@@ -1,8 +1,12 @@
 # 🏢 ระบบจองหอพัก (Dorm Booking System)
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)](#)
-[![React](https://img.shields.io/badge/React-18-blue?logo=react)](#)
+[![PHP](https://img.shields.io/badge/PHP-8+-purple?logo=php)](#)
+[![Laravel](https://img.shields.io/badge/Laravel-10-red?logo=laravel)](#)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-orange?logo=mysql)](#)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](#)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](#)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow?logo=javascript)](#)
+[![Blade](https://img.shields.io/badge/Blade-Templating-lightblue)](#)
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)](#)
 
 > โครงการเพื่อรายวิชา **MTE-456 Web Development for Online Business** ภาคการศึกษา **1/2568**
@@ -35,18 +39,22 @@
 git clone https://github.com/NatrinT/PHP_LaravelProject.git
 cd dorm-booking-system
 
+
 # ติดตั้ง dependencies
-npm install
+composer install
+npm install && npm run build
+
 
 # ตั้งค่า environment
 cp .env.example .env
+php artisan key:generate
+
 
 # รันระบบ
-npm run dev
+php artisan serve
 ```
 
-* Backend: [http://localhost:3000](http://localhost:3000)
-* Frontend: [http://localhost:5173](http://localhost:5173)
+* Backend + Frontend: http://localhost:8000
 
 ---
 
@@ -61,5 +69,6 @@ npm run dev
 ## 📜 License
 
 MIT
+
 
 
