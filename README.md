@@ -32,7 +32,7 @@
 
 ```bash
 # Clone โปรเจกต์
-git clone <YOUR_REPO_URL>
+git clone [<YOUR_REPO_URL>](https://github.com/NatrinT/PHP_LaravelProject.git)
 cd dorm-booking-system
 
 # ติดตั้ง dependencies
@@ -61,3 +61,4 @@ npm run dev
 ## 📜 License
 
 MIT
+
