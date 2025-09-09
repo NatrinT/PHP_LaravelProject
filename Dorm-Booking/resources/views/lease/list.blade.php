@@ -10,7 +10,7 @@
 @endsection
 
 @section('content')
-    <h3> ::Lease Managements ::
+    <h3> :: Lease Management ::
         <a href="/lease/adding" class="btn btn-primary btn-sm"> Add Lease </a>
     </h3>
 
@@ -19,7 +19,7 @@
             <tr class="table-info">
                 <th class="text-center">No.</th>
                 <th width="15%">Contract</th>
-                <th width="20%"> Username </th>
+                <th width="20%">Username</th>
                 <th class="text-center">Room No</th>
                 <th class="text-center">Start date</th>
                 <th class="text-center">End date</th>
@@ -35,19 +35,31 @@
             @foreach ($LeasesList as $row)
                 <tr>
                     <td align="center"> {{ $loop->iteration }}. </td>
-                    <td>
-
-                        <img src="{{ asset('storage/' . $row->contract_file_url) }}" width="100">
+                    <td align="center">
+                        @if ($row->contract_file_url)
+                            @php
+                                $ext = pathinfo($row->contract_file_url, PATHINFO_EXTENSION);
+                            @endphp
+                            @if (in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
+                                <img src="{{ asset('storage/' . $row->contract_file_url) }}" width="100">
+                            @elseif(strtolower($ext) === 'pdf')
+                                <a href="{{ asset('storage/' . $row->contract_file_url) }}" target="_blank" class="btn btn-sm btn-info">
+                                    View PDF
+                                </a>
+                            @else
+                                <a href="{{ asset('storage/' . $row->contract_file_url) }}" target="_blank">Download</a>
+                            @endif
+                        @endif
                     </td>
                     <td>
-                        <b>{{ $row->username }}</b>
+                        <b>{{ $row->user->full_name }}</b>
                     </td>
-                    <td align="center">฿{{ $row->room_no }}</td>
-                    <td align="center"> {{ $row->start_date }} </td>
-                    <td align="center"> {{ $row->end_date }} </td>
-                    <td align="center"> {{ $row->rent_amount }} </td>
-                    <td align="center"> {{ $row->deposit_amount }} </td>
-                    <td align="center"> {{ $row->status }} </td>
+                    <td align="center">{{ $row->room->room_no }}</td>
+                    <td align="center">{{ \Carbon\Carbon::parse($row->start_date)->format('d/m/Y') }}</td>
+                    <td align="center">{{ \Carbon\Carbon::parse($row->end_date)->format('d/m/Y') }}</td>
+                    <td align="center">{{ number_format($row->rent_amount, 2) }}</td>
+                    <td align="center">{{ number_format($row->deposit_amount, 2) }}</td>
+                    <td align="center">{{ $row->status }}</td>
                     <td align="center">
                         <a href="/lease/{{ $row->id }}" class="btn btn-warning btn-sm">edit</a>
                     </td>
@@ -60,8 +72,6 @@
                             @csrf
                             @method('delete')
                         </form>
-
-
                     </td>
                 </tr>
             @endforeach
@@ -79,12 +89,6 @@
 @section('js_before')
 @endsection
 
-@section('js_before')
-@endsection
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -100,7 +104,6 @@
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                // ถ้ากด "ลบเลย" ให้ submit form ที่ซ่อนไว้
                 document.getElementById('delete-form-' + id).submit();
             }
         })

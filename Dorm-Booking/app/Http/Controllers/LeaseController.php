@@ -3,211 +3,211 @@
 namespace App\Http\Controllers;
 
 use App\Models\LeaseModel;
-use Illuminate\Http\Request; //รับค่าจากฟอร์ม
-use Illuminate\Support\Facades\Validator; //form validation
-use RealRashid\SweetAlert\Facades\Alert; //sweet alert
-use Illuminate\Support\Facades\Storage; //สำหรับเก็บไฟล์ภาพ
-use Illuminate\Pagination\Paginator; //แบ่งหน้า
-use App\Models\ProductModel; //model
-
-
+use App\Models\RoomModel;
+use App\Models\UsersModel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\Paginator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class LeaseController extends Controller
 {
+    // กำหนดสถานะที่อนุญาตให้ชัดเจน
+    private const STATUSES = ['PENDING','ACTIVE','ENDED','CANCELED'];
 
     public function index()
     {
-        Paginator::useBootstrap(); // ใช้ Bootstrap pagination
-        $LeasesList = LeaseModel::orderBy('id', 'desc')->paginate(5); //order by & pagination
-        //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+        Paginator::useBootstrap();
+        $LeasesList = LeaseModel::with(['user','room'])
+            ->orderBy('id','desc')
+            ->paginate(10);
+
         return view('lease.list', compact('LeasesList'));
     }
 
     public function adding()
     {
-        return view('lease.create');
+        // ถ้าจะทำ dropdown เลือกผู้ใช้/ห้อง
+        $users = UsersModel::orderBy('full_name')->get(['id','full_name']);
+        $rooms = RoomModel::orderBy('room_no')->get(['id','room_no']);
+        return view('lease.create', compact('users','rooms'));
     }
-
 
     public function create(Request $request)
     {
-        //msg
         $messages = [
-            'product_name.required' => 'กรุณากรอกชื่อสินค้า',
-            'product_name.min' => 'ต้องมีอย่างน้อย :min ตัวอักษร',
-            'product_detail.required' => 'กรุณากรอกรายละเอียดสินค้า',
-            'product_detail.min' => 'ต้องมีอย่างน้อย :min ตัวอักษร',
-            'product_price.required' => 'ห้ามว่าง',
-            'product_price.integer' => 'ใส่ตัวเลขเท่านั้น',
-            'product_price.min' => 'ขั้นต่ำมากกว่า 1',
-            'product_img.mimes' => 'รองรับ jpeg, png, jpg เท่านั้น !!',
-            'product_img.max' => 'ขนาดไฟล์ไม่เกิน 5MB !!',
+            'user_id.required'   => 'กรุณาเลือกผู้เช่า',
+            'user_id.exists'     => 'ไม่พบผู้เช่า',
+            'room_id.required'   => 'กรุณาเลือกห้อง',
+            'room_id.exists'     => 'ไม่พบห้อง',
+            'start_date.required'=> 'กรุณากำหนดวันเริ่มสัญญา',
+            'end_date.required'  => 'กรุณากำหนดวันสิ้นสุดสัญญา',
+            'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่น้อยกว่าวันเริ่ม',
+            'rent_amount.required'=> 'กรุณากำหนดค่าเช่า',
+            'rent_amount.numeric' => 'ค่าเช่าต้องเป็นตัวเลข',
+            'rent_amount.min'     => 'ค่าเช่าต้องไม่น้อยกว่า 500 บาท',
+            'deposit_amount.numeric'=> 'เงินมัดจำต้องเป็นตัวเลข',
+            'deposit_amount.min'    => 'เงินมัดจำต้องไม่น้อยกว่า 0',
+            'status.in'           => 'สถานะไม่ถูกต้อง',
+            'contract_file.mimes' => 'อัปโหลดได้เฉพาะ pdf, jpg, jpeg, png',
+            'contract_file.max'   => 'ไฟล์ต้องไม่เกิน 5MB',
         ];
 
-        //rule ตั้งขึ้นว่าจะเช็คอะไรบ้าง
         $validator = Validator::make($request->all(), [
-            'product_name' => 'required|min:3',
-            'product_detail' => 'required|min:10',
-            'product_price' => 'required|integer|min:1',
-            'product_img' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'user_id'        => 'required|exists:users,id',
+            'room_id'        => 'required|exists:rooms,id',
+            'start_date'     => 'required|date',
+            'end_date'       => 'required|date|after_or_equal:start_date',
+            'rent_amount'    => 'required|numeric|min:500',
+            'deposit_amount' => 'nullable|numeric|min:0',
+            'status'         => 'nullable|in:'.implode(',', self::STATUSES),
+            'contract_file'  => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
-
-        //ถ้าผิดกฏให้อยู่หน้าเดิม และแสดง msg ออกมา
         if ($validator->fails()) {
-            return redirect('product/adding')
+            return redirect('lease/adding')
                 ->withErrors($validator)
                 ->withInput();
         }
 
-
-        //ถ้ามีการอัพโหลดไฟล์เข้ามา ให้อัพโหลดไปเก็บยังโฟลเดอร์ uploads/product
         try {
-            $imagePath = null;
-            if ($request->hasFile('product_img')) {
-                $imagePath = $request->file('product_img')->store('uploads/product', 'public');
+            $path = null;
+            if ($request->hasFile('contract_file')) {
+                $path = $request->file('contract_file')->store('uploads/contracts', 'public');
             }
 
-            //insert เพิ่มข้อมูลลงตาราง
-            ProductModel::create([
-                'product_name' => strip_tags($request->product_name),
-                'product_detail' => strip_tags($request->product_detail),
-                'product_price' => $request->product_price,
-                'product_img' => $imagePath,
+            LeaseModel::create([
+                'user_id'          => (int) $request->user_id,
+                'room_id'          => (int) $request->room_id,
+                'start_date'       => $request->start_date,
+                'end_date'         => $request->end_date,
+                'rent_amount'      => $request->rent_amount,
+                'deposit_amount'   => $request->deposit_amount,
+                'status'           => $request->status ?: 'PENDING',
+                'contract_file_url'=> $path,
             ]);
 
-            //แสดง sweet alert
-            Alert::success('Insert Successfully');
-            return redirect('/product');
-        } catch (\Exception $e) {  //error debug
-            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
-            return view('errors.404');
+            Alert::success('เพิ่มสัญญาเช่าสำเร็จ');
+            return redirect('/lease');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-    } //create 
+    }
 
     public function edit($id)
     {
         try {
-            $product = ProductModel::findOrFail($id); // ใช้ findOrFail เพื่อให้เจอหรือ 404
+            $lease = LeaseModel::with(['user','room'])->findOrFail($id);
+            $users = UsersModel::orderBy('full_name')->get(['id','full_name']);
+            $rooms = RoomModel::orderBy('room_no')->get(['id','room_no']);
 
-            //ประกาศตัวแปรเพื่อส่งไปที่ view
-            if (isset($product)) {
-                $id = $product->id;
-                $product_name = $product->product_name;
-                $product_detail = $product->product_detail;
-                $product_price = $product->product_price;
-                $product_img = $product->product_img;
-                return view('products.edit', compact('id', 'product_name', 'product_detail', 'product_price', 'product_img'));
-            }
+            // แตกตัวแปรส่งไป view
+            $data = [
+                'id'             => $lease->id,
+                'user_id'        => $lease->user_id,
+                'room_id'        => $lease->room_id,
+                'start_date'     => $lease->start_date?->format('Y-m-d'),
+                'end_date'       => $lease->end_date?->format('Y-m-d'),
+                'rent_amount'    => $lease->rent_amount,
+                'deposit_amount' => $lease->deposit_amount,
+                'status'         => $lease->status,
+                'contract_file_url' => $lease->contract_file_url,
+            ];
+
+            return view('lease.edit', $data + compact('users','rooms'));
         } catch (\Exception $e) {
-            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
             return view('errors.404');
         }
-    } //func edit
+    }
 
     public function update($id, Request $request)
     {
-
-        //error msg
         $messages = [
-            'product_name.required' => 'กรุณากรอกชื่อสินค้า',
-            'product_name.min' => 'ต้องมีอย่างน้อย :min ตัวอักษร',
-
-            'product_detail.required' => 'กรุณากรอกรายละเอียดสินค้า',
-            'product_detail.min' => 'ต้องมีอย่างน้อย :min ตัวอักษร',
-
-            'product_price.required' => 'ห้ามว่าง',
-            'product_price.integer' => 'ใส่ตัวเลขเท่านั้น',
-            'product_price.min' => 'ขั้นต่ำมากกว่า 1',
-
-            'product_img.mimes' => 'รองรับ jpeg, png, jpg เท่านั้น !!',
-            'product_img.max' => 'ขนาดไฟล์ไม่เกิน 5MB !!',
+            'user_id.required'   => 'กรุณาเลือกผู้เช่า',
+            'user_id.exists'     => 'ไม่พบผู้เช่า',
+            'room_id.required'   => 'กรุณาเลือกห้อง',
+            'room_id.exists'     => 'ไม่พบห้อง',
+            'start_date.required'=> 'กรุณากำหนดวันเริ่มสัญญา',
+            'end_date.required'  => 'กรุณากำหนดวันสิ้นสุดสัญญา',
+            'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่น้อยกว่าวันเริ่ม',
+            'rent_amount.required'=> 'กรุณากำหนดค่าเช่า',
+            'rent_amount.numeric' => 'ค่าเช่าต้องเป็นตัวเลข',
+            'rent_amount.min'     => 'ค่าเช่าต้องไม่น้อยกว่า 500 บาท',
+            'deposit_amount.numeric'=> 'เงินมัดจำต้องเป็นตัวเลข',
+            'deposit_amount.min'    => 'เงินมัดจำต้องไม่น้อยกว่า 0',
+            'status.in'           => 'สถานะไม่ถูกต้อง',
+            'contract_file.mimes' => 'อัปโหลดได้เฉพาะ pdf, jpg, jpeg, png',
+            'contract_file.max'   => 'ไฟล์ต้องไม่เกิน 5MB',
         ];
 
-
-        // ตรวจสอบข้อมูลจากฟอร์มด้วย Validator
         $validator = Validator::make($request->all(), [
-            'product_name' => 'required|min:3',
-            'product_detail' => 'required|min:3',
-            'product_price' => 'required|integer|min:1',
-            'product_img' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'user_id'        => 'required|exists:users,id',
+            'room_id'        => 'required|exists:rooms,id',
+            'start_date'     => 'required|date',
+            'end_date'       => 'required|date|after_or_equal:start_date',
+            'rent_amount'    => 'required|numeric|min:500',
+            'deposit_amount' => 'nullable|numeric|min:0',
+            'status'         => 'required|in:'.implode(',', self::STATUSES),
+            'contract_file'  => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
-        // ถ้า validation ไม่ผ่าน ให้กลับไปหน้าฟอร์มพร้อมแสดง error และข้อมูลเดิม
         if ($validator->fails()) {
-            return redirect('product/' . $id)
+            return redirect('lease/'.$id)
                 ->withErrors($validator)
                 ->withInput();
         }
 
         try {
-            // ดึงข้อมูลสินค้าตามไอดี ถ้าไม่เจอจะ throw Exception
-            $product = ProductModel::findOrFail($id);
+            $lease = LeaseModel::findOrFail($id);
 
-            // ตรวจสอบว่ามีไฟล์รูปใหม่ถูกอัปโหลดมาหรือไม่
-            if ($request->hasFile('product_img')) {
-                // ถ้ามีรูปเดิมให้ลบไฟล์รูปเก่าออกจาก storage
-                if ($product->product_img) {
-                    Storage::disk('public')->delete($product->product_img);
+            // อัปโหลดไฟล์ใหม่ (ถ้ามี) และลบไฟล์เก่า
+            $path = $lease->contract_file_url;
+            if ($request->hasFile('contract_file')) {
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
                 }
-                // บันทึกไฟล์รูปใหม่ลงโฟลเดอร์ 'uploads/product' ใน disk 'public'
-                $imagePath = $request->file('product_img')->store('uploads/product', 'public');
-                // อัปเดต path รูปภาพใหม่ใน model
-                $product->product_img = $imagePath;
+                $path = $request->file('contract_file')->store('uploads/contracts', 'public');
             }
 
-            // อัปเดตชื่อสินค้า โดยใช้ strip_tags ป้องกันการแทรกโค้ด HTML/JS
-            $product->product_name = strip_tags($request->product_name);
-            // อัปเดตรายละเอียดสินค้า โดยใช้ strip_tags ป้องกันการแทรกโค้ด HTML/JS
-            $product->product_detail = strip_tags($request->product_detail);
-            // อัปเดตราคาสินค้า
-            $product->product_price = $request->product_price;
+            $lease->update([
+                'user_id'          => (int) $request->user_id,
+                'room_id'          => (int) $request->room_id,
+                'start_date'       => $request->start_date,
+                'end_date'         => $request->end_date,
+                'rent_amount'      => $request->rent_amount,
+                'deposit_amount'   => $request->deposit_amount,
+                'status'           => $request->status,
+                'contract_file_url'=> $path,
+            ]);
 
-            // บันทึกการเปลี่ยนแปลงในฐานข้อมูล
-            $product->save();
-
-            // แสดง SweetAlert แจ้งว่าบันทึกสำเร็จ
-            Alert::success('Update Successfully');
-
-            // เปลี่ยนเส้นทางกลับไปหน้ารายการสินค้า
-            return redirect('/product');
+            Alert::success('ปรับปรุงสัญญาสำเร็จ');
+            return redirect('/lease');
         } catch (\Exception $e) {
-            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
             return view('errors.404');
-
-            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
-            //return view('errors.404');
         }
-    } //update  
-
-
+    }
 
     public function remove($id)
     {
         try {
-            $product = ProductModel::find($id); //คิวรี่เช็คว่ามีไอดีนี้อยู่ในตารางหรือไม่
-
-            if (!$product) {   //ถ้าไม่มี
-                Alert::error('Product not found.');
-                return redirect('/product');
+            $lease = LeaseModel::find($id);
+            if (!$lease) {
+                Alert::error('ไม่พบสัญญาเช่า');
+                return redirect('/lease');
             }
 
-            //ถ้ามีภาพ ลบภาพในโฟลเดอร์ 
-            if ($product->product_img && Storage::disk('public')->exists($product->product_img)) {
-                Storage::disk('public')->delete($product->product_img);
+            // ลบไฟล์สัญญาถ้ามี
+            if ($lease->contract_file_url && Storage::disk('public')->exists($lease->contract_file_url)) {
+                Storage::disk('public')->delete($lease->contract_file_url);
             }
 
-            // ลบข้อมูลจาก DB
-            $product->delete();
-
-            Alert::success('Delete Successfully');
-            return redirect('/product');
+            $lease->delete();
+            Alert::success('ลบสัญญาสำเร็จ');
+            return redirect('/lease');
         } catch (\Exception $e) {
-            Alert::error('เกิดข้อผิดพลาด: ' . $e->getMessage());
-            return redirect('/product');
+            Alert::error('เกิดข้อผิดพลาด: '.$e->getMessage());
+            return redirect('/lease');
         }
-    } //remove 
-
-
-
-} //class
+    }
+}

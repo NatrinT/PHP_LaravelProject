@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 07, 2025 at 01:13 PM
+-- Generation Time: Sep 09, 2025 at 07:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,8 +40,8 @@ CREATE TABLE `invoices` (
   `paid_at` datetime DEFAULT NULL,
   `payment_status` enum('PENDING','CONFIRMED','FAILED') NOT NULL DEFAULT 'PENDING',
   `receipt_file_url` varchar(500) DEFAULT NULL,
-  `create_at` datetime DEFAULT current_timestamp(),
-  `upate_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp(),
+  `upated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -80,6 +80,15 @@ CREATE TABLE `rooms` (
   `note` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `rooms`
+--
+
+INSERT INTO `rooms` (`id`, `room_no`, `floor`, `type`, `status`, `monthly_rent`, `note`) VALUES
+(4, '224', 2, 'STANDARD', 'MAINTENANCE', 2500.00, 'Haha, Benten'),
+(5, '128', 8, 'DELUXE', 'AVAILABLE', 4500.00, 'this room is for black gay that horny, mai wai leawwwwww~~~'),
+(6, '123', 3, 'STANDARD', 'MAINTENANCE', 2378.00, 'Eiei');
+
 -- --------------------------------------------------------
 
 --
@@ -97,6 +106,17 @@ CREATE TABLE `users` (
   `create_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `pass_hash`, `full_name`, `phone`, `role`, `status`, `create_at`, `updated_at`) VALUES
+(2, 'kh.chittaworn_st@tni.ac.th', '$2y$12$AX23PiH6Y9JjzK2Nm5aEseM2Yj3Pjf8mBJI.ZKckebjQQ/RtgVR7q', 'Riew EieiTest', '0944364363', 'MEMBER', 'ACTIVE', '2025-09-07 20:39:59', '2025-09-08 16:15:01'),
+(3, 'masdf@gmail.com', '$2y$12$RSU9KcpIVqZynPoVBp.1lOIL0.1pq8m.wB3P3jdRZwBjm6OFVxpKC', 'Potter', '0009998889', 'STAFF', 'ACTIVE', '2025-09-08 16:16:00', '2025-09-08 16:16:00'),
+(4, 'T_T@gmail.com', '$2y$12$nP0oD0fEy53uCh61We1/HOdDebaZh8XKTkXnRr54nd0NKVFE765E6', 'Phat', '9998765432', 'MEMBER', 'ACTIVE', '2025-09-08 16:16:35', '2025-09-08 16:16:35'),
+(5, 'Kim@gmail.com', '$2y$12$rg0P6s/oPfEzF5k8B7g5QeE7J2Ovc07d62hfssgljAUTpCi4SQf8m', 'Kim Eiei`', '1234567890', 'ADMIN', 'ACTIVE', '2025-09-08 16:17:06', '2025-09-08 16:17:06'),
+(6, 'haha@gmail.com', '$2y$12$ktEx7FxyrZZPeFx/6fexLuiKlyRNH5.JGOmjet5YvhtLtIzzNraUu', 'Gene', '8888444488', 'MEMBER', 'ACTIVE', '2025-09-08 16:17:33', '2025-09-08 16:17:33');
 
 --
 -- Indexes for dumped tables
@@ -151,13 +171,13 @@ ALTER TABLE `leases`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
