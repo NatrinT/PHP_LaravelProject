@@ -14,13 +14,13 @@ use RealRashid\SweetAlert\Facades\Alert;
 class LeaseController extends Controller
 {
     // กำหนดสถานะที่อนุญาตให้ชัดเจน
-    private const STATUSES = ['PENDING','ACTIVE','ENDED','CANCELED'];
+    private const STATUSES = ['PENDING', 'ACTIVE', 'ENDED', 'CANCELED'];
 
     public function index()
     {
         Paginator::useBootstrap();
-        $LeasesList = LeaseModel::with(['user','room'])
-            ->orderBy('id','desc')
+        $LeasesList = LeaseModel::with(['user', 'room'])
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('lease.list', compact('LeasesList'));
@@ -28,11 +28,11 @@ class LeaseController extends Controller
 
     public function adding()
     {
-        // ถ้าจะทำ dropdown เลือกผู้ใช้/ห้อง
-        $users = UsersModel::orderBy('full_name')->get(['id','full_name']);
-        $rooms = RoomModel::orderBy('room_no')->get(['id','room_no']);
-        return view('lease.create', compact('users','rooms'));
+        $users = UsersModel::orderBy('full_name')->get();
+        $rooms = RoomModel::where('status', 'AVAILABLE')->orderBy('room_no')->get(); // เอาเฉพาะห้องว่าง
+        return view('lease.create', compact('users', 'rooms'));
     }
+
 
     public function create(Request $request)
     {
@@ -41,13 +41,13 @@ class LeaseController extends Controller
             'user_id.exists'     => 'ไม่พบผู้เช่า',
             'room_id.required'   => 'กรุณาเลือกห้อง',
             'room_id.exists'     => 'ไม่พบห้อง',
-            'start_date.required'=> 'กรุณากำหนดวันเริ่มสัญญา',
+            'start_date.required' => 'กรุณากำหนดวันเริ่มสัญญา',
             'end_date.required'  => 'กรุณากำหนดวันสิ้นสุดสัญญา',
             'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่น้อยกว่าวันเริ่ม',
-            'rent_amount.required'=> 'กรุณากำหนดค่าเช่า',
+            'rent_amount.required' => 'กรุณากำหนดค่าเช่า',
             'rent_amount.numeric' => 'ค่าเช่าต้องเป็นตัวเลข',
             'rent_amount.min'     => 'ค่าเช่าต้องไม่น้อยกว่า 500 บาท',
-            'deposit_amount.numeric'=> 'เงินมัดจำต้องเป็นตัวเลข',
+            'deposit_amount.numeric' => 'เงินมัดจำต้องเป็นตัวเลข',
             'deposit_amount.min'    => 'เงินมัดจำต้องไม่น้อยกว่า 0',
             'status.in'           => 'สถานะไม่ถูกต้อง',
             'contract_file.mimes' => 'อัปโหลดได้เฉพาะ pdf, jpg, jpeg, png',
@@ -61,13 +61,19 @@ class LeaseController extends Controller
             'end_date'       => 'required|date|after_or_equal:start_date',
             'rent_amount'    => 'required|numeric|min:500',
             'deposit_amount' => 'nullable|numeric|min:0',
-            'status'         => 'nullable|in:'.implode(',', self::STATUSES),
             'contract_file'  => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
         if ($validator->fails()) {
             return redirect('lease/adding')
                 ->withErrors($validator)
+                ->withInput();
+        }
+
+        $room = RoomModel::find($request->room_id);
+        if (!$room || $room->status !== 'AVAILABLE') {
+            return redirect('lease/adding')
+                ->withErrors(['room_id' => 'ห้องนี้ไม่ว่าง ไม่สามารถจองได้'])
                 ->withInput();
         }
 
@@ -78,15 +84,17 @@ class LeaseController extends Controller
             }
 
             LeaseModel::create([
-                'user_id'          => (int) $request->user_id,
-                'room_id'          => (int) $request->room_id,
+                'user_id'          => $request->user_id,
+                'room_id'          => $request->room_id,
                 'start_date'       => $request->start_date,
                 'end_date'         => $request->end_date,
                 'rent_amount'      => $request->rent_amount,
                 'deposit_amount'   => $request->deposit_amount,
-                'status'           => $request->status ?: 'PENDING',
-                'contract_file_url'=> $path,
+                'status'           => 'ACTIVE',
+                'contract_file_url' => $path,
             ]);
+            // อัปเดตสถานะห้องเป็น OCCUPIED
+            $room->update(['status' => 'OCCUPIED']);
 
             Alert::success('เพิ่มสัญญาเช่าสำเร็จ');
             return redirect('/lease');
@@ -98,9 +106,9 @@ class LeaseController extends Controller
     public function edit($id)
     {
         try {
-            $lease = LeaseModel::with(['user','room'])->findOrFail($id);
-            $users = UsersModel::orderBy('full_name')->get(['id','full_name']);
-            $rooms = RoomModel::orderBy('room_no')->get(['id','room_no']);
+            $lease = LeaseModel::with(['user', 'room'])->findOrFail($id);
+            $users = UsersModel::orderBy('full_name')->get(['id', 'full_name']);
+            $rooms = RoomModel::orderBy('room_no')->get(['id', 'room_no']);
 
             // แตกตัวแปรส่งไป view
             $data = [
@@ -115,7 +123,7 @@ class LeaseController extends Controller
                 'contract_file_url' => $lease->contract_file_url,
             ];
 
-            return view('lease.edit', $data + compact('users','rooms'));
+            return view('lease.edit', $data + compact('users', 'rooms'));
         } catch (\Exception $e) {
             return view('errors.404');
         }
@@ -128,13 +136,13 @@ class LeaseController extends Controller
             'user_id.exists'     => 'ไม่พบผู้เช่า',
             'room_id.required'   => 'กรุณาเลือกห้อง',
             'room_id.exists'     => 'ไม่พบห้อง',
-            'start_date.required'=> 'กรุณากำหนดวันเริ่มสัญญา',
+            'start_date.required' => 'กรุณากำหนดวันเริ่มสัญญา',
             'end_date.required'  => 'กรุณากำหนดวันสิ้นสุดสัญญา',
             'end_date.after_or_equal' => 'วันสิ้นสุดต้องไม่น้อยกว่าวันเริ่ม',
-            'rent_amount.required'=> 'กรุณากำหนดค่าเช่า',
+            'rent_amount.required' => 'กรุณากำหนดค่าเช่า',
             'rent_amount.numeric' => 'ค่าเช่าต้องเป็นตัวเลข',
             'rent_amount.min'     => 'ค่าเช่าต้องไม่น้อยกว่า 500 บาท',
-            'deposit_amount.numeric'=> 'เงินมัดจำต้องเป็นตัวเลข',
+            'deposit_amount.numeric' => 'เงินมัดจำต้องเป็นตัวเลข',
             'deposit_amount.min'    => 'เงินมัดจำต้องไม่น้อยกว่า 0',
             'status.in'           => 'สถานะไม่ถูกต้อง',
             'contract_file.mimes' => 'อัปโหลดได้เฉพาะ pdf, jpg, jpeg, png',
@@ -148,12 +156,12 @@ class LeaseController extends Controller
             'end_date'       => 'required|date|after_or_equal:start_date',
             'rent_amount'    => 'required|numeric|min:500',
             'deposit_amount' => 'nullable|numeric|min:0',
-            'status'         => 'required|in:'.implode(',', self::STATUSES),
+            'status'         => 'required|in:' . implode(',', self::STATUSES),
             'contract_file'  => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ], $messages);
 
         if ($validator->fails()) {
-            return redirect('lease/'.$id)
+            return redirect('lease/' . $id)
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -178,8 +186,18 @@ class LeaseController extends Controller
                 'rent_amount'      => $request->rent_amount,
                 'deposit_amount'   => $request->deposit_amount,
                 'status'           => $request->status,
-                'contract_file_url'=> $path,
+                'contract_file_url' => $path,
             ]);
+
+            if ($lease->status === 'ENDED' || $lease->status === 'CANCELED') {
+                $lease->room->update(['status' => 'AVAILABLE']);
+            } elseif ($lease->status === 'ACTIVE') {
+                $lease->room->update(['status' => 'OCCUPIED']);
+            } else {
+                // กรณี PENDING หรือสถานะอื่นๆ
+                $lease->room->update(['status' => 'AVAILABLE']);
+            }
+
 
             Alert::success('ปรับปรุงสัญญาสำเร็จ');
             return redirect('/lease');
@@ -202,11 +220,17 @@ class LeaseController extends Controller
                 Storage::disk('public')->delete($lease->contract_file_url);
             }
 
+            // คืนห้องว่าง ไม่ว่าลบ Lease ที่สถานะอะไร
+            if ($lease->room) {
+                $lease->room->update(['status' => 'AVAILABLE']);
+            }
+
             $lease->delete();
+
             Alert::success('ลบสัญญาสำเร็จ');
             return redirect('/lease');
         } catch (\Exception $e) {
-            Alert::error('เกิดข้อผิดพลาด: '.$e->getMessage());
+            Alert::error('เกิดข้อผิดพลาด: ' . $e->getMessage());
             return redirect('/lease');
         }
     }
