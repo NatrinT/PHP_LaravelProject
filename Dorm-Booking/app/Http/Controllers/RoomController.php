@@ -1,0 +1,180 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\RoomModel;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Pagination\Paginator;
+
+class RoomController extends Controller
+{
+
+    public function index()
+    {
+        try {
+            Paginator::useBootstrap();
+            $RoomList = RoomModel::orderBy('id', 'desc')->paginate(10); //order by & pagination
+            return view('rooms.list', compact('RoomList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            //return view('errors.404');
+        }
+    }
+
+    public function adding()
+    {
+        return view('rooms.create');
+    }
+
+    public function create(Request $request)
+    {
+        // echo '<pre>';
+        // dd($_POST);
+        // exit();
+
+        //vali msg 
+        $messages = [
+            'room_no.required' => 'กรุณากรอกข้อมูล',
+            'room_no.unique' => 'เลขห้องซ้ำ เพิ่มใหม่อีกครั้ง',
+
+            'floor.required' => 'กรุณากรอกข้อมูล',
+            'floor.min' => 'ชั้นต้องไม่เป็น 0 หรือต่ำกว่า :min',
+
+            'type.required' => 'กรุณากรอกข้อมูล',
+
+            'status.required' => 'กรุณากรอกข้อมูล',
+
+            'monthly_rent.required' => 'กรุณากรอกข้อมูล',
+            'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
+        ];
+
+
+        //rule 
+        $validator = Validator::make($request->all(), [
+            'room_no' => 'required|unique:rooms',
+            'floor' => 'required|integer|min:1',
+            'type' => 'required',
+            'status' => 'required',
+            'monthly_rent' => 'required|numeric|min:500',
+        ], $messages);
+
+
+        //check vali 
+        if ($validator->fails()) {
+            return redirect('room/adding')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+
+            //ปลอดภัย: กัน XSS ที่มาจาก <script>, <img onerror=...> ได้
+            RoomModel::create([
+                'room_no' => strip_tags($request->input('room_no')),
+                'floor' => strip_tags($request->input('floor')),
+                'type' => strip_tags($request->input('type')),
+                'status' => strip_tags($request->input('status')),
+                'monthly_rent' => strip_tags($request->input('monthly_rent')),
+                'note' => strip_tags($request->input('note')),
+            ]);
+            // แสดง Alert ก่อน return
+            Alert::success('เพิ่มข้อมูลสำเร็จ');
+            return redirect('/room');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            //return view('errors.404');
+        }
+    } //fun create
+
+
+
+    public function edit($id)
+    {
+        try {
+            //query data for form edit 
+            $room = RoomModel::findOrFail($id); // ใช้ findOrFail เพื่อให้เจอหรือ 404
+            if (isset($room)) {
+                $id = $room->id;
+                $room_no = $room->room_no;
+                $floor = $room->floor;
+                $type = $room->type;
+                $status = $room->status;
+                $monthly_rent = $room->monthly_rent;
+                $note = $room->note;
+                return view('rooms.edit', compact('id', 'room_no', 'floor', 'type', 'status', 'monthly_rent', 'note'));
+            }
+        } catch (\Exception $e) {
+            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            return view('errors.404');
+        }
+    } //func edit
+
+
+    public function update($id, Request $request)
+    {
+        //vali msg 
+        $messages = [
+            // 'room_no.required' => 'กรุณากรอกข้อมูล',
+            // 'room_no.unique' => 'เลขห้องซ้ำ เพิ่มใหม่อีกครั้ง',
+
+            'floor.required' => 'กรุณากรอกข้อมูล',
+            'floor.min' => 'ชั้นต้องไม่เป็น 0 หรือต่ำกว่า :min',
+
+            'type.required' => 'กรุณากรอกข้อมูล',
+
+            'status.required' => 'กรุณากรอกข้อมูล',
+
+            'monthly_rent.required' => 'กรุณากรอกข้อมูล',
+            'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            // 'room_no' => ['required', Rule::unique('rooms', 'room_no')->ignore($id, 'id')],
+            'floor' => 'required|numeric|min:1',
+            'type' => 'required',
+            'status' => 'required',
+            'monthly_rent' => 'required|numeric|min:500',
+        ], $messages);
+
+        //check 
+        if ($validator->fails()) {
+            return redirect('room/' . $id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $room = RoomModel::find($id);
+            $room->update([
+                'floor' => strip_tags($request->input('floor')),
+                'type' => strip_tags($request->input('type')),
+                'status' => strip_tags($request->input('status')),
+                'monthly_rent' => strip_tags($request->input('monthly_rent')),
+                'note' => strip_tags($request->input('note')),
+            ]);
+            // แสดง Alert ก่อน return
+            Alert::success('ปรับปรุงข้อมูลสำเร็จ');
+            return redirect('/room');
+        } catch (\Exception $e) {
+            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            return view('errors.404');
+        }
+    } //fun update 
+
+
+    public function remove($id)
+    {
+        try {
+            $room = RoomModel::find($id);  //query หาว่ามีไอดีนี้อยู่จริงไหม 
+            $room->delete();
+            Alert::success('ลบข้อมูลสำเร็จ');
+            return redirect('/room');
+        } catch (\Exception $e) {
+            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            return view('errors.404');
+        }
+    } //remove 
+
+} //class

@@ -1,0 +1,64 @@
+<?php
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\UsersController;
+
+//home page
+Route::get('/', [UsersController::class, 'index']);
+// product home page
+Route::get('/detail/{id}', [HomeController::class, 'detail']);
+Route::get('/search', [HomeController::class, 'searchProduct']);
+
+//users crud
+Route::get('/users', [UsersController::class, 'index']);
+Route::get('/users/adding',  [UsersController::class, 'adding']);
+Route::post('/users',  [UsersController::class, 'create']);
+Route::get('/users/{id}',  [UsersController::class, 'edit']);
+Route::put('/users/{id}',  [UsersController::class, 'update']);
+Route::delete('/users/remove/{id}',  [UsersController::class, 'remove']);
+Route::get('/users/reset/{id}',  [UsersController::class, 'reset']);
+Route::put('/users/reset/{id}',  [UsersController::class, 'resetPassword']);
+
+//rooms crud
+Route::get('/room', [RoomController::class, 'index']);
+Route::get('/room/adding',  [RoomController::class, 'adding']);
+Route::post('/room',  [RoomController::class, 'create']);
+Route::get('/room/{id}',  [RoomController::class, 'edit']);
+Route::put('/room/{id}',  [RoomController::class, 'update']);
+Route::delete('/room/remove/{id}',  [RoomController::class, 'remove']);
+Route::get('/room/reset/{id}',  [RoomController::class, 'reset']);
+Route::put('/room/reset/{id}',  [RoomController::class, 'resetPassword']);
+
+Route::get('/lease', [LeaseController::class, 'index']);
+Route::get('/lease/adding',  [LeaseController::class, 'adding']);
+Route::post('/lease',  [LeaseController::class, 'create']);
+Route::get('/lease/{id}',  [LeaseController::class, 'edit']);
+Route::put('/lease/{id}',  [LeaseController::class, 'update']);
+Route::delete('/lease/remove/{id}',  [LeaseController::class, 'remove']);
+Route::get('/lease/reset/{id}',  [LeaseController::class, 'reset']);
+Route::put('/lease/reset/{id}',  [LeaseController::class, 'resetPassword']);
+
+//admin crud
+// Route::get('/admin', [AdminController::class, 'index']);
+// Route::get('/admin/adding',  [AdminController::class, 'adding']);
+// Route::post('/admin',  [AdminController::class, 'create']);
+// Route::get('/admin/{id}',  [AdminController::class, 'edit']);
+// Route::put('/admin/{id}',  [AdminController::class, 'update']);
+// Route::delete('/admin/remove/{id}',  [AdminController::class, 'remove']);
+// Route::get('/admin/reset/{id}',  [AdminController::class, 'reset']);
+// Route::put('/admin/reset/{id}',  [AdminController::class, 'resetPassword']);
+
+//product crud
+// Route::get('/product', [ProductController::class, 'index']);
+// Route::get('/product/adding',  [ProductController::class, 'adding']);
+// Route::post('/product',  [ProductController::class, 'create']);
+// Route::get('/product/{id}',  [ProductController::class, 'edit']);
+// Route::put('/product/{id}',  [ProductController::class, 'update']);
+// Route::delete('/product/remove/{id}',  [ProductController::class, 'remove']);
+// Route::get('/product/reset/{id}',  [ProductController::class, 'reset']);
+// Route::put('/product/reset/{id}',  [ProductController::class, 'resetPassword']);
+
+
