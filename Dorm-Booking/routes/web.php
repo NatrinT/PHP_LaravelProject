@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\AuthenController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
@@ -7,7 +9,12 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 
 //home page
-Route::get('/', [UsersController::class, 'index']);
+Route::get('/', [HomeController::class, 'index']);
+
+//login
+Route::get('/login', [AuthenController::class, 'index']);
+Route::get('/checkmail', [UsersController::class, 'checkmail'])->name('users.checkmail');
+
 // product home page
 Route::get('/detail/{id}', [HomeController::class, 'detail']);
 Route::get('/search', [HomeController::class, 'searchProduct']);
@@ -19,7 +26,7 @@ Route::post('/users',  [UsersController::class, 'create']);
 Route::get('/users/{id}',  [UsersController::class, 'edit']);
 Route::put('/users/{id}',  [UsersController::class, 'update']);
 Route::delete('/users/remove/{id}',  [UsersController::class, 'remove']);
-Route::get('/users/reset/{id}',  [UsersController::class, 'reset']);
+Route::get('/users/reset/{id}',  [UsersController::class, 'reset'])->name('user.reset');;
 Route::put('/users/reset/{id}',  [UsersController::class, 'resetPassword']);
 
 //rooms crud

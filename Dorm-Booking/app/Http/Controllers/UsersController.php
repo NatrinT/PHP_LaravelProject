@@ -24,6 +24,20 @@ class UsersController extends Controller
         }
     }
 
+    public function checkmail(Request $request)
+{
+    $email = $request->input('email');
+
+    try {
+        $user = UsersModel::where('email', $email)->firstOrFail();
+        return redirect()->route('user.reset', ['id' => $user->id]);
+    } catch (\Throwable $th) {
+        return view('errors.404');
+    }
+}
+
+
+
     public function adding()
     {
         return view('users.create');

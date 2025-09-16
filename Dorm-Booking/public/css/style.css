@@ -1,0 +1,219 @@
+/* ตั้งค่า default flex-row สำหรับ desktop */
+#display-res {
+    display: flex;
+    flex-direction: row;
+}
+
+/* phone (sm < 768px) */
+@media (max-width: 767px) {
+    #display-res {
+        flex-direction: column !important;
+    }
+
+    .login-img {
+        width: 100% !important;
+        height: 200px !important; /* ปรับสูงให้เหมาะกับมือถือ */
+        margin-bottom: 15px;
+    }
+
+    .show-pass {
+        top: 50%;
+        right: 10px; /* ปรับเล็กน้อยให้ไม่ชิดขอบ */
+    }
+}
+
+/* tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    #display-res {
+        flex-direction: column !important;
+    }
+
+    .login-img {
+        width: 100% !important;
+        height: 250px !important; /* ปรับสูงให้เหมาะกับมือถือ */
+        margin-bottom: 15px;
+    }
+
+    .show-pass {
+        top: 50%;
+        right: 10px; /* ปรับเล็กน้อยให้ไม่ชิดขอบ */
+    }
+}
+
+/* desktop (992px+) */
+@media (min-width: 992px) {
+    .login-img {
+        width: 350px;
+        height: 400px;
+    }
+}
+
+body {
+    font-family: "Prompt", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+.bg-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70vh;
+    background-image: url("/images/main_bg.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: -1;
+}
+
+.navbar-style {
+    background-color: transparent !important;
+}
+
+.app-icon {
+    display: inline-block;
+    margin: 0 15px 0 0;
+    width: 140px;
+    height: 70px;
+    background-image: url("/images/app_logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.center-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    color: white !important;
+}
+
+.modal-body .d-flex {
+    height: 400px; /* กำหนดสูง หรือใช้ vh */
+}
+
+.login-img {
+    width: 350px;
+    height: 400px; /* หรือสูงเท่ากับ modal */
+    background-image: url("../images/login_flatdesign.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: 10;
+}
+
+.show-pass {
+    top: 50%;
+    right: 0;
+}
+
+.animate-text:hover {
+    transform: scale(1.08);
+    transition: all 0.2s ease;
+}
+
+.tab-menu {
+    font-size: 16px;
+    background-color: transparent;
+    padding: 10px 15px;
+    margin-right: 10px;
+    border-radius: 40px;
+    cursor: pointer;
+    color: #d6d6d6;
+    transition: 0.3s;
+}
+
+.tab-menu.active {
+    background-color: white;
+    color: black;
+}
+.tab-menu.active:hover {
+    background-color: white;
+    color: black;
+}
+
+.tab-menu:hover {
+    background-color: rgba(97, 134, 201, 0.5);
+}
+
+.type-hotel {
+    font-size: 13px;
+    background-color: transparent;
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-radius: 40px;
+    cursor: pointer;
+    color: #d6d6d6;
+    transition: 0.3s;
+}
+
+.type-hotel.active {
+    background-color: #5e80dd;
+    color: white;
+}
+.type-hotel.active:hover {
+    background-color: #5e80dd;
+    color: white;
+}
+
+.type-hotel:hover {
+    background-color: rgba(97, 134, 201, 0.5);
+}
+
+.tab-menu i {
+    color: #d6d6d6;
+}
+.tab-menu.active i {
+    color: #0c3e64;
+}
+
+hr {
+    margin-top: 10px;
+    color: white;
+    border: none;
+    height: 2px;
+    background-color: white; /* Modern Browsers */
+}
+
+.input-data {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    height: 100%;
+    border: 1px solid #cdd0d180;
+    padding: 5px;
+}
+
+.corner-radius1 {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    overflow: hidden;
+}
+
+.input-data ion-icon {
+    color: black;
+    font-size: 25px;
+}
+.input-data input {
+    border: none;
+}
+input:focus,
+.form-control:focus {
+    border: none !important; /* เอาเส้น border ออก */
+    box-shadow: none !important; /* เอาเงาที่ Bootstrap ใส่มาออก */
+    outline: none !important; /* เอา outline ดั้งเดิมของ browser ออก */
+}
+
+.search-data {
+    background-color: rgba(197, 139, 30, 0.986);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

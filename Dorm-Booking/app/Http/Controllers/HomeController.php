@@ -17,9 +17,10 @@ class HomeController extends Controller
     public function index()
     {
         Paginator::useBootstrap(); // ใช้ Bootstrap pagination
-        $products = ProductModel::orderBy('id', 'desc')->paginate(8); //order by & pagination
+        // $products = ProductModel::orderBy('id', 'desc')->paginate(8); //order by & pagination
         //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
-        return view('home.product_index', compact('products'));
+        // return view('home.product_index', compact('products'));
+        return view('home.homepage');
     }
 
     public function detail($id)
