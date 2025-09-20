@@ -1,8 +1,8 @@
-@extends('layouts.frontend'))
+@extends('layouts.frontend')
 
 @section('css_before')
-  <!-- ใส่ CSS เพิ่มเติมได้ -->
 @endsection
+
 
 @section('navbar')
   <!-- Navbar ของหน้า -->
@@ -11,40 +11,45 @@
 @section('contenthome')
   <div class="row">
     <div class="col-12 text-white fs-2 text-center mt-5">
-      ราคาถูก วางใจทุกการจองโรงแรม ไปกับ DORM Booking
+      ราคาถูก วางใจทุกการจองหอพัก ไปกับ DORM Booking
     </div>
     <div class="col-12 mt-5">
       <div class="d-flex">
-        <div class="tab-menu active"><i class="fas fa-hotel" color="blue"></i>&nbsp;จองโรงแรม</div>
+        <div class="tab-menu active"><i class="fas fa-hotel" color="blue"></i>&nbsp;จองหอพัก</div>
         <div class="tab-menu"><i class="fa-solid fa-compass"></i>&nbsp;สถานที่ท่องเที่ยว</div>
       </div>
       <hr>
       <div class="d-flex">
-        <div class="type-hotel active"><i class="fas fa-hotel" color="blue"></i>&nbsp;โรงแรม</div>
-        <div class="type-hotel"><i class="fas fa-hotel"></i>&nbsp;วิลล่า</div>
-        <div class="type-hotel"><i class="fas fa-hotel"></i>&nbsp;อพาร์ตเมนต์</div>
+        <div class="type-hotel active"><i class="fas fa-hotel" color="blue"></i>&nbsp;หอพักดอร์มศรีนครินทร์</div>
+        <div class="type-hotel"><i class="fas fa-hotel"></i>&nbsp;หอพักดอร์มพระราม 9</div>
+        <div class="type-hotel"><i class="fas fa-hotel"></i>&nbsp;หอพักดอร์มอโศก</div>
       </div>
     </div>
   </div>
   <div class="row d-flex flex-row mt-4 text-white" style="font-weight: 400;">
-    <div class="col-4">ชื่อสถานที่ รีสอร์ท หรือ โรงแรม</div>
-    <div class="col-4">วันเช็คอินและเช็คเอาต์</div>
+    <div class="col-4">รูปแบบห้อง</div>
+    <div class="col-4">ระยะเวลาเช่า</div>
     <div class="col-4">ห้องพัก</div>
   </div>
   <div class="row d-flex flex-row mt-2 text-white "
     style="font-weight: 400; justify-content: center; align-items: center;">
-    <form action="/search" method="get" class="col-4 p-0 m-0">
-      <div class="input-data corner-radius1">
-        <ion-icon name="location-outline"></ion-icon>
-        <input class="form-control p-2" type="text" name="keyword" placeholder="ค้นหาชื่อสถานที่ รีสอร์ท หรือ โรงแรม"
-          aria-label="Search" value="{{ $keyword ?? ''}}">
-      </div>
-    </form>
 
+    <div id="selectTypeRoom" class="input-data corner-radius1 col-4 position-relative">
+      <ion-icon name="location-outline"></ion-icon>
+      <input id="roomInput" class="form-control p-2" type="text" placeholder="เลือกประเภทห้อง" readonly>
+
+      <div id="dropdownContainer" class="dropdownContainer" style="display:none;">
+        <ul class="dropdown-menu show w-100">
+          <li><a class="dropdown-item" href="#">Standard</a></li>
+          <li><a class="dropdown-item" href="#">Deluxe</a></li>
+          <li><a class="dropdown-item" href="#">Luxury</a></li>
+        </ul>
+      </div>
+    </div>
     <div class="col-4 input-data">
       <ion-icon name="calendar-outline"></ion-icon>
       <input type="text" class="form-control m-0 p-2" id="dateRangePicker" style="border-radius:0 "
-        placeholder="วันเช็คอินและเช็คเอาต์">
+        placeholder="ระยะเวลาที่ท่านต้องการเช่า">
     </div>
 
     <div class="col-3 input-data corner-radius2">
@@ -53,14 +58,9 @@
     </div>
 
     <a href="/" style="color: white" class="col-1 search-data p-2">
-        <ion-icon name="search-outline" style="font-size: 36px"></ion-icon>
+      <ion-icon name="search-outline" style="font-size: 36px"></ion-icon>
     </a>
   </div>
-
-
-
-
-
   <div class="row mt-2 mb-2">
     <div class="col-sm-5 col-md-5"></div>
     <div class="col-sm-3 col-md-3">
@@ -71,10 +71,8 @@
   </div>
 @endsection
 
-@section('footer')
-  <footer class="mt-5 mb-2">
-    <p class="text-center">by devbanban.com @2025</p>
-  </footer>
+@section('contentBody')
+  @include('home.mainpage') <!-- เรียกใช้ไฟล์แยก -->
 @endsection
 
 @section('js_before')

@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class UsersModel extends Model
+class UsersModel extends Authenticatable
 {
     protected $table = 'users';
-    protected $primaryKey = 'id'; // ตั้งให้ตรงกับชื่อจริงใน DB
-    protected $fillable = ['email', 'pass_hash', 'full_name', 'phone','role','status','create_at','update_at'];
-    public $incrementing = true; // ถ้า primary key เป็นตัวเลข auto increment
+    protected $primaryKey = 'id';
+    protected $fillable = ['email', 'pass_hash', 'full_name', 'phone','role','status','created_at','updated_at'];
     public $timestamps = false;
+
+    public function getAuthPassword()
+    {
+        return $this->pass_hash; // ต้องตรงกับ column รหัสผ่านใน DB
+    }
 }

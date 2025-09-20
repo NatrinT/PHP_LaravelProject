@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthenController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 
@@ -12,8 +13,7 @@ use App\Http\Controllers\UsersController;
 Route::get('/', [HomeController::class, 'index']);
 
 //login
-Route::get('/login', [AuthenController::class, 'index']);
-Route::get('/checkmail', [UsersController::class, 'checkmail'])->name('users.checkmail');
+
 
 // product home page
 Route::get('/detail/{id}', [HomeController::class, 'detail']);
@@ -47,6 +47,21 @@ Route::put('/lease/{id}',  [LeaseController::class, 'update']);
 Route::delete('/lease/remove/{id}',  [LeaseController::class, 'remove']);
 Route::get('/lease/reset/{id}',  [LeaseController::class, 'reset']);
 Route::put('/lease/reset/{id}',  [LeaseController::class, 'resetPassword']);
+
+Route::get('/dashboard', [HomeController::class, 'backend'])->name('dashboard');
+
+Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/checkmail', [AuthController::class, 'checkmail'])->name('users.checkmail');
+//ทำไมต้องมี name('login') ?
+//เวลาใช้ auth middleware ถ้า user ยังไม่ login → Laravel จะ redirect ไปหา route ที่ชื่อว่า login โดยอัตโนมัติ
+//ถ้าไม่เจอ → มันก็โยน error Route [login] not defined.
+ 
+//login เสร็จไปหน้า Dashboard
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'backend'])->name('dashboard');
+});
 
 //admin crud
 // Route::get('/admin', [AdminController::class, 'index']);

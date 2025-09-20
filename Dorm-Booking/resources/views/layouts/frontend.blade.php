@@ -7,77 +7,86 @@
   <title>Laravel 12 Basic CRUD by devbanban.com 2025</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&display=swap" rel="stylesheet">
   <!-- Font Awesome 6 Free -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/contentBody.css') }}" rel="stylesheet">
 
   @yield('css_before')
 </head>
 
 <body>
-  <p class="bg-img">
-  <div class="container p-0">
-    <div class="row">
-      <div class="col-12 col-sm-12 col-md-12">
-        <nav class="navbar navbar-expand-lg navbar-style">
-          <div class="container ">
-            <a href="/">
-              <p class="app-icon"></p>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-              aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                  <a class="nav-link active text-white animate-text" aria-current="page" href="/">โรงแรม</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active text-white animate-text" aria-current="page" href="/">โปรโมชั่น</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link text-white animate-text" href="https://devbanban.com/?p=4425">ช่วยเหลือ</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link text-white animate-text" href="https://devbanban.com/?p=4425">การจองของฉัน</a>
-                </li>
+  <div class="bg-img">
+    <div class="container-fluid p-0">
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12">
+          <nav class="navbar navbar-expand-lg navbar-style">
+            <div class="container-fluid ">
+              <a href="/">
+                <p class="app-icon"></p>
+              </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active text-white animate-text" aria-current="page" href="/">หอพัก</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active text-white animate-text" aria-current="page" href="/">ข่าวสาร/ประกาศ</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white animate-text" href="https://devbanban.com/?p=4425">ช่วยเหลือ</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-white animate-text" href="https://devbanban.com/?p=4425">การจองของฉัน</a>
+                  </li>
 
 
+                  @if(session('user_id'))
+                    <li class="nav-item">
+                      <a class="nav-link text-danger animate-text" href="/dashboard" target="_blank">จัดการหลังบ้าน</a>
+                    </li>
+                  @endif
 
-                <li class="nav-item">
-                  <a class="nav-link text-danger animate-text" href="/dashboard" target="_blank">จัดการหลังบ้าน</a>
-                </li>
 
-              </ul>
-              <div class="d-flex">
-                <button type="button" class="btn btn-outline-light text-white d-flex align-items-center"
-                  data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
-                  <ion-icon name="person-outline" class="me-2"></ion-icon> เข้าสู่ระบบ
-                </button>
-                <a href="/register" style="text-decoration: none">
-                  <button type="button" class="btn btn-primary text-white mx-2">ลงทะเบียน</button>
-                </a>
+                </ul>
+                <div class="d-flex">
+                  <button type="button" class="btn btn-outline-light text-white d-flex align-items-center"
+                    data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
+                    <ion-icon name="person-outline" class="me-2"></ion-icon> เข้าสู่ระบบ
+                  </button>
+                  <a href="/register" style="text-decoration: none">
+                    <button type="button" class="btn btn-primary text-white mx-2">ลงทะเบียน</button>
+                  </a>
+                </div>
+
+                {{-- <form action="/search" method="get" class="d-flex" role="search">
+                  <input class="form-control me-2" type="text" name="keyword" placeholder="Search Product Name"
+                    aria-label="Search" value="{{ $keyword ?? ''}}">
+                  <button class="btn btn-success" type="submit">Search </button>
+                </form> --}}
               </div>
-
-              {{-- <form action="/search" method="get" class="d-flex" role="search">
-                <input class="form-control me-2" type="text" name="keyword" placeholder="Search Product Name"
-                  aria-label="Search" value="{{ $keyword ?? ''}}">
-                <button class="btn btn-success" type="submit">Search </button>
-              </form> --}}
             </div>
-          </div>
-        </nav>
+          </nav>
+        </div>
+      </div>
+      <div class="container contenthome-wrapper">
+        <div>
+          @yield('contenthome')
+        </div>
       </div>
     </div>
   </div>
 
   <div class="container">
     <div>
-      @yield('contenthome')
+      @yield('contentBody')
     </div>
   </div>
 
@@ -98,7 +107,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
 
-              <form action="/login/" method="post" enctype="multipart/form-data">
+              <form action="/login" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                   <label>Email</label>
@@ -126,7 +135,8 @@
 
                 <div class="text-end">
                   <button type="button" class="btn text-danger p-0" style="font-size: 14px"
-                    data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">forgot password?</button>
+                    data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">forgot
+                    password?</button>
                 </div>
 
                 <div class="text-end mt-5">
@@ -176,12 +186,19 @@
       </div>
     </div>
 
-
-    <div class="container mt-2">
-      <div class="row">
-        @yield('showProduct')
-      </div>
-    </div>
+    <script>
+      function togglePassword() {
+        const password = document.getElementById('password');
+        const icon = document.getElementById('passwordIcon');
+        if (password.type === 'password') {
+          password.type = 'text';
+          icon.name = 'eye-outline'; // เปลี่ยน icon
+        } else {
+          password.type = 'password';
+          icon.name = 'eye-off-outline';
+        }
+      }
+    </script>
 
 
     <footer class="mt-5 mb-2">
@@ -198,19 +215,6 @@
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-      function togglePassword() {
-        const password = document.getElementById('password');
-        const icon = document.getElementById('passwordIcon');
-        if (password.type === 'password') {
-          password.type = 'text';
-          icon.name = 'eye-outline'; // เปลี่ยน icon
-        } else {
-          password.type = 'password';
-          icon.name = 'eye-off-outline';
-        }
-      }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ asset('js/script.js') }}"></script>
 </body>

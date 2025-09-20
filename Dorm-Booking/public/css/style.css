@@ -1,11 +1,15 @@
 /* ตั้งค่า default flex-row สำหรับ desktop */
-#display-res {
-    display: flex;
-    flex-direction: row;
+#display-res > * {
+    flex: 1 1 100%;
 }
+
 
 /* phone (sm < 768px) */
 @media (max-width: 767px) {
+    body {
+        font-size: 12px !important;
+    }
+
     #display-res {
         flex-direction: column !important;
     }
@@ -19,6 +23,12 @@
     .show-pass {
         top: 50%;
         right: 10px; /* ปรับเล็กน้อยให้ไม่ชิดขอบ */
+    }
+    .bg-img {
+        height: 40vh;
+    }
+    .content-body {
+        margin-top: 40vh;
     }
 }
 
@@ -38,6 +48,12 @@
         top: 50%;
         right: 10px; /* ปรับเล็กน้อยให้ไม่ชิดขอบ */
     }
+    .bg-img {
+        height: 50vh !important;
+    }
+    .content-body {
+        margin-top: 50vh;
+    }
 }
 
 /* desktop (992px+) */
@@ -45,27 +61,41 @@
     .login-img {
         width: 350px;
         height: 400px;
-    }
+    } 
 }
 
+@media (min-width: 1400px) { 
+    .bg-img {
+        height: 60vh !important;
+    }
+ }
+
 body {
+    width: 100%;
     font-family: "Prompt", sans-serif;
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.3px;
+    overflow: hidden; 
+    margin: 0;
+    padding: 0;
 }
 
+.container-fluid {
+    margin: 0 !important;
+    padding: 0 5%!important; /* หรือปรับเฉพาะ top/bottom ถ้าต้องการ */
+}
+
+
 .bg-img {
-    position: fixed;
-    top: 0;
-    left: 0;
+    min-height: 40vh;
     width: 100%;
-    height: 70vh;
     background-image: url("/images/main_bg.jpg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    z-index: -1;
+    position: relative; /* เป็น reference สำหรับ absolute ของ contenthome */
+    z-index: 0;
 }
 
 .navbar-style {
@@ -99,8 +129,9 @@ body {
 }
 
 .login-img {
-    width: 350px;
-    height: 400px; /* หรือสูงเท่ากับ modal */
+    width: 100%;
+    max-width: 350px;
+    height: auto;
     background-image: url("../images/login_flatdesign.jpg");
     background-size: cover;
     background-position: center;
@@ -192,7 +223,7 @@ hr {
 .corner-radius1 {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
-    overflow: hidden;
+    position: relative;
 }
 
 .input-data ion-icon {
@@ -202,11 +233,12 @@ hr {
 .input-data input {
     border: none;
 }
+
 input:focus,
 .form-control:focus {
-    border: none !important; /* เอาเส้น border ออก */
-    box-shadow: none !important; /* เอาเงาที่ Bootstrap ใส่มาออก */
-    outline: none !important; /* เอา outline ดั้งเดิมของ browser ออก */
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .search-data {
@@ -216,4 +248,12 @@ input:focus,
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.dropdownContainer {
+    position: absolute;
+    top: 110%; /* อยู่ใต้ input โดยอัตโนมัติ */
+    left: 0;
+    width: 100%;
+    z-index: 1000;
 }

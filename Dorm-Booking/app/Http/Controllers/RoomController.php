@@ -11,6 +11,14 @@ use Illuminate\Pagination\Paginator;
 class RoomController extends Controller
 {
 
+    public function __construct()
+    {
+        // ใช middleware 'auth:admin' เพื่อบังคับใหตองล็อกอินในฐานะ admin กอนใชงาน
+        // controller นี้
+        // ถาไมล็อกอินหรือไมไดใช guard 'admin' จะถูก redirect ไปหนา login
+        $this->middleware('auth:admin');
+    }
+
     public function index()
     {
         try {

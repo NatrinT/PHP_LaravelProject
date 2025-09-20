@@ -12,6 +12,14 @@ use Illuminate\Pagination\Paginator;
 class UsersController extends Controller
 {
 
+    public function __construct()
+    {
+        // ใช middleware 'auth:admin' เพื่อบังคับใหตองล็อกอินในฐานะ admin กอนใชงาน
+        // controller นี้
+        // ถาไมล็อกอินหรือไมไดใช guard 'admin' จะถูก redirect ไปหนา login
+        $this->middleware('auth:admin');
+    }
+
     public function index()
     {
         try {
@@ -23,18 +31,6 @@ class UsersController extends Controller
             //return view('errors.404');
         }
     }
-
-    public function checkmail(Request $request)
-{
-    $email = $request->input('email');
-
-    try {
-        $user = UsersModel::where('email', $email)->firstOrFail();
-        return redirect()->route('user.reset', ['id' => $user->id]);
-    } catch (\Throwable $th) {
-        return view('errors.404');
-    }
-}
 
 
 

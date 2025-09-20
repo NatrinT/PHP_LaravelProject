@@ -1,0 +1,55 @@
+.header {
+    color: rgba(7, 62, 104, 1);
+}
+
+.header i {
+    color: rgb(66, 116, 155);
+}
+
+.card {
+    height: 200px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* ใส่พื้นหลังดำโปร่งใส */
+    border-radius: 50%; /* ทำเป็นปุ่มกลม */
+    background-size: 70%, 70%; /* ย่อ icon */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 8%; /* ปรับขนาดพื้นที่คลิก */
+    top: 0;
+    bottom: 0;
+}
+
+.carousel-control-prev {
+    left: 0;
+}
+
+.carousel-control-next {
+    right: 0;
+}
+
+.card .col-md-4 img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; /* ให้รูปเต็มพื้นที่โดยไม่บิด */
+}
+
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* จำนวนบรรทัดสูงสุด */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* จำนวนบรรทัดสูงสุด */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
