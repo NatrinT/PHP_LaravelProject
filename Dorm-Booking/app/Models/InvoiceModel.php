@@ -39,4 +39,3 @@ class InvoiceModel extends Model
         return $this->belongsTo(LeaseModel::class, 'lease_id', 'id');
     }
 }
-

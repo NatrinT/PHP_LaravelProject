@@ -47,6 +47,10 @@
 
           <a href="/lease" class="list-group-item list-group-item-action"> - Leases </a>
 
+          <a href="/invoice" class="list-group-item list-group-item-action"> - Invoices </a>
+
+          <a href="/announcement" class="list-group-item list-group-item-action"> - Announcement </a>
+
           <a href="#" class="list-group-item list-group-item-action list-group-item-danger"
             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             ออกจากระบบ

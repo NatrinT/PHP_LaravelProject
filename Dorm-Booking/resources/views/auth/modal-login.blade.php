@@ -1,5 +1,4 @@
-<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-    tabindex="-1">
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- ใช้ modal-lg ให้กว้างขึ้น -->
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -12,7 +11,8 @@
                     <div class="p-4 flex-grow-1 bg-white">
                         <div class="modal-header p-0 mb-3">
                             <h5 class="modal-title" id="exampleModalToggleLabel">กรุณาเข้าสู่ระบบ</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
 
                         <form action="/login" method="post" enctype="multipart/form-data">
@@ -21,7 +21,7 @@
                                 <label>Email</label>
                                 <input type="email" class="form-control" name="email" required
                                     placeholder="id@email.com" minlength="3" value="{{ old('email') }}">
-                                @if(isset($errors) && $errors->has('email'))
+                                @if (isset($errors) && $errors->has('email'))
                                     <div class="text-danger">{{ $errors->first('email') }}</div>
                                 @endif
                             </div>
@@ -37,7 +37,7 @@
                                     <ion-icon name="eye-off-outline" id="passwordIcon" size="10"></ion-icon>
                                 </button>
 
-                                @if(isset($errors) && $errors->has('password'))
+                                @if (isset($errors) && $errors->has('password'))
                                     <div class="text-danger">{{ $errors->first('password') }}</div>
                                 @endif
                             </div>
@@ -78,7 +78,7 @@
                         <label>Email</label>
                         <input type="email" class="form-control" name="email" required placeholder="id@email.com"
                             minlength="3" value="{{ old('email') }}">
-                        @if(isset($errors) && $errors->has('email'))
+                        @if (isset($errors) && $errors->has('email'))
                             <div class="text-danger">{{ $errors->first('email') }}</div>
                         @endif
                     </div>

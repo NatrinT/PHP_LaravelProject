@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 
@@ -39,6 +41,7 @@ Route::delete('/room/remove/{id}',  [RoomController::class, 'remove']);
 Route::get('/room/reset/{id}',  [RoomController::class, 'reset']);
 Route::put('/room/reset/{id}',  [RoomController::class, 'resetPassword']);
 
+//lease crud
 Route::get('/lease', [LeaseController::class, 'index']);
 Route::get('/lease/adding',  [LeaseController::class, 'adding']);
 Route::post('/lease',  [LeaseController::class, 'create']);
@@ -47,6 +50,26 @@ Route::put('/lease/{id}',  [LeaseController::class, 'update']);
 Route::delete('/lease/remove/{id}',  [LeaseController::class, 'remove']);
 Route::get('/lease/reset/{id}',  [LeaseController::class, 'reset']);
 Route::put('/lease/reset/{id}',  [LeaseController::class, 'resetPassword']);
+
+//invoice crud
+Route::get('/invoice', [InvoiceController::class, 'index']);
+Route::get('/invoice/adding',  [InvoiceController::class, 'adding']);
+Route::post('/invoice',  [InvoiceController::class, 'create']);
+Route::get('/invoice/{id}',  [InvoiceController::class, 'edit']);
+Route::put('/invoice/{id}',  [InvoiceController::class, 'update']);
+Route::delete('/invoice/remove/{id}',  [InvoiceController::class, 'remove']);
+Route::get('/invoice/reset/{id}',  [InvoiceController::class, 'reset']);
+Route::put('/invoice/reset/{id}',  [InvoiceController::class, 'resetPassword']);
+
+//announcement crud
+Route::get('/announcement', [AnnouncementController::class, 'index']);
+Route::get('/announcement/adding',  [AnnouncementController::class, 'adding']);
+Route::post('/announcement',  [AnnouncementController::class, 'create']);
+Route::get('/announcement/{id}',  [AnnouncementController::class, 'edit']);
+Route::put('/announcement/{id}',  [AnnouncementController::class, 'update']);
+Route::delete('/announcement/remove/{id}',  [AnnouncementController::class, 'remove']);
+Route::get('/announcement/reset/{id}',  [AnnouncementController::class, 'reset']);
+Route::put('/announcement/reset/{id}',  [AnnouncementController::class, 'resetPassword']);
 
 Route::get('/dashboard', [HomeController::class, 'backend'])->name('dashboard');
 
@@ -82,5 +105,3 @@ Route::middleware('auth:admin')->group(function () {
 // Route::delete('/product/remove/{id}',  [ProductController::class, 'remove']);
 // Route::get('/product/reset/{id}',  [ProductController::class, 'reset']);
 // Route::put('/product/reset/{id}',  [ProductController::class, 'resetPassword']);
-
-
