@@ -42,13 +42,12 @@ cd dorm-booking-system
 
 # ติดตั้ง dependencies
 composer install
-npm install && npm run build
+npm install
 
 
 # ตั้งค่า environment
 cp .env.example .env
-php artisan key:generate
-
+php artisan storage:link
 
 # รันระบบ
 php artisan serve
@@ -69,6 +68,7 @@ php artisan serve
 ## 📜 License
 
 MIT
+
 
 
 
