@@ -57,7 +57,7 @@
                             <select class="form-control" name="type" required>
                                 <option value="STANDARD">Standard</option>
                                 <option value="DELUXE">Deluxe</option>
-                                <option value="OTHER">Other</option>
+                                <option value="LUXURY">Luxury</option>
                             </select>
                             @if (isset($errors))
                                 @if ($errors->has('type'))
