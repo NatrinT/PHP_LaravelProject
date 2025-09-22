@@ -34,12 +34,12 @@ class AuthController extends Controller
                 'password' => $request->password
             ])) {
                 $request->session()->regenerate();
-                session(['user_id' => $user->id, 'user_name' => $user->full_name]);
+                session(['user_id' => $user->id, 'user_name' => $user->full_name, 'user_role' => $user->role]);
                 return redirect()->intended('/dashboard');
             }
         } else {
             if (Hash::check($request->password, $user->pass_hash)) {
-                session(['user_id' => $user->id, 'user_name' => $user->full_name]);
+                session(['user_id' => $user->id, 'user_name' => $user->full_name, 'user_role' => $user->role]);
                 return redirect('/');
             }
         }
