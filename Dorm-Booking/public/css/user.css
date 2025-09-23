@@ -1,0 +1,20 @@
+.table-modern thead th{ font-weight:600; color:#344767; }
+.table-modern tbody tr:hover{ background:#f8fafc; }
+
+.name-cell{ display:flex; align-items:center; gap:.75rem; }
+.avatar{
+  width:36px; height:36px; border-radius:50%;
+  object-fit:cover; flex:0 0 auto;
+  box-shadow:0 0 0 1px rgba(0,0,0,.05);
+}
+
+.status{ display:inline-flex; align-items:center; gap:.5rem; }
+.status-dot{
+  width:10px; height:10px; border-radius:50%;
+  display:inline-block;
+}
+
+.btn-icon{
+  width:32px; height:32px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+}

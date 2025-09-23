@@ -1,91 +1,96 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Laravel 12 Basic CRUD by devbanban.com 2025</title>
+  <title>Admin</title>
+
+  {{-- Bootstrap --}}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  {{-- Icons + Sidebar styles (สำคัญ) --}}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{{ asset('css/backend.css') }}" rel="stylesheet">
+
   @yield('css_before')
-</head>
 
-<body>
+  <div class="container-fluid p-0">
+    <div class="row g-0">
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <div class="alert alert-success text-center" role="alert">
-          <h4>Back Office || Laravel 12 || ยินดีต้อนรับคุณ Admin</h4>
-        </div>
+      {{-- ===== Sidebar (ซ้าย) ===== --}}
+      <div class="col-auto">
+        <aside class="sbv sidebar d-flex flex-column align-items-stretch">
+          {{-- Brand --}}
+  {{-- โลโก้ตอน sidebar ย่อ --}}
+  <img src="{{ asset('images/app_logo.png') }}" alt="Dorm Logo" class="logo-mini">
+  
+  {{-- โลโก้เต็มตอน hover --}}
+  <img src="{{ asset('images/app_logo.png') }}" alt="Dorm Booking" class="logo-full ms-2">
+
+          {{-- Menu --}}
+          <nav class="mt-2 px-2 flex-grow-1">
+  <a href="{{ url('/') }}"
+     class="sbv-link {{ request()->is('/') ? 'active' : '' }}">
+    <i class="bi bi-house fs-4 "></i> <span class = "fw-bold fs-5">Home</span>
+  </a>
+
+  <a href="{{ url('/dashboard') }}"
+     class="sbv-link {{ request()->is('dashboard*') ? 'active' : '' }}">
+    <i class="bi bi-bar-chart-line fs-4"></i> <span class = "fw-bold fs-5">Dashboard</span>
+  </a>
+
+  <a href="{{ url('/users') }}"
+     class="sbv-link {{ request()->is('users*') ? 'active' : '' }}">
+    <i class="bi bi-people fs-4"></i> <span class = "fw-bold fs-5">Users</span>
+  </a>
+
+  <a href="{{ url('/room') }}"
+     class="sbv-link {{ request()->is('room*') ? 'active' : '' }}">
+    <i class="bi bi-door-open fs-4"></i> <span class = "fw-bold fs-5">Room</span>
+  </a>
+
+  <a href="{{ url('/lease') }}"
+     class="sbv-link {{ request()->is('lease*') ? 'active' : '' }}">
+    <i class="bi bi-file-earmark-text fs-4"></i> <span class = "fw-bold fs-5">Leases</span>
+  </a>
+
+  <a href="{{ url('/invoice') }}"
+     class="sbv-link {{ request()->is('invoice*') ? 'active' : '' }}">
+    <i class="bi bi-receipt fs-4"></i> <span class = "fw-bold fs-5">Invoices</span>
+  </a>
+
+  <a href="{{ url('/announcement') }}"
+     class="sbv-link {{ request()->is('announcement*') ? 'active' : '' }}">
+    <i class="bi bi-megaphone fs-4"></i> <span class = "fw-bold fs-5">Announcement</span>
+  </a>
+          </nav>
+
+          {{-- Logout --}}
+          <div class="px-2 pb-3">
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+              @csrf
+            </form>
+            <a href="#"
+               class="sbv-link danger"
+               onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+              <i class="bi bi-box-arrow-right fs-4" style="color:#FF0000;"></i> <span class = "fw-bold fs-5" style="color:#FF0000;">Logout</span>
+            </a>
+          </div>
+        </aside>
       </div>
-    </div>
+
+{{-- ===== Main (ขวา) ===== --}}
+<div class="col d-flex flex-column">
+  
+  @yield('topbar')
+
+  {{-- Content หลัก --}}
+  <div class="p-3 flex-grow-1">
+    @yield('content')
   </div>
 
-  @yield('header')
-
-  <div class="container">
-    <div class="row">
-
-      <div class="col-md-3">
-        <div class="list-group">
-          <a href="/" class="list-group-item list-group-item-action active" aria-current="true">
-            Home
-          </a>
-
-          {{-- <a href="/test" class="list-group-item list-group-item-action"> - TestCRUD </a>
-
-          <a href="/admin" class="list-group-item list-group-item-action"> - Admin </a>
-
-          <a href="/product" class="list-group-item list-group-item-action"> - Product </a>
-
-          <a href="/student" class="list-group-item list-group-item-action"> - Student </a> --}}
-
-          <a href="/users" class="list-group-item list-group-item-action"> - Users </a>
-
-          <a href="/room" class="list-group-item list-group-item-action"> - Room </a>
-
-          <a href="/lease" class="list-group-item list-group-item-action"> - Leases </a>
-
-          <a href="/invoice" class="list-group-item list-group-item-action"> - Invoices </a>
-
-          <a href="/announcement" class="list-group-item list-group-item-action"> - Announcement </a>
-
-          <a href="#" class="list-group-item list-group-item-action list-group-item-danger"
-            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            ออกจากระบบ
-          </a>
-          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
-            @csrf
-          </form>
-
-
-
-        </div>
-        @yield('sidebarMenu')
-      </div>
-
-      <div class="col-md-9">
-        @yield('content')
-      </div>
-
-    </div>
+</div>
   </div>
-
-  <footer class="mt-5 mb-2">
-    <p class="text-center">by devbanban.com @2025</p>
-  </footer>
-
-  @yield('footer')
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-    crossorigin="anonymous"></script>
-
-  @yield('js_before')
-
-
-
-  {{-- >>>>>>> ตรงนี้สำคัญ <<<<<<< --}} @include('sweetalert::alert') </body>
-
-</html>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YbCrDk0kJm9x2kN8p1o7rRG0mE0M2mC9i5zK2y/8kC7Z6vJ1m1n3qJZqVfI0iZVJ"
+        crossorigin="anonymous"></script>

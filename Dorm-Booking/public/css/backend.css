@@ -1,0 +1,191 @@
+/* ===== Sidebar ===== */
+.sbv.sidebar {
+  width: 70px;              /* ความกว้างตอนย่อ */
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  background: black;
+  color: #e8f0ff;
+  transition: width 0.3s;   /* ทำให้เวลาขยาย/ย่อมี animation */
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+/* hover แล้วขยาย */
+.sbv.sidebar:hover {
+  width: 260px;
+}
+/* เมนู - ซ่อนข้อความตอนย่อ */
+.sbv-link span {
+  display: none;
+}
+
+/* hover แล้วโชว์ข้อความ */
+.sbv.sidebar:hover .sbv-link span {
+  display: inline;
+}
+
+/* ไอคอน fix ไว้กลาง */
+.sbv-link i {
+  font-size: 1.05rem;
+  width: 1.25rem;
+  text-align: center;
+}
+
+/* Brand */
+.brand-mark{
+  width:28px;height:28px;border-radius:8px;
+  background:#fff; opacity:.9; display:inline-block;
+}
+.brand-name{ font-weight:700; letter-spacing:.5px; color:#fff; }
+
+/* Links */
+.sbv-link{
+  display:flex; align-items:center; gap:.75rem;
+  padding:.5rem .75rem;
+  margin:.25rem .25rem;
+  border-radius:12px;
+  color:#e8f0ff; text-decoration:none;   /* ตัดเส้นใต้ */
+  transition: background .15s, color .15s;
+  line-height: 1;            /* กัน line-height จาก bootstrap */
+  box-sizing: border-box;
+}
+.sbv-link i{ 
+  font-size:1.05rem; width:1.25rem; text-align:center;
+  display: inline-flex;
+  align-items: center;
+}
+.sbv-link:hover{ background:rgba(255,255,255,.12); color:#fff; }
+
+/* Active pill */
+.sbv-link.active{
+  background:#1f5ade; color:#fff; font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+/* Logout */
+.sbv-link.danger:hover{ background:rgba(255,255,255,.12); color:#fff; }
+
+.sbv.sidebar .brand-name {
+  display: none;
+}
+.sbv.sidebar:hover .brand-name {
+  display: inline;
+}
+
+/* ฝั่งขวาให้พื้นหลังอ่อน */
+body{ background:#F8FAFC; }
+
+.brand-logo {
+  width: 150px;      /* ขนาดโลโก้ */
+  height: 35px;
+  object-fit: contain;
+}
+.brand-name {
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: #fff;
+}
+
+.logo-mini {
+  height:74px;          /* ประมาณ 36–40px */
+  width:auto;
+  object-fit:contain;
+  display:block;
+  margin:0 auto;
+}
+
+/* โลโก้เต็ม (ตอน hover) */
+.logo-full {
+  height:100%;          /* ประมาณ 24–28px */
+  width:auto;
+  object-fit:contain;
+  display:none;
+}
+
+/* สลับโชว์ */
+.sbv.sidebar .logo-mini { display:block; }
+.sbv.sidebar .logo-full { display:none; }
+.sbv.sidebar:hover .logo-mini { display:none; }
+.sbv.sidebar:hover .logo-full { display:block; }
+
+
+/* Modern table styles */
+
+.table-modern thead th{ font-weight:600; color:#344767; line-height: 2.3rem;  font-size: 17px;}
+.table-modern tbody tr:hover{ background:#f8fafc; font-size: 15px;}
+
+.table-modern td {
+  line-height: 2.7rem;   /* เพิ่มความสูงบรรทัด */
+  color: #344767;
+}
+
+.name-cell{ display:flex; align-items:center; gap:.75rem; }
+.avatar{
+  width:36px; height:36px; border-radius:50%;
+  object-fit:cover; flex:0 0 auto;
+  box-shadow:0 0 0 1px rgba(0,0,0,.05);
+}
+.status{ display:inline-flex; align-items:center; gap:.5rem; }
+.status-dot{
+  width:10px; height:10px; border-radius:50%;
+  display:inline-block;
+}
+.btn-icon{
+  width:32px; height:32px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+
+/* btn Icon */
+.icon-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;  /* ขนาด icon */
+  padding: 4px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.icon-action:hover {
+  transform: scale(1.2);   /* ขยายเวลา hover */
+  opacity: 0.8;
+}
+.icon-action,
+.icon-action:hover,
+.icon-action:focus,
+.icon-action:active {
+  text-decoration: none !important;
+}
+
+.pagination .page-link {
+  border: none !important;       /* ตัดกรอบ */
+  background-color: transparent; /* ไม่มีพื้นหลัง */
+  color: #2563EB;                /* สีข้อความ/เลข */
+  box-shadow: none !important;   /* ตัดเงา */
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 10px !important;
+}
+.pagination .page-link:hover {
+  background-color: #2563EB; /* พื้นหลังฟ้า */
+  color: #fff;              /* ตัวอักษรขาว */
+  border-radius: 10px !important;       /* ทำให้มุมโค้ง */
+}
+/* active (หน้าปัจจุบัน) */
+.pagination .page-item.active .page-link {
+  background-color: #2563EB;
+  border: none;
+  color: #fff;
+  border-radius: 10px !important;
+  font-weight: 600;
+}
+
+.btn-add-user {
+  width: 40px;
+  height: 40px;
+  background: #35F048;
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-add-user:hover {
+  background: #22C837;   /* เขียวเข้มขึ้น */
+  transform: scale(1.05); /* ขยายเล็กน้อยตอน hover */
+}

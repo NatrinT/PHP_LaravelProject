@@ -6,10 +6,22 @@
 @section('header')
 @endsection
 
+@section('topbar')
+  <div class="topbar mt-3 d-flex justify-content-center">
+<div class="input-group" style="max-width: 400px;">
+  <input type="text" class="form-control" placeholder="Search...">
+  <button class="btn btn-primary" type="button">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+  </div>
+@endsection
+
 @section('sidebarMenu')
 @endsection
 
 @section('content')
+<div class="container-xl"> 
     <h3> :: Lease Management ::
         <a href="/lease/adding" class="btn btn-primary btn-sm"> Add Lease </a>
     </h3>
@@ -81,6 +93,7 @@
     <div>
         {{ $LeasesList->links() }}
     </div>
+</div>    
 @endsection
 
 @section('footer')

@@ -6,10 +6,22 @@
 @section('header')
 @endsection
 
+@section('topbar')
+  <div class="topbar mt-3 d-flex justify-content-center">
+<div class="input-group" style="max-width: 400px;">
+  <input type="text" class="form-control" placeholder="Search...">
+  <button class="btn btn-primary" type="button">
+    <i class="bi bi-search"></i>
+  </button>
+</div>
+  </div>
+@endsection
+
 @section('sidebarMenu')
 @endsection
 
 @section('content')
+<div class="container-xl">
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
@@ -69,6 +81,7 @@
         </div>
     </div>
     {{-- devbanban.com  --}}
+</div>
 @endsection
 
 @section('footer')
