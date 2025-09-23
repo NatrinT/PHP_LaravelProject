@@ -71,10 +71,9 @@
                     <label class="col-sm-2"> </label>
                     <div class="col-sm-6">
                         <button type="submit" class="btn btn-primary"> Update </button>
-                        <a href="/admin" class="btn btn-danger">cancel</a>
+                        <a href="/users" class="btn btn-danger">cancel</a>
                     </div>
                 </div>
-
             </form>
         </div>
     </div>
