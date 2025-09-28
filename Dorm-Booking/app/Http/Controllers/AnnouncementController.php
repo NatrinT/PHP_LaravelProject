@@ -23,15 +23,12 @@ class AnnouncementController extends Controller
 
     public function index()
     {
-        try {
-            Paginator::useBootstrap();
-            $AnnouncementList = AnnouncementModel::orderBy('id', 'desc')->paginate(10); //order by & pagination
-            return view('announcement.list', compact('AnnouncementList'));
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
-            //return view('errors.404');
-        }
+        Paginator::useBootstrap();
+        $AnnouncementList = AnnouncementModel::orderBy('id', 'desc')->paginate(10);
+        return view('announcement.list', compact('AnnouncementList'));
     }
+
+
 
     public function adding()
     {
@@ -40,31 +37,22 @@ class AnnouncementController extends Controller
 
     public function create(Request $request)
     {
-        // echo '<pre>';
-        // dd($_POST);
-        // exit();
-
-        //vali msg 
         $messages = [
             'title.required' => 'กรุณากรอกข้อมูล',
             'title.unique' => 'หัวข้อซ้ำ เพิ่มใหม่อีกครั้ง',
-
             'body.required' => 'กรุณากรอกข้อมูล',
             'body.min' => 'ข้อความไม่เป็น 0 หรือต่ำกว่า :min',
-
+            'link.required' => 'กรุณากรอกข้อมูล',
             'image.required' => 'กรุณาใส่ภาพประกอบ',
         ];
 
-
-        //rule 
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:announcement',
             'body' => 'required|min:1',
+            'link' => 'required|min:1',
             'image' => 'required|file|mimes:jpg,jpeg,png,webp|max:5120',
         ], $messages);
 
-
-        //check vali 
         if ($validator->fails()) {
             return redirect('announcement/adding')
                 ->withErrors($validator)
@@ -73,24 +61,30 @@ class AnnouncementController extends Controller
 
         try {
             $path = null;
+
             if ($request->hasFile('image')) {
+                // เก็บไฟล์ใน storage/app/public/uploads/announcement
                 $path = $request->file('image')->store('uploads/announcement', 'public');
+
+                // แปลง path ให้เป็น URL สำหรับ public
+                $url = asset('storage/' . $path);
             }
 
-            //ปลอดภัย: กัน XSS ที่มาจาก <script>, <img onerror=...> ได้
+            // สร้างข้อมูลใน DB
             AnnouncementModel::create([
                 'title' => strip_tags($request->input('title')),
                 'body' => strip_tags($request->input('body')),
-                'image' => $path,
+                'link' => strip_tags($request->input('link')),
+                'image' => $path, // เก็บ path สำหรับเรียก asset('storage/...') ใน view
             ]);
-            // แสดง Alert ก่อน return
+
             Alert::success('เพิ่มข้อมูลสำเร็จ');
             return redirect('/announcement');
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
-            //return view('errors.404');
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-    } //fun create
+    }
+
 
 
 
@@ -103,9 +97,10 @@ class AnnouncementController extends Controller
                 $id = $announcement->id;
                 $title = $announcement->title;
                 $body = $announcement->body;
+                $link = $announcement->link;
                 $image = $announcement->image;
                 $updated_at = $announcement->updated_at;
-                return view('announcement.edit', compact('id', 'title', 'body', 'image', 'updated_at'));
+                return view('announcement.edit', compact('id', 'title', 'body', 'link', 'image', 'updated_at'));
             }
         } catch (\Exception $e) {
             //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
@@ -121,6 +116,8 @@ class AnnouncementController extends Controller
             'title.required' => 'กรุณากรอกข้อมูล',
             'title.unique' => 'หัวข้อซ้ำ เพิ่มใหม่อีกครั้ง',
 
+            'link.required' => 'กรุณากรอกข้อมูล',
+
             'body.required' => 'กรุณากรอกข้อมูล',
             'body.min' => 'ข้อความไม่เป็น 0 หรือต่ำกว่า :min',
         ];
@@ -130,6 +127,7 @@ class AnnouncementController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:announcement',
             'body' => 'required|min:1',
+            'link' => 'required|min:1',
             'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
         ], $messages);
 
@@ -155,6 +153,7 @@ class AnnouncementController extends Controller
             $announcement->update([
                 'title' => strip_tags($request->title),
                 'body'  => strip_tags($request->body),
+                'link'  => strip_tags($request->link),
                 'image' => $path, // ถ้าไม่ได้อัปใหม่ จะเป็นของเดิม
             ]);
 

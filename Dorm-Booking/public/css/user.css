@@ -1,91 +1,142 @@
 /* Modern table styles */
 
-.table-modern thead th{ font-weight:600; color:#344767; line-height: 2.3rem;  font-size: 17px;}
-.table-modern tbody tr:hover{ background:#f8fafc; font-size: 15px;}
+.table-modern thead th {
+    font-weight: 600;
+    color: #344767;
+    line-height: 2.3rem;
+    font-size: 17px;
+}
 
 .table-modern td {
-  line-height: 2.7rem;   /* เพิ่มความสูงบรรทัด */
-  color: #344767;
+    line-height: 2.7rem; /* เพิ่มความสูงบรรทัด */
+    color: #344767;
 }
 
-.name-cell{ display:flex; align-items:center; gap:.75rem; }
-.status{ display:inline-flex; align-items:center; gap:.5rem; }
-.status-dot{
-  width:10px; height:10px; border-radius:50%;
-  display:inline-block;
+.name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
-.btn-icon{
-  width:32px; height:32px; padding:0;
-  display:inline-flex; align-items:center; justify-content:center;
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
-
 
 /* ปุ่ม Add user */
 .btn-add-user {
-  background:#e8f0ff;
-  color:#fff;
-  height:45px;
-  width:45px;                 /* เริ่มวงกลม */
-  border-radius:50%;
-  overflow:hidden;
-  white-space:nowrap;
-  padding:0 14px;
-  transition: width .28s ease, border-radius .28s ease, padding .28s ease;
+    background: #e8f0ff;
+    color: #fff;
+    height: 45px;
+    width: 45px; /* เริ่มวงกลม */
+    border-radius: 50%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 14px;
+    transition: width 0.28s ease, border-radius 0.28s ease, padding 0.28s ease;
 }
 
 /* ข้อความซ่อนตอนปกติ */
 .btn-add-user .btn-text {
-  opacity:0;
-  transform: translateX(8px);
-  transition: opacity .25s ease, transform .25s ease;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 /* Hover: ยืดออกเป็น pill + โชว์ข้อความ */
 .btn-add-user:hover {
-  width:122px;
-  border-radius:999px;
-  padding-left:14px;
+    width: 122px;
+    border-radius: 999px;
+    padding-left: 14px;
 }
 .btn-add-user:hover .btn-text {
-  opacity:1;
-  transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* btn Icon */
 .icon-action {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;  /* ขนาด icon */
-  padding: 4px;
-  transition: transform 0.2s, opacity 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem; /* ขนาด icon */
+    padding: 4px;
+    transition: transform 0.2s, opacity 0.2s;
 }
 .icon-action:hover {
-  transform: scale(1.2);   /* ขยายเวลา hover */
-  opacity: 0.8;
+    transform: scale(1.2); /* ขยายเวลา hover */
+    opacity: 0.8;
 }
 .icon-action,
 .icon-action:hover,
 .icon-action:focus,
 .icon-action:active {
-  text-decoration: none !important;
+    text-decoration: none !important;
 }
-form .form-label { font-weight: 600; }
-
-nav ul.pagination .page-item .page-link{
-  color:#020025 !important;
-  border-color:#dee2e6 !important;
-}
-nav ul.pagination .page-item .page-link:hover{
-  color:#fff !important;
-  background:#020025 !important;
-  border-color:#020025 !important;
-}
-nav ul.pagination .page-item.active .page-link{
-  color:#fff !important;
-  background:#020025 !important;
-  border-color:#020025 !important;
+form .form-label {
+    font-weight: 600;
 }
 
+nav ul.pagination .page-item .page-link {
+    color: #020025 !important;
+    border-color: #dee2e6 !important;
+}
+nav ul.pagination .page-item .page-link:hover {
+    color: #fff !important;
+    background: #020025 !important;
+    border-color: #020025 !important;
+}
+nav ul.pagination .page-item.active .page-link {
+    color: #fff !important;
+    background: #020025 !important;
+    border-color: #020025 !important;
+}
 
+/* announcement.css */
+.thumb-ann {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* ทำให้รูปเต็มกรอบโดยไม่บิดสัดส่วน */
+    border-radius: 4px; /* ถ้าต้องการให้มุมโค้ง */
+    display: block; /* ป้องกันปัญหา inline spacing */
+    margin: 0 auto; /* จัดกลางถ้าต้องการ */
+}
+
+/* จำกัดให้แสดง 3 บรรทัด แล้วตัดด้วย ... */
+.text-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* จำนวนบรรทัด */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* จำนวนบรรทัด */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-link {
+    max-width: 150px; /* กำหนดความกว้างสูงสุด */
+    white-space: nowrap; /* ไม่ให้ wrap เป็นบรรทัดใหม่ */
+    overflow: hidden; /* ซ่อนข้อความเกิน */
+    text-overflow: ellipsis; /* แสดง ... */
+}

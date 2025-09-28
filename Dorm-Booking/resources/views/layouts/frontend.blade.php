@@ -75,7 +75,10 @@
                                     </div>
                                 @endif
                                 @if (session('user_id'))
-                                    <div><b style="font-size:medium">{{ session('user_name') }}</b></div>
+                                    <div class="mx-3 d-flex fs-6"
+                                        style="align-items: center; justify-content: center; color: white;"><ion-icon
+                                            name="person-circle-outline" class="fs-4"></ion-icon>&nbsp;{{ session('user_name') }}
+                                    </div>
                                     <button type="button" class="btn btn-danger text-white mx-2"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ออกจากระบบ</button>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST"
@@ -83,12 +86,6 @@
                                         @csrf
                                     </form>
                                 @endif
-
-                                {{-- <form action="/search" method="get" class="d-flex" role="search">
-                  <input class="form-control me-2" type="text" name="keyword" placeholder="Search Product Name"
-                    aria-label="Search" value="{{ $keyword ?? ''}}">
-                  <button class="btn btn-success" type="submit">Search </button>
-                </form> --}}
                             </div>
                         </div>
                     </nav>

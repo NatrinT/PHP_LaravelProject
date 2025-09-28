@@ -19,7 +19,8 @@
                 <h3> :: form Add Announcement :: </h3>
 
 
-                <form action="/announcement/" method="post" enctype="multipart/form-data">
+                <form action="{{ url('/announcement') }}" method="post" enctype="multipart/form-data">
+
                     @csrf
 
 
@@ -49,6 +50,19 @@
                     </div>
 
                     <div class="form-group row mb-2">
+                        <label class="col-sm-2"> Link </label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="link" required placeholder="Link News"
+                                minlength="1" value="{{ old('link') }}">
+                            @if (isset($errors))
+                                @if ($errors->has('link'))
+                                    <div class="text-danger"> {{ $errors->first('link') }}</div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
                         <label class="col-sm-2"> Image </label>
                         <div class="col-sm-6">
                             <input type="file" name="image" class="form-control" accept="application/pdf,image/*">
@@ -57,7 +71,7 @@
                             @enderror
                         </div>
                     </div>
-                    
+
 
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> </label>

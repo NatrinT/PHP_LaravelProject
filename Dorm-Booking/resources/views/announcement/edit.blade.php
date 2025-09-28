@@ -47,6 +47,19 @@
                         </div>
                     </div>
 
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-2"> Link </label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="link" placeholder="Enter Link"
+                                value="{{ $link }}">
+                            @if (isset($errors))
+                                @if ($errors->has('link'))
+                                    <div class="text-danger"> {{ $errors->first('link') }}</div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+
                     {{-- Image --}}
                     <div class="form-group row mb-2">
                         <label class="col-sm-2">Image</label>
