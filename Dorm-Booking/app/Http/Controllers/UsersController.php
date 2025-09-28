@@ -254,5 +254,34 @@ class UsersController extends Controller
         }
     } //fun update 
 
+public function search(Request $request)
+{
+    Paginator::useBootstrap();
+
+    $q = UsersModel::query();
+
+    if ($request->filled('q')) {
+        $kw = $request->q;
+
+        $q->where(function ($w) use ($kw) {
+            $w->where('full_name', 'like', "%{$kw}%")
+              ->orWhere('email', 'like', "%{$kw}%")
+              ->orWhere('phone', 'like', "%{$kw}%")
+            ->orWhere('role', 'like', "%$kw%")
+              // ✅ ค้นหาสถานะด้วย (partial match: "sus" → "suspect")
+              ->orWhere('status', 'like', "%{$kw}%");
+        });
+    }
+
+    // ยังสามารถกรองสถานะแบบเลือกจากดรอปดาวน์ได้เหมือนเดิม (ถ้ามี)
+    if ($request->filled('status')) {
+        $q->where('status', $request->status);
+    }
+
+    $UsersList = $q->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+    return view('users.list', compact('UsersList'));
+}
+    
 
 } //class

@@ -1,0 +1,89 @@
+/* ==============================
+   Announcement page (match Lease look & feel)
+   ============================== */
+
+.announcement-page .announcement-header {
+  height: 68px;
+  background: #020025;
+  color: #e8f0ff;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+/* ตาราง – โทนเดียวกับหน้า Lease/User */
+.announcement-page .table-announcement thead th {
+  background: #020025;
+  color: #e8f0ff;
+  font-weight: 700;
+  border: 0 !important;
+  padding: 14px 16px;
+  white-space: nowrap;
+}
+.announcement-page .table-announcement tbody td {
+  padding: 14px 16px;
+  border-top: 1px solid #eee !important;
+}
+
+/* กล่องตาราง (shadow + radius ล่าง) */
+.announcement-page .table-wrap {
+  overflow: hidden;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, .08);
+}
+
+/* รูปภาพ thumbnail */
+.announcement-page .thumb-ann {
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(2,0,37,0.08);
+}
+
+/* ตัดข้อความหลายบรรทัด */
+.text-truncate-1,
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.text-truncate-1 { -webkit-line-clamp: 1; }
+.text-truncate-2 { -webkit-line-clamp: 2; }
+
+/* ไอคอนปุ่ม action ให้คลิกง่าย */
+.icon-action {
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform .08s ease-in-out, opacity .1s ease;
+  text-decoration: none;
+}
+.icon-action:hover {
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
+
+/* ปุ่ม Add (ถ้าใน user.css มีแล้ว อันนี้จะเป็นตัวเสริม) */
+.btn-add-user {
+  background: #e8f0ff;
+  border: 1px solid #e8f0ff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: background .1s ease, transform .08s ease;
+}
+.btn-add-user:hover {
+  background: #dce8ff;
+  transform: translateY(-1px);
+}
+.btn-add-user .btn-text {
+  color: #020025;
+  font-weight: 700;
+  letter-spacing: .2px;
+}

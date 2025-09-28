@@ -1,116 +1,155 @@
-@extends('home')
+    @extends('home')
 
-@section('css_before')
-@endsection
+    @section('css_before')
+    <link rel="stylesheet" href="{{ asset('css/user.css') }}">
+    @endsection
 
-@section('header')
-@endsection
+    @section('header')
+    @endsection
 
-@section('topbar')
-  <div class="topbar mt-3 d-flex justify-content-center">
-<div class="input-group" style="max-width: 400px;">
-  <input type="text" class="form-control" placeholder="Search...">
-  <button class="btn btn-primary" type="button">
-    <i class="bi bi-search"></i>
-  </button>
-</div>
-  </div>
-@endsection
+    @section('topbar')
+    @endsection
 
-@section('sidebarMenu')
-@endsection
+    @section('sidebarMenu')
+    @endsection
 
-@section('content')
-<div class="container-xl">
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Room data
-                    <a href="/room/adding" class="btn btn-primary btn-sm mb-2"> + Room </a>
-                </h1>
+    @section('content')
+    <div class="container-xl mt-5">
 
-                <table class="table table-bordered table-striped table-hover">
-                    <thead>
-                        <tr class="table-info">
-                            <th width="10%">Room No.</th>
-                            <th width="10%">Floor</th>
-                            <th width="20%">Type</th>
-                            <th width="20%">Status</th>
-                            <th width="20%">Monthly Rent</th>
-                            <th width="20%">Note</th>
-                            <th width="20%">Edit</th>
-                            <th width="20%">Delete</th>
-                        </tr>
-                    </thead>
+        {{-- Search แบบเดียวกับ users (คงค่า q เดิมด้วย request('q')) --}}
+        <form method="GET" action="{{ route('rooms.search') }}" 
+            class="input-group ms-auto me-3" style="max-width: 300px;">
+            <input type="text" name="q" class="form-control" placeholder="Search..."
+                value="{{ request('q') }}">
+        <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
+            <i class="bi bi-search" style="color:#e8f0ff;"></i>
+        </button>
+        </form>
 
-                    <tbody>
+            <div class="d-flex justify-content-between align-items-center mb-0 rounded-top-4"
+                style="height:68px; background:#020025;">
+                <h3 class="mb-0 fw-bold ms-3" style="color: #e8f0ff">Room Management</h3>
 
-                        @foreach ($RoomList as $row)
+                <a href="/room/adding"
+                    class=" btn-add-user d-inline-flex align-items-center text-white text-decoration-none me-4">
+                    <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
+                    <span class="btn-text ms-1 fw-bold " style="color:#020025;">Add Room</span>
+                </a>
+            </div>
+
+                <div class="table-responsive">
+                    <table class="table table-modern align-middle mb-0">
+                        <thead>
                             <tr>
-                                <td align="center"> {{ $row->room_no }} </td>
-                                <td>{{ $row->floor }} </td>
-                                <td>{{ $row->type }} </td>
-                                <td>{{ $row->status }} </td>
-                                <td>{{ number_format($row->monthly_rent,2) }} </td>
-                                <td>{{ $row->note }} </td>
-                                <td>
-                                    <a href="/room/{{ $row->id }}" class="btn btn-warning btn-sm">edit</a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="deleteConfirm({{ $row->id }})">delete</button>
-                                    <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
-                                        method="POST" style="display: none;">
-                                        @csrf
-                                        @method('delete')
-                                    </form>
-
-
-                                </td>
+                                <th style="width:70px;" class="text-center">#</th>
+                                <th style="width:100px;">Room No.</th>
+                                <th style="width:100px;">Floor</th>
+                                <th style="width:160px;">Type</th>
+                                <th style="width:160px;">Status</th>
+                                <th style="width:160px;">Monthly Rent</th>
+                                <th class="text-center">Note</th>
+                                <th style="width:160px;" class="text-center">Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
+                        </thead>
+                        <tbody>
+                            @foreach ($RoomList as $i => $row)
+                                @php
+                                    // เหมือน users: map สถานะ -> สี badge/dot
+                                    // ปรับชื่อสถานะตามระบบคุณ (Available / Occupied / Maintenance ฯลฯ)
+                                    $statusMap = [
+                                        'AVAILABLE'   => 'success',
+                                        'OCCUPIED'    => 'danger',
+                                        'MAINTENANCE' => 'warning',
+                                        'INACTIVE'    => 'secondary',
+                                    ];
+                                    $key   = strtoupper($row->status ?? '');
+                                    $color = $statusMap[$key] ?? 'secondary';
+                                    $statusText = ucfirst(strtolower($row->status ?? ''));
+                                @endphp
+                                <tr>
+                                    {{-- running index แบบ users: ใช้ firstItem()+$i --}}
+                                    <td class="text-muted text-center">{{ $RoomList->firstItem() + $i }}</td>
 
-                </table>
+                                    <td class="text-center fw-semibold">{{ $row->room_no }}</td>
+                                    <td>{{ $row->floor }}</td>
+                                    <td>{{ $row->type }}</td>
+                                    <td>
+                                        <span class="status">
+                                            <span class="status-dot bg-{{ $color }}"></span>
+                                            {{ $statusText }}
+                                        </span>
+                                    </td>
+                                    <td>{{ number_format($row->monthly_rent, 2) }}</td>
+                                    <td class="text-muted">{{ $row->note }}</td>
 
-                <div>
-                    {{ $RoomList->links() }}
+                                    <td class="text-center">
+                                        {{-- ปุ่ม action แบบ users: icon-action + tooltip title --}}
+                                        <a href="/room/{{ $row->id }}" class="icon-action text-secondary me-3" title="Edit">
+                                            <i class="bi bi-gear"></i>
+                                        </a>
+
+                                        {{-- ถ้าต้องการปุ่มอื่นให้เหมือน users (เช่น reset) ใส่เพิ่มได้ที่นี่
+                                        <a href="/room/reset/{{ $row->id }}" class="icon-action text-info me-3" title="Reset">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </a>
+                                        --}}
+
+                                        <button type="button" class="icon-action text-danger"
+                                                onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
+                                            method="POST" style="display:none;">
+                                            @csrf
+                                            @method('delete')
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-            </div>
+                {{-- ส่วนสรุป/เพจจิเนชันแบบเดียวกับ users --}}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="text-muted small">
+                        Showing {{ $RoomList->count() }} of {{ $RoomList->total() }} entries
+                    </span>
+                    {{ $RoomList->withQueryString()->links('pagination::bootstrap-5') }}
+                </div>
         </div>
     </div>
-    {{-- devbanban.com  --}}
-</div>
-@endsection
-
-@section('footer')
-@endsection
-
-@section('js_before')
-@endsection
-
-@section('js_before')
-@endsection
+    @endsection
 
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    function deleteConfirm(id) {
-        Swal.fire({
-            title: 'คุณแน่ใจหรือไม่?',
-            text: "หากลบแล้วจะไม่สามารถกู้คืนได้!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'ใช่, ลบเลย!',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('delete-form-' + id).submit();
-            }
-        });
-    }
-</script>
+    @section('footer')
+    @endsection
+
+    @section('js_before')
+    @endsection
+
+    @section('js_before')
+    @endsection
+
+    <link href="{{ asset('css/room.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function deleteConfirm(id) {
+            Swal.fire({
+                title: 'คุณแน่ใจหรือไม่?',
+                text: "หากลบแล้วจะไม่สามารถกู้คืนได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+    </script>

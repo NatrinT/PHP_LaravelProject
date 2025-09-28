@@ -24,15 +24,47 @@ class InvoiceController extends Controller
         $this->middleware('auth:admin');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         Paginator::useBootstrap();
-        $InvoiceList = InvoiceModel::with('lease')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+
+        $q = trim($request->input('q', ''));
+
+        $likeUpper = '%' . strtoupper($q) . '%';
+
+        $query = InvoiceModel::with(['lease.room', 'lease.user']);
+
+        if ($q !== '') {
+            $like  = "%{$q}%";
+            $likeUpper = '%' . strtoupper($q) . '%';
+
+            $query->where(function ($w) use ($q, $like, $likeUpper) {
+                $w->orWhere('id', $q)
+                    ->orWhere('lease_id', $q)
+                    ->orWhere('billing_period', 'like', $like)
+                    ->orWhere('status', 'like', $likeUpper)          // <== ใช้ %LIKE%
+                    ->orWhere('payment_status', 'like', $likeUpper)  // <== ใช้ %LIKE%
+                    ->orWhereRaw('CAST(total_amount AS CHAR) LIKE ?', [$like])
+                    ->orWhereHas('lease', function ($q2) use ($like, $q) {
+                        $q2->where('id', $q)
+                            ->orWhereHas('room', function ($r) use ($like) {
+                                $r->where('room_no', 'like', $like);
+                            })
+                            ->orWhereHas('user', function ($u) use ($like) {
+                                $u->where('full_name', 'like', $like)
+                                    ->orWhere('email', 'like', $like);
+                            });
+                    });
+            });
+        }
+
+        $InvoiceList = $query->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('invoice.list', compact('InvoiceList'));
     }
+
 
     public function adding()
     {

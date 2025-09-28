@@ -21,18 +21,22 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/detail/{id}', [HomeController::class, 'detail']);
 Route::get('/search', [HomeController::class, 'searchProduct']);
 
-//users crud
 Route::get('/users', [UsersController::class, 'index']);
-Route::get('/users/adding',  [UsersController::class, 'adding']);
-Route::post('/users',  [UsersController::class, 'create']);
-Route::get('/users/{id}',  [UsersController::class, 'edit']);
-Route::put('/users/{id}',  [UsersController::class, 'update']);
-Route::delete('/users/remove/{id}',  [UsersController::class, 'remove']);
-Route::get('/users/reset/{id}',  [UsersController::class, 'reset'])->name('user.reset');;
-Route::put('/users/reset/{id}',  [UsersController::class, 'resetPassword']);
+Route::get('/users/adding', [UsersController::class, 'adding']);
+Route::post('/users', [UsersController::class, 'create']);
+
+// ✅ ต้องมาก่อน {id}
+Route::get('/users/search', [UsersController::class, 'search'])->name('users.search');
+Route::get('/users/{id}', [UsersController::class, 'edit']);
+Route::put('/users/{id}', [UsersController::class, 'update']);
+Route::delete('/users/remove/{id}', [UsersController::class, 'remove']);
+Route::get('/users/reset/{id}', [UsersController::class, 'reset'])->name('user.reset');
+Route::put('/users/reset/{id}', [UsersController::class, 'resetPassword']);
+
 
 //rooms crud
 Route::get('/room', [RoomController::class, 'index']);
+Route::get('/room/search', [RoomController::class, 'search'])->name('rooms.search');
 Route::get('/room/adding',  [RoomController::class, 'adding']);
 Route::post('/room',  [RoomController::class, 'create']);
 Route::get('/room/{id}',  [RoomController::class, 'edit']);
@@ -43,6 +47,7 @@ Route::put('/room/reset/{id}',  [RoomController::class, 'resetPassword']);
 
 //lease crud
 Route::get('/lease', [LeaseController::class, 'index']);
+Route::get('/lease/search', [LeaseController::class, 'search'])->name('leases.search');
 Route::get('/lease/adding',  [LeaseController::class, 'adding']);
 Route::post('/lease',  [LeaseController::class, 'create']);
 Route::get('/lease/{id}',  [LeaseController::class, 'edit']);
@@ -52,7 +57,8 @@ Route::get('/lease/reset/{id}',  [LeaseController::class, 'reset']);
 Route::put('/lease/reset/{id}',  [LeaseController::class, 'resetPassword']);
 
 //invoice crud
-Route::get('/invoice', [InvoiceController::class, 'index']);
+Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
+Route::get('/invoices/search', [InvoiceController::class, 'index'])->name('invoices.search');
 Route::get('/invoice/adding',  [InvoiceController::class, 'adding']);
 Route::post('/invoice',  [InvoiceController::class, 'create']);
 Route::get('/invoice/{id}',  [InvoiceController::class, 'edit']);

@@ -116,10 +116,10 @@
                     <div class="d-flex" id="display-res"> <!-- Flex container -->
 
                         <!-- รูปด้านซ้าย -->
-                        <div class="login-img flex-shrink-0"></div>
+                        <div class="login-img flex-shrink-0 rounded"></div>
 
                         <!-- ฟอร์มด้านขวา -->
-                        <div class="p-4 flex-grow-1 bg-white">
+                        <div class="p-4 flex-grow-1 bg-white rounded">
                             <div class="modal-header p-0 mb-3">
                                 <h5 class="modal-title" id="exampleModalToggleLabel">กรุณาเข้าสู่ระบบ</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"

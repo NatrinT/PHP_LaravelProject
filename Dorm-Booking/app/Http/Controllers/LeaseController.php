@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\Paginator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class LeaseController extends Controller
 {
     // กำหนดสถานะที่อนุญาตให้ชัดเจน
     private const STATUSES = ['PENDING', 'ACTIVE', 'ENDED', 'CANCELED'];
-    
+
     public function __construct()
     {
         // ใช middleware 'auth:admin' เพื่อบังคับใหตองล็อกอินในฐานะ admin กอนใชงาน
@@ -241,5 +243,86 @@ class LeaseController extends Controller
             Alert::error('เกิดข้อผิดพลาด: ' . $e->getMessage());
             return redirect('/lease');
         }
+    }
+    public function search(Request $request)
+    {
+        Paginator::useBootstrap();
+
+        $q = LeaseModel::with(['user', 'room']);
+
+        if ($request->filled('q')) {
+            $kw = trim($request->q);
+
+            $q->where(function ($w) use ($kw) {
+                // 1) user / room (กว้างได้)
+                $w->whereHas('user', function ($u) use ($kw) {
+                    $u->where('full_name', 'like', "%{$kw}%")
+                        ->orWhere('email', 'like', "%{$kw}%")
+                        ->orWhere('phone', 'like', "%{$kw}%");
+                })->orWhereHas('room', function ($r) use ($kw) {
+                    $r->where('room_no', 'like', "%{$kw}%")
+                        ->orWhere('type', 'like', "%{$kw}%");
+                });
+
+                // 2) status: จับแบบขึ้นต้น/เท่ากับ (ไม่ใช้ %...%)
+                $statuses = ['PENDING', 'ACTIVE', 'ENDED', 'CANCELED'];
+                $kwUpper  = strtoupper($kw);
+                $matchStatuses = array_values(array_filter($statuses, function ($s) use ($kwUpper) {
+                    return str_starts_with($s, $kwUpper); // 'ac' -> ACTIVE
+                }));
+
+                $w->orWhere(function ($s) use ($matchStatuses, $kwUpper) {
+                    if (!empty($matchStatuses)) {
+                        $s->whereIn('status', $matchStatuses);
+                    } else {
+                        // เผื่อเคสอยากค้นคำเต็มๆ ที่เป็นคำอื่น
+                        $s->where('status', 'like', "%{$kwUpper}%");
+                    }
+                });
+
+                // 3) ตัวเลข -> จับ rent/deposit เท่ากัน
+                if (is_numeric($kw)) {
+                    $w->orWhere('rent_amount', (float)$kw)
+                        ->orWhere('deposit_amount', (float)$kw);
+                }
+
+                // 4) วันเวลา: พาร์สเฉพาะที่ “ดูเหมือนวันที่”
+                if (preg_match('/^\d{4}-\d{2}-\d{2}$|^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/', $kw)) {
+                    try {
+                        $asDate   = \Carbon\Carbon::parse($kw);
+                        $dayStart = $asDate->copy()->startOfDay();
+                        $dayEnd   = $asDate->copy()->endOfDay();
+                        $w->orWhereBetween('start_date', [$dayStart, $dayEnd])
+                            ->orWhereBetween('end_date',   [$dayStart, $dayEnd]);
+                    } catch (\Exception $e) {
+                        // ไม่ใช่วันที่จริง ก็ไม่เพิ่มเงื่อนไขวัน
+                    }
+                }
+
+                // 5) ไฟล์สัญญา (ได้อยู่ที่ like กว้าง)
+                $w->orWhere('contract_file_url', 'like', "%{$kw}%");
+            });
+        }
+
+        // ฟิลเตอร์อื่นๆ ที่มีในหน้า
+        if ($request->filled('status')) {
+            $status = strtoupper($request->status);
+            if (in_array($status, self::STATUSES, true)) {
+                $q->where('status', $status);
+            }
+        }
+        if ($request->filled('start_from')) $q->whereDate('start_date', '>=', $request->start_from);
+        if ($request->filled('start_to'))   $q->whereDate('start_date', '<=', $request->start_to);
+        if ($request->filled('end_from'))   $q->whereDate('end_date', '>=', $request->end_from);
+        if ($request->filled('end_to'))     $q->whereDate('end_date',   '<=', $request->end_to);
+        if ($request->filled('rent_min'))   $q->where('rent_amount', '>=', (float)$request->rent_min);
+        if ($request->filled('rent_max'))   $q->where('rent_amount', '<=', (float)$request->rent_max);
+
+        // ให้ลำดับเหมือน index เสมอ
+        $q->orderBy('id', 'desc');
+
+        $LeasesList = $q->paginate(10)->withQueryString();
+
+        return view('lease.list', compact('LeasesList'));
     }
 }

@@ -23,7 +23,7 @@ class RoomController extends Controller
     {
         try {
             Paginator::useBootstrap();
-            $RoomList = RoomModel::orderBy('id', 'desc')->paginate(10); //order by & pagination
+            $RoomList = RoomModel::orderBy('floor')->paginate(5); //order by & pagination
             return view('rooms.list', compact('RoomList'));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
@@ -184,5 +184,47 @@ class RoomController extends Controller
             return view('errors.404');
         }
     } //remove 
+
+public function search(Request $request)
+{
+    Paginator::useBootstrap();
+
+    $q = RoomModel::query();
+
+    // คีย์เวิร์ดหลัก ?q=
+    if ($request->filled('q')) {
+        $kw = trim($request->q);
+
+        $q->where(function ($w) use ($kw) {
+            $w->where('room_no', 'like', "%{$kw}%")
+              ->orWhere('floor', 'like', "%{$kw}%")
+              ->orWhere('type', 'like', "%{$kw}%")
+              ->orWhere('status', 'like', "%{$kw}%")
+              ->orWhere('note', 'like', "%{$kw}%");
+
+            // เผื่อค้นด้วยตัวเลข เช่น "3500" ให้จับค่าเช่าโดยตรง
+            if (is_numeric($kw)) {
+                $w->orWhere('monthly_rent', $kw);
+            }
+        });
+    }
+
+    // ตัวกรองสถานะจากดรอปดาวน์ (ถ้ามี)
+    if ($request->filled('status')) {
+        $q->where('status', $request->status);
+    }
+
+    // ตัวกรองประเภทห้อง (ถ้ามีดรอปดาวน์ type)
+    if ($request->filled('type')) {
+        $q->where('type', $request->type);
+    }
+
+    // เรียงให้ดูง่าย (ปรับตามที่ต้องการ)
+    $q->orderBy('floor')->orderBy('room_no');
+
+    $RoomList = $q->paginate(10)->withQueryString();
+
+    return view('rooms.list', compact('RoomList'));
+}
 
 } //class
