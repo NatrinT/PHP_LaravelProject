@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InvoiceModel;
 use App\Models\LeaseModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -27,40 +28,9 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         Paginator::useBootstrap();
-
-        $q = trim($request->input('q', ''));
-
-        $likeUpper = '%' . strtoupper($q) . '%';
-
-        $query = InvoiceModel::with(['lease.room', 'lease.user']);
-
-        if ($q !== '') {
-            $like  = "%{$q}%";
-            $likeUpper = '%' . strtoupper($q) . '%';
-
-            $query->where(function ($w) use ($q, $like, $likeUpper) {
-                $w->orWhere('id', $q)
-                    ->orWhere('lease_id', $q)
-                    ->orWhere('billing_period', 'like', $like)
-                    ->orWhere('status', 'like', $likeUpper)          // <== ใช้ %LIKE%
-                    ->orWhere('payment_status', 'like', $likeUpper)  // <== ใช้ %LIKE%
-                    ->orWhereRaw('CAST(total_amount AS CHAR) LIKE ?', [$like])
-                    ->orWhereHas('lease', function ($q2) use ($like, $q) {
-                        $q2->where('id', $q)
-                            ->orWhereHas('room', function ($r) use ($like) {
-                                $r->where('room_no', 'like', $like);
-                            })
-                            ->orWhereHas('user', function ($u) use ($like) {
-                                $u->where('full_name', 'like', $like)
-                                    ->orWhere('email', 'like', $like);
-                            });
-                    });
-            });
-        }
-
-        $InvoiceList = $query->orderByDesc('id')
-            ->paginate(10)
-            ->withQueryString();
+        $InvoiceList = InvoiceModel::with('lease')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
         return view('invoice.list', compact('InvoiceList'));
     }
@@ -262,6 +232,143 @@ class InvoiceController extends Controller
         } catch (\Exception $e) {
             Alert::error('เกิดข้อผิดพลาด: ' . $e->getMessage());
             return redirect('/invoice');
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            Paginator::useBootstrap();
+
+            $keyword = trim((string)$request->input('keyword', ''));
+            $by      = $request->input('by', 'all');
+
+            $allowed = ['all', 'id', 'lease', 'user', 'room', 'status', 'payment', 'period', 'due', 'amount'];
+            if (!in_array($by, $allowed, true)) {
+                $by = 'all';
+            }
+
+            $query = InvoiceModel::with(['lease.room', 'lease.user']);
+
+            // แปลงวันที่จากรูปแบบ dd/mm/YYYY → Y-m-d ถ้าใส่มาถูกฟอร์แมต
+            $parsedDueYmd = null;
+            if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $keyword)) {
+                try {
+                    $parsedDueYmd = Carbon::createFromFormat('d/m/Y', $keyword)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    $parsedDueYmd = null; // ถ้า parse ไม่ผ่าน จะปล่อยไปใช้ LIKE เดิม
+                }
+            }
+
+
+            if ($keyword !== '') {
+                $like = '%' . $keyword . '%';
+                $likeUpper = '%' . strtoupper($keyword) . '%';
+
+                switch ($by) {
+                    case 'id':
+                        if (ctype_digit($keyword)) {
+                            $query->where('id', (int)$keyword);
+                        } else {
+                            $query->whereRaw('1=0');
+                        }
+                        break;
+
+                    case 'lease':
+                        if (ctype_digit($keyword)) {
+                            $query->where('lease_id', (int)$keyword);
+                        } else {
+                            $query->whereHas('lease', fn($q) => $q->where('id', 'LIKE', $like));
+                        }
+                        break;
+
+                    case 'user':
+                        $query->whereHas('lease.user', function ($u) use ($like) {
+                            $u->where('full_name', 'LIKE', $like)
+                                ->orWhere('email', 'LIKE', $like)
+                                ->orWhere('phone', 'LIKE', $like);
+                        });
+                        break;
+
+                    case 'room':
+                        $query->whereHas('lease.room', fn($r) => $r->where('room_no', 'LIKE', $like));
+                        break;
+
+                    case 'status':
+                        $query->where('status', 'LIKE', $likeUpper);
+                        break;
+
+                    case 'payment':
+                        $query->where('payment_status', 'LIKE', $likeUpper);
+                        break;
+
+                    case 'period':
+                        $query->where('billing_period', 'LIKE', $like);
+                        break;
+
+                    case 'due':
+                        if ($parsedDueYmd) {
+                            // ค้นเท่ากับวันนั้นแบบตรง ๆ (คอลัมน์เป็น DATE)
+                            $query->whereDate('due_date', $parsedDueYmd);
+                        } else {
+                            // ถ้าไม่ได้ใส่เป็น dd/mm/YYYY ก็ใช้ LIKE เดิม (เช่นค้นบางส่วน)
+                            $query->where('due_date', 'LIKE', $like);
+                        }
+                        break;
+
+                    case 'amount':
+                        $num = str_replace([','], '', $keyword);
+                        if (is_numeric($num)) {
+                            $query->where('total_amount', (float)$num);
+                        } else {
+                            $query->whereRaw('CAST(total_amount AS CHAR) LIKE ?', [$like]);
+                        }
+                        break;
+
+                    case 'all':
+                    default:
+                        $query->where(function ($w) use ($keyword, $like, $likeUpper, $parsedDueYmd) {
+                            $w->where('billing_period', 'LIKE', $like)
+                                ->orWhere('status', 'LIKE', $likeUpper)
+                                ->orWhere('payment_status', 'LIKE', $likeUpper)
+                                // ถ้า parse วันที่สำเร็จ ใช้ whereDate ให้ตรงวัน; ถ้าไม่สำเร็จ ใช้ LIKE เหมือนเดิม
+                                ->orWhere(function ($x) use ($parsedDueYmd, $like) {
+                                    if ($parsedDueYmd) {
+                                        $x->whereDate('due_date', $parsedDueYmd);
+                                    } else {
+                                        $x->where('due_date', 'LIKE', $like);
+                                    }
+                                })
+                                ->orWhereRaw('CAST(total_amount AS CHAR) LIKE ?', [$like]);
+
+                            $w->orWhereHas('lease', function ($q2) use ($keyword, $like) {
+                                if (ctype_digit($keyword)) {
+                                    $q2->where('id', (int)$keyword);
+                                }
+                                $q2->orWhereHas('room', fn($r) => $r->where('room_no', 'LIKE', $like))
+                                    ->orWhereHas('user', function ($u) use ($like) {
+                                        $u->where('full_name', 'LIKE', $like)
+                                            ->orWhere('email', 'LIKE', $like)
+                                            ->orWhere('phone', 'LIKE', $like);
+                                    });
+                            });
+
+                            if (ctype_digit($keyword)) {
+                                $w->orWhere('id', (int)$keyword)
+                                    ->orWhere('lease_id', (int)$keyword);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            $InvoiceList = $query->orderByDesc('id')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return view('invoice.list', compact('InvoiceList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

@@ -244,85 +244,113 @@ class LeaseController extends Controller
             return redirect('/lease');
         }
     }
+
     public function search(Request $request)
     {
-        Paginator::useBootstrap();
+        try {
+            Paginator::useBootstrap();
 
-        $q = LeaseModel::with(['user', 'room']);
+            // รับค่าจากฟอร์ม
+            $keyword = trim((string) $request->input('keyword', ''));
+            $by      = $request->input('by', 'all');
 
-        if ($request->filled('q')) {
-            $kw = trim($request->q);
-
-            $q->where(function ($w) use ($kw) {
-                // 1) user / room (กว้างได้)
-                $w->whereHas('user', function ($u) use ($kw) {
-                    $u->where('full_name', 'like', "%{$kw}%")
-                        ->orWhere('email', 'like', "%{$kw}%")
-                        ->orWhere('phone', 'like', "%{$kw}%");
-                })->orWhereHas('room', function ($r) use ($kw) {
-                    $r->where('room_no', 'like', "%{$kw}%")
-                        ->orWhere('type', 'like', "%{$kw}%");
-                });
-
-                // 2) status: จับแบบขึ้นต้น/เท่ากับ (ไม่ใช้ %...%)
-                $statuses = ['PENDING', 'ACTIVE', 'ENDED', 'CANCELED'];
-                $kwUpper  = strtoupper($kw);
-                $matchStatuses = array_values(array_filter($statuses, function ($s) use ($kwUpper) {
-                    return str_starts_with($s, $kwUpper); // 'ac' -> ACTIVE
-                }));
-
-                $w->orWhere(function ($s) use ($matchStatuses, $kwUpper) {
-                    if (!empty($matchStatuses)) {
-                        $s->whereIn('status', $matchStatuses);
-                    } else {
-                        // เผื่อเคสอยากค้นคำเต็มๆ ที่เป็นคำอื่น
-                        $s->where('status', 'like', "%{$kwUpper}%");
-                    }
-                });
-
-                // 3) ตัวเลข -> จับ rent/deposit เท่ากัน
-                if (is_numeric($kw)) {
-                    $w->orWhere('rent_amount', (float)$kw)
-                        ->orWhere('deposit_amount', (float)$kw);
-                }
-
-                // 4) วันเวลา: พาร์สเฉพาะที่ “ดูเหมือนวันที่”
-                if (preg_match('/^\d{4}-\d{2}-\d{2}$|^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/', $kw)) {
-                    try {
-                        $asDate   = \Carbon\Carbon::parse($kw);
-                        $dayStart = $asDate->copy()->startOfDay();
-                        $dayEnd   = $asDate->copy()->endOfDay();
-                        $w->orWhereBetween('start_date', [$dayStart, $dayEnd])
-                            ->orWhereBetween('end_date',   [$dayStart, $dayEnd]);
-                    } catch (\Exception $e) {
-                        // ไม่ใช่วันที่จริง ก็ไม่เพิ่มเงื่อนไขวัน
-                    }
-                }
-
-                // 5) ไฟล์สัญญา (ได้อยู่ที่ like กว้าง)
-                $w->orWhere('contract_file_url', 'like', "%{$kw}%");
-            });
-        }
-
-        // ฟิลเตอร์อื่นๆ ที่มีในหน้า
-        if ($request->filled('status')) {
-            $status = strtoupper($request->status);
-            if (in_array($status, self::STATUSES, true)) {
-                $q->where('status', $status);
+            // กันค่าที่ไม่อนุญาต
+            $allowed = ['all', 'user', 'room', 'status', 'rent', 'deposit', 'id'];
+            if (!in_array($by, $allowed, true)) {
+                $by = 'all';
             }
+
+            // base query + join ความสัมพันธ์ที่จำเป็น
+            $q = LeaseModel::with(['user', 'room']);
+
+            // ถ้ามี keyword ค่อยประกอบเงื่อนไข
+            if ($keyword !== '') {
+                switch ($by) {
+                    case 'user':
+                        // ค้นจากชื่อผู้เช่า (users.full_name)
+                        $q->whereHas('user', function ($w) use ($keyword) {
+                            $w->where('full_name', 'LIKE', '%' . $keyword . '%');
+                        });
+                        break;
+
+                    case 'room':
+                        // ค้นจากเลขห้อง (rooms.room_no)
+                        $q->whereHas('room', function ($w) use ($keyword) {
+                            $w->where('room_no', 'LIKE', '%' . $keyword . '%');
+                        });
+                        break;
+
+                    case 'status':
+                        // ค้นสถานะแบบยืดหยุ่น (ตัวพิมพ์เล็ก/ใหญ่/บางส่วน)
+                        $q->where(function ($w) use ($keyword) {
+                            $w->where('status', 'LIKE', '%' . strtoupper($keyword) . '%')
+                                ->orWhere('status', 'LIKE', '%' . ucfirst(strtolower($keyword)) . '%')
+                                ->orWhere('status', 'LIKE', '%' . strtolower($keyword) . '%');
+                        });
+                        break;
+
+                    case 'rent':
+                        // ค้นค่าเช่า: ถ้าเป็นตัวเลขให้เทียบตรง ๆ, ถ้าไม่ใช่ใช้ LIKE
+                        $num = str_replace([','], '', $keyword);
+                        if (is_numeric($num)) {
+                            $q->where('rent_amount', (float) $num);
+                        } else {
+                            $q->where('rent_amount', 'LIKE', '%' . $keyword . '%');
+                        }
+                        break;
+
+                    case 'deposit':
+                        $num = str_replace([','], '', $keyword);
+                        if (is_numeric($num)) {
+                            $q->where('deposit_amount', (float) $num);
+                        } else {
+                            $q->where('deposit_amount', 'LIKE', '%' . $keyword . '%');
+                        }
+                        break;
+
+                    case 'id':
+                        // ค้นด้วยเลขสัญญาเช่า
+                        if (ctype_digit($keyword)) {
+                            $q->where('id', (int)$keyword);
+                        } else {
+                            $q->whereRaw('1=0'); // ไม่ใช่ตัวเลข → บังคับไม่พบผลลัพธ์
+                        }
+                        break;
+
+                    case 'all':
+                    default:
+                        // ค้นทุกช่องหลัก ๆ (รวม user, room)
+                        $q->where(function ($w) use ($keyword) {
+                            $w->where('status', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('rent_amount', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('deposit_amount', 'LIKE', '%' . $keyword . '%');
+
+                            // join ความสัมพันธ์เพื่อ orWhere ข้ามตาราง
+                            $w->orWhereHas('user', function ($wu) use ($keyword) {
+                                $wu->where('full_name', 'LIKE', '%' . $keyword . '%');
+                            });
+                            $w->orWhereHas('room', function ($wr) use ($keyword) {
+                                $wr->where('room_no', 'LIKE', '%' . $keyword . '%');
+                            });
+
+                            // ถ้าเป็นตัวเลขให้ลองแมตช์กับ id โดยตรงด้วย
+                            if (ctype_digit($keyword)) {
+                                $w->orWhere('id', (int)$keyword);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            // เรียง & เพจจิเนชัน + เก็บ query string เดิมไว้ในลิงก์ถัดไป
+            $LeasesList = $q->orderBy('id', 'desc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return view('lease.list', compact('LeasesList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+            // หรือ: return view('errors.404');
         }
-        if ($request->filled('start_from')) $q->whereDate('start_date', '>=', $request->start_from);
-        if ($request->filled('start_to'))   $q->whereDate('start_date', '<=', $request->start_to);
-        if ($request->filled('end_from'))   $q->whereDate('end_date', '>=', $request->end_from);
-        if ($request->filled('end_to'))     $q->whereDate('end_date',   '<=', $request->end_to);
-        if ($request->filled('rent_min'))   $q->where('rent_amount', '>=', (float)$request->rent_min);
-        if ($request->filled('rent_max'))   $q->where('rent_amount', '<=', (float)$request->rent_max);
-
-        // ให้ลำดับเหมือน index เสมอ
-        $q->orderBy('id', 'desc');
-
-        $LeasesList = $q->paginate(10)->withQueryString();
-
-        return view('lease.list', compact('LeasesList'));
     }
 }

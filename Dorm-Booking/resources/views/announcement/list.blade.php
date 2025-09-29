@@ -17,16 +17,63 @@
 @section('content')
     <div class="container-xl mt-5 announcement-page">
 
-        {{-- Search (สไตล์เดียวกับหน้า Lease) --}}
-        <form method="GET" action="{{ url('/announcement') }}" class="input-group ms-auto me-3" style="max-width: 300px;">
-            <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ request('q') }}">
-            <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
-                <i class="bi bi-search" style="color:#e8f0ff;"></i>
-            </button>
-        </form>
+        <div class="d-flex justify-content-end mb-3">
+            <form method="GET" action="{{ route('announcement.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
+                style="max-width: 920px;">
+
+                @php $by = request('by','all'); @endphp
+
+                <div class="btn-group btn-group-sm flex-wrap me-2" role="group" aria-label="Search by">
+                    <input type="radio" class="btn-check" name="by" id="by-all" value="all"
+                        {{ $by === 'all' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-all">All</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-id" value="id"
+                        {{ $by === 'id' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-id">ID</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-title" value="title"
+                        {{ $by === 'title' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-title">Title</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-body" value="body"
+                        {{ $by === 'body' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-body">Body</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-link" value="link"
+                        {{ $by === 'link' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-link">Link</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-image" value="image"
+                        {{ $by === 'image' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-image">Image</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-created" value="created"
+                        {{ $by === 'created' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-created">Created</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-updated" value="updated"
+                        {{ $by === 'updated' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-updated">Updated</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-date" value="date"
+                        {{ $by === 'date' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-date">Any Date</label>
+                </div>
+
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" name="keyword" class="form-control"
+                        placeholder="พิมพ์ข้อความ หรือวันที่แบบ 18/09/2025" value="{{ request('keyword', request('q')) }}">
+                    <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
+                        <i class="bi bi-search" style="color:#e8f0ff;"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
 
         {{-- Header bar --}}
-        <div class="d-flex justify-content-between align-items-center mb-3 rounded-top-4 announcement-header">
+        <div class="d-flex justify-content-between align-items-center rounded-top-4 announcement-header">
             <h3 class="mb-0 fw-bold ms-3">Announcement Management</h3>
             <a href="/announcement/adding"
                 class="btn-add-user d-inline-flex align-items-center text-white text-decoration-none me-4">
@@ -123,7 +170,8 @@
                                     <i class="bi bi-x-circle"></i>
                                 </button>
                                 <form id="delete-form-{{ $row->id }}"
-                                    action="/announcement/remove/{{ $row->id }}" method="POST" style="display:none;">
+                                    action="/announcement/remove/{{ $row->id }}" method="POST"
+                                    style="display:none;">
                                     @csrf @method('delete')
                                 </form>
                             </td>

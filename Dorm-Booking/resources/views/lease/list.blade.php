@@ -15,14 +15,56 @@
 
 @section('content')
     <div class="container-xl mt-5">
-        
-        {{-- Search แบบเดียวกับ users (คงค่า q เดิมด้วย request('q')) --}}
-        <form method="GET" action="{{ route('leases.search') }}" class="input-group ms-auto me-3" style="max-width: 300px;">
-            <input type="text" name="q" class="form-control " placeholder="Search..." value="{{ request('q') }}">
-            <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
-                <i class="bi bi-search" style="color:#e8f0ff;"></i>
-            </button>
-        </form>
+
+        {{-- Search: ค้นหาสัญญาเช่าแบบเลือกเงื่อนไข + คงค่าที่เลือกไว้ --}}
+        <div class="d-flex justify-content-end mb-3">
+            <form method="GET" action="{{ route('leases.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
+                style="max-width: 760px;">
+
+                {{-- ปุ่ม radio ระบุว่าจะค้นด้วยคอลัมน์ไหน --}}
+                <div class="btn-group btn-group-sm flex-wrap me-2" role="group" aria-label="Search by">
+                    @php $by = request('by','all'); @endphp
+
+                    <input type="radio" class="btn-check" name="by" id="by-all" value="all"
+                        {{ $by === 'all' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-all">All</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-user" value="user"
+                        {{ $by === 'user' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-user">Username</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-room" value="room"
+                        {{ $by === 'room' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-room">RoomNo</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-status" value="status"
+                        {{ $by === 'status' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-status">Status</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-rent" value="rent"
+                        {{ $by === 'rent' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-rent">Rent</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-deposit" value="deposit"
+                        {{ $by === 'deposit' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-deposit">Deposit</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-id" value="id"
+                        {{ $by === 'id' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-id">ID</label>
+                </div>
+
+                {{-- ช่อง keyword + ปุ่มค้นหา (คงค่าจาก request('keyword')) --}}
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="text" name="keyword" class="form-control" placeholder="Search..."
+                        value="{{ request('keyword') }}">
+                    <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
+                        <i class="bi bi-search" style="color:#e8f0ff;"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
 
         <div class="d-flex justify-content-between align-items-center mb-0 rounded-top-4"
             style="height:68px; background:#020025;">
@@ -38,7 +80,7 @@
             <table class="table table-modern align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width:70px;">#</th>
+                        <th class="text-center" style="width:70px;">ID</th>
                         <th style="width:12%;">Contract</th>
                         <th style="width:17%;">Username</th>
                         <th class="text-center">Room No</th>
@@ -65,7 +107,7 @@
                         @endphp
 
                         <tr>
-                            <td class="text-muted text-center">{{ $LeasesList->firstItem() + $i }}</td>
+                            <td class="text-muted text-center">{{ $row->id }}</td>
                             <td class="text-start">
                                 @if ($row->contract_file_url)
                                     @php $ext = pathinfo($row->contract_file_url, PATHINFO_EXTENSION); @endphp

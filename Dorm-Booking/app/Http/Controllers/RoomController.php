@@ -185,46 +185,89 @@ class RoomController extends Controller
         }
     } //remove 
 
-public function search(Request $request)
-{
-    Paginator::useBootstrap();
+    public function search(Request $request)
+    {
+        try {
+            Paginator::useBootstrap();
 
-    $q = RoomModel::query();
+            $keyword = trim((string) $request->input('keyword', ''));
+            $by      = $request->input('by', 'all');
 
-    // คีย์เวิร์ดหลัก ?q=
-    if ($request->filled('q')) {
-        $kw = trim($request->q);
-
-        $q->where(function ($w) use ($kw) {
-            $w->where('room_no', 'like', "%{$kw}%")
-              ->orWhere('floor', 'like', "%{$kw}%")
-              ->orWhere('type', 'like', "%{$kw}%")
-              ->orWhere('status', 'like', "%{$kw}%")
-              ->orWhere('note', 'like', "%{$kw}%");
-
-            // เผื่อค้นด้วยตัวเลข เช่น "3500" ให้จับค่าเช่าโดยตรง
-            if (is_numeric($kw)) {
-                $w->orWhere('monthly_rent', $kw);
+            // กันค่า by ที่ไม่อนุญาต
+            $allowed = ['all', 'room_no', 'floor', 'type', 'status', 'rent', 'id'];
+            if (!in_array($by, $allowed, true)) {
+                $by = 'all';
             }
-        });
+
+            $rooms = RoomModel::query();
+
+            if ($keyword !== '') {
+                switch ($by) {
+                    case 'room_no':
+                        $rooms->where('room_no', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'floor':
+                        if (ctype_digit($keyword)) {
+                            $rooms->where('floor', (int)$keyword);
+                        } else {
+                            $rooms->where('floor', 'LIKE', '%' . $keyword . '%');
+                        }
+                        break;
+
+                    case 'type':
+                        $rooms->where('type', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'status':
+                        $rooms->where(function ($w) use ($keyword) {
+                            $w->where('status', 'LIKE', '%' . strtoupper($keyword) . '%')
+                                ->orWhere('status', 'LIKE', '%' . ucfirst(strtolower($keyword)) . '%')
+                                ->orWhere('status', 'LIKE', '%' . strtolower($keyword) . '%');
+                        });
+                        break;
+
+                    case 'rent':
+                        if (is_numeric(str_replace([','], '', $keyword))) {
+                            $num = (float) str_replace([','], '', $keyword);
+                            $rooms->where('monthly_rent', $num);
+                        } else {
+                            $rooms->where('monthly_rent', 'LIKE', '%' . $keyword . '%');
+                        }
+                        break;
+
+                    case 'id':
+                        if (ctype_digit($keyword)) {
+                            $rooms->where('id', (int)$keyword);
+                        } else {
+                            $rooms->whereRaw('1=0');
+                        }
+                        break;
+
+                    case 'all':
+                    default:
+                        $rooms->where(function ($w) use ($keyword) {
+                            $w->where('room_no', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('floor', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('type', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('status', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('monthly_rent', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('note', 'LIKE', '%' . $keyword . '%');
+                            if (ctype_digit($keyword)) {
+                                $w->orWhere('id', (int)$keyword);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            $RoomList = $rooms->orderBy('id', 'desc')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return view('room.list', compact('RoomList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
-
-    // ตัวกรองสถานะจากดรอปดาวน์ (ถ้ามี)
-    if ($request->filled('status')) {
-        $q->where('status', $request->status);
-    }
-
-    // ตัวกรองประเภทห้อง (ถ้ามีดรอปดาวน์ type)
-    if ($request->filled('type')) {
-        $q->where('type', $request->type);
-    }
-
-    // เรียงให้ดูง่าย (ปรับตามที่ต้องการ)
-    $q->orderBy('floor')->orderBy('room_no');
-
-    $RoomList = $q->paginate(10)->withQueryString();
-
-    return view('rooms.list', compact('RoomList'));
-}
-
 } //class

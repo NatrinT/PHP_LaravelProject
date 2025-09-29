@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AnnouncementModel;
 use App\Models\RoomModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -179,4 +180,117 @@ class AnnouncementController extends Controller
         }
     } //remove 
 
+    public function search(Request $request)
+    {
+        try {
+            Paginator::useBootstrap();
+
+            $keyword = trim((string)($request->input('keyword', $request->input('q', ''))));
+            $by      = $request->input('by', 'all');
+
+            $allowed = ['all', 'id', 'title', 'body', 'link', 'image', 'created', 'updated', 'date'];
+            if (!in_array($by, $allowed, true)) {
+                $by = 'all';
+            }
+
+            $query = AnnouncementModel::query();
+
+            // เตรียม like และลอง parse วันที่ dd/mm/YYYY -> Y-m-d
+            $like = '%' . $keyword . '%';
+            $parsedYmd = null;
+            if ($keyword !== '' && preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $keyword)) {
+                try {
+                    $parsedYmd = Carbon::createFromFormat('d/m/Y', $keyword)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    $parsedYmd = null;
+                }
+            }
+
+            if ($keyword !== '') {
+                switch ($by) {
+                    case 'id':
+                        if (ctype_digit($keyword)) {
+                            $query->where('id', (int)$keyword);
+                        } else {
+                            $query->whereRaw('1=0');
+                        }
+                        break;
+
+                    case 'title':
+                        $query->where('title', 'LIKE', $like);
+                        break;
+
+                    case 'body':
+                        $query->where('body', 'LIKE', $like);
+                        break;
+
+                    case 'link':
+                        $query->where('link', 'LIKE', $like);
+                        break;
+
+                    case 'image':
+                        $query->where('image', 'LIKE', $like);
+                        break;
+
+                    case 'created':
+                        if ($parsedYmd) {
+                            $query->whereDate('created_at', $parsedYmd);
+                        } else {
+                            $query->where('created_at', 'LIKE', $like);
+                        }
+                        break;
+
+                    case 'updated':
+                        if ($parsedYmd) {
+                            $query->whereDate('updated_at', $parsedYmd);
+                        } else {
+                            $query->where('updated_at', 'LIKE', $like);
+                        }
+                        break;
+
+                    case 'date': // ค้นได้ทั้ง created/updated
+                        $query->where(function ($w) use ($like, $parsedYmd) {
+                            if ($parsedYmd) {
+                                $w->whereDate('created_at', $parsedYmd)
+                                    ->orWhereDate('updated_at', $parsedYmd);
+                            } else {
+                                $w->where('created_at', 'LIKE', $like)
+                                    ->orWhere('updated_at', 'LIKE', $like);
+                            }
+                        });
+                        break;
+
+                    case 'all':
+                    default:
+                        $query->where(function ($w) use ($like, $parsedYmd, $keyword) {
+                            $w->where('title', 'LIKE', $like)
+                                ->orWhere('body', 'LIKE', $like)
+                                ->orWhere('link', 'LIKE', $like)
+                                ->orWhere('image', 'LIKE', $like);
+
+                            if ($parsedYmd) {
+                                $w->orWhereDate('created_at', $parsedYmd)
+                                    ->orWhereDate('updated_at', $parsedYmd);
+                            } else {
+                                $w->orWhere('created_at', 'LIKE', $like)
+                                    ->orWhere('updated_at', 'LIKE', $like);
+                            }
+
+                            if (ctype_digit($keyword)) {
+                                $w->orWhere('id', (int)$keyword);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            $AnnouncementList = $query->orderByDesc('id')
+                ->paginate(10)
+                ->appends($request->query());
+
+            return view('announcement.list', compact('AnnouncementList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 } //class

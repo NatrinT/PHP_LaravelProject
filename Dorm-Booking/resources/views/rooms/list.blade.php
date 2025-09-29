@@ -1,7 +1,7 @@
     @extends('home')
 
     @section('css_before')
-    <link rel="stylesheet" href="{{ asset('css/user.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/user.css') }}">
     @endsection
 
     @section('header')
@@ -14,17 +14,58 @@
     @endsection
 
     @section('content')
-    <div class="container-xl mt-5">
+        <div class="container-xl mt-5">
 
-        {{-- Search แบบเดียวกับ users (คงค่า q เดิมด้วย request('q')) --}}
-        <form method="GET" action="{{ route('rooms.search') }}" 
-            class="input-group ms-auto me-3" style="max-width: 300px;">
-            <input type="text" name="q" class="form-control" placeholder="Search..."
-                value="{{ request('q') }}">
-        <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
-            <i class="bi bi-search" style="color:#e8f0ff;"></i>
-        </button>
-        </form>
+            {{-- Search: เลือกวิธีค้นหาด้วย radio + คงค่าที่เลือกไว้ด้วย request('by') --}}
+            <div class="d-flex justify-content-end mb-3">
+                <form method="GET" action="{{ route('rooms.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
+                    style="max-width: 720px;">
+
+                    {{-- ปุ่ม radio เลือกว่าจะค้นด้วยอะไร --}}
+                    <div class="btn-group btn-group-sm flex-wrap me-2" role="group" aria-label="Search by">
+                        @php $by = request('by', 'all'); @endphp
+
+                        <input type="radio" class="btn-check" name="by" id="by-all" value="all"
+                            {{ $by === 'all' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-all">All</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-roomno" value="room_no"
+                            {{ $by === 'room_no' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-roomno">Room No.</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-floor" value="floor"
+                            {{ $by === 'floor' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-floor">Floor</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-type" value="type"
+                            {{ $by === 'type' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-type">Type</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-status" value="status"
+                            {{ $by === 'status' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-status">Status</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-rent" value="rent"
+                            {{ $by === 'rent' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-rent">Rent</label>
+
+                        <input type="radio" class="btn-check" name="by" id="by-id" value="id"
+                            {{ $by === 'id' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-id">ID</label>
+                    </div>
+
+                    {{-- ช่อง keyword + ปุ่มค้นหา --}}
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search..."
+                            value="{{ request('keyword') }}">
+                        <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
+                            <i class="bi bi-search" style="color:#e8f0ff;"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
 
             <div class="d-flex justify-content-between align-items-center mb-0 rounded-top-4"
                 style="height:68px; background:#020025;">
@@ -37,88 +78,89 @@
                 </a>
             </div>
 
-                <div class="table-responsive">
-                    <table class="table table-modern align-middle mb-0">
-                        <thead>
+            <div class="table-responsive">
+                <table class="table table-modern align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:70px;" class="text-center">#</th>
+                            <th style="width:100px;">Room No.</th>
+                            <th style="width:100px;">Floor</th>
+                            <th style="width:160px;">Type</th>
+                            <th style="width:160px;">Status</th>
+                            <th style="width:160px;">Monthly Rent</th>
+                            <th class="text-center">Note</th>
+                            <th style="width:160px;" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($RoomList as $i => $row)
+                            @php
+                                // เหมือน users: map สถานะ -> สี badge/dot
+                                // ปรับชื่อสถานะตามระบบคุณ (Available / Occupied / Maintenance ฯลฯ)
+                                $statusMap = [
+                                    'AVAILABLE' => 'success',
+                                    'OCCUPIED' => 'danger',
+                                    'MAINTENANCE' => 'warning',
+                                    'INACTIVE' => 'secondary',
+                                ];
+                                $key = strtoupper($row->status ?? '');
+                                $color = $statusMap[$key] ?? 'secondary';
+                                $statusText = ucfirst(strtolower($row->status ?? ''));
+                            @endphp
                             <tr>
-                                <th style="width:70px;" class="text-center">#</th>
-                                <th style="width:100px;">Room No.</th>
-                                <th style="width:100px;">Floor</th>
-                                <th style="width:160px;">Type</th>
-                                <th style="width:160px;">Status</th>
-                                <th style="width:160px;">Monthly Rent</th>
-                                <th class="text-center">Note</th>
-                                <th style="width:160px;" class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($RoomList as $i => $row)
-                                @php
-                                    // เหมือน users: map สถานะ -> สี badge/dot
-                                    // ปรับชื่อสถานะตามระบบคุณ (Available / Occupied / Maintenance ฯลฯ)
-                                    $statusMap = [
-                                        'AVAILABLE'   => 'success',
-                                        'OCCUPIED'    => 'danger',
-                                        'MAINTENANCE' => 'warning',
-                                        'INACTIVE'    => 'secondary',
-                                    ];
-                                    $key   = strtoupper($row->status ?? '');
-                                    $color = $statusMap[$key] ?? 'secondary';
-                                    $statusText = ucfirst(strtolower($row->status ?? ''));
-                                @endphp
-                                <tr>
-                                    {{-- running index แบบ users: ใช้ firstItem()+$i --}}
-                                    <td class="text-muted text-center">{{ $RoomList->firstItem() + $i }}</td>
+                                {{-- running index แบบ users: ใช้ firstItem()+$i --}}
+                                <td class="text-muted text-center">{{ $RoomList->firstItem() + $i }}</td>
 
-                                    <td class="text-center fw-semibold">{{ $row->room_no }}</td>
-                                    <td>{{ $row->floor }}</td>
-                                    <td>{{ $row->type }}</td>
-                                    <td>
-                                        <span class="status">
-                                            <span class="status-dot bg-{{ $color }}"></span>
-                                            {{ $statusText }}
-                                        </span>
-                                    </td>
-                                    <td>{{ number_format($row->monthly_rent, 2) }}</td>
-                                    <td class="text-muted">{{ $row->note }}</td>
+                                <td class="text-center fw-semibold">{{ $row->room_no }}</td>
+                                <td>{{ $row->floor }}</td>
+                                <td>{{ $row->type }}</td>
+                                <td>
+                                    <span class="status">
+                                        <span class="status-dot bg-{{ $color }}"></span>
+                                        {{ $statusText }}
+                                    </span>
+                                </td>
+                                <td>{{ number_format($row->monthly_rent, 2) }}</td>
+                                <td class="text-muted">{{ $row->note }}</td>
 
-                                    <td class="text-center">
-                                        {{-- ปุ่ม action แบบ users: icon-action + tooltip title --}}
-                                        <a href="/room/{{ $row->id }}" class="icon-action text-secondary me-3" title="Edit">
-                                            <i class="bi bi-gear"></i>
-                                        </a>
+                                <td class="text-center">
+                                    {{-- ปุ่ม action แบบ users: icon-action + tooltip title --}}
+                                    <a href="/room/{{ $row->id }}" class="icon-action text-secondary me-3"
+                                        title="Edit">
+                                        <i class="bi bi-gear"></i>
+                                    </a>
 
-                                        {{-- ถ้าต้องการปุ่มอื่นให้เหมือน users (เช่น reset) ใส่เพิ่มได้ที่นี่
+                                    {{-- ถ้าต้องการปุ่มอื่นให้เหมือน users (เช่น reset) ใส่เพิ่มได้ที่นี่
                                         <a href="/room/reset/{{ $row->id }}" class="icon-action text-info me-3" title="Reset">
                                             <i class="bi bi-arrow-repeat"></i>
                                         </a>
                                         --}}
 
-                                        <button type="button" class="icon-action text-danger"
-                                                onclick="deleteConfirm({{ $row->id }})" title="Delete">
-                                            <i class="bi bi-x-circle"></i>
-                                        </button>
-                                        <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
-                                            method="POST" style="display:none;">
-                                            @csrf
-                                            @method('delete')
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                                    <button type="button" class="icon-action text-danger"
+                                        onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
+                                        method="POST" style="display:none;">
+                                        @csrf
+                                        @method('delete')
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-                {{-- ส่วนสรุป/เพจจิเนชันแบบเดียวกับ users --}}
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="text-muted small">
-                        Showing {{ $RoomList->count() }} of {{ $RoomList->total() }} entries
-                    </span>
-                    {{ $RoomList->withQueryString()->links('pagination::bootstrap-5') }}
-                </div>
+            {{-- ส่วนสรุป/เพจจิเนชันแบบเดียวกับ users --}}
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="text-muted small">
+                    Showing {{ $RoomList->count() }} of {{ $RoomList->total() }} entries
+                </span>
+                {{ $RoomList->withQueryString()->links('pagination::bootstrap-5') }}
+            </div>
         </div>
-    </div>
+        </div>
     @endsection
 
 

@@ -254,34 +254,80 @@ class UsersController extends Controller
         }
     } //fun update 
 
-public function search(Request $request)
-{
-    Paginator::useBootstrap();
+    public function search(Request $request)
+    {
+        try {
+            Paginator::useBootstrap();
 
-    $q = UsersModel::query();
+            $keyword = trim((string)$request->input('keyword', ''));
+            $by = $request->input('by', 'all');
 
-    if ($request->filled('q')) {
-        $kw = $request->q;
+            // กันค่าที่ไม่อยู่ใน whitelist
+            $allowed = ['all', 'name', 'email', 'phone', 'role', 'status', 'id'];
+            if (!in_array($by, $allowed, true)) {
+                $by = 'all';
+            }
 
-        $q->where(function ($w) use ($kw) {
-            $w->where('full_name', 'like', "%{$kw}%")
-              ->orWhere('email', 'like', "%{$kw}%")
-              ->orWhere('phone', 'like', "%{$kw}%")
-            ->orWhere('role', 'like', "%$kw%")
-              // ✅ ค้นหาสถานะด้วย (partial match: "sus" → "suspect")
-              ->orWhere('status', 'like', "%{$kw}%");
-        });
+            $q = UsersModel::query();
+
+            if ($keyword !== '') {
+                switch ($by) {
+                    case 'name':
+                        $q->where('full_name', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'email':
+                        $q->where('email', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'phone':
+                        $q->where('phone', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'role':
+                        // ให้ค้นแบบยืดหยุ่น (LIKE) และแปลงเป็นตัวพิมพ์ใหญ่/เล็กได้
+                        $q->where('role', 'LIKE', '%' . $keyword . '%');
+                        break;
+
+                    case 'status':
+                        // รองรับพิมพ์เล็ก/ใหญ่ และคำบางส่วน เช่น "act" -> ACTIVE
+                        $q->where('status', 'LIKE', '%' . strtoupper($keyword) . '%')
+                            ->orWhere('status', 'LIKE', '%' . ucfirst(strtolower($keyword)) . '%')
+                            ->orWhere('status', 'LIKE', '%' . strtolower($keyword) . '%');
+                        break;
+
+                    case 'id':
+                        // ถ้าเป็นตัวเลข ให้เท่ากันเป๊ะ ๆ; ถ้าไม่ใช่ ปล่อยให้ผลลัพธ์ว่าง
+                        if (ctype_digit($keyword)) {
+                            $q->where('id', (int)$keyword);
+                        } else {
+                            $q->whereRaw('1=0'); // คีย์เวิร์ดไม่ใช่ตัวเลข -> ไม่พบผลลัพธ์
+                        }
+                        break;
+
+                    case 'all':
+                    default:
+                        $q->where(function ($w) use ($keyword) {
+                            $w->where('full_name', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('email', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('phone', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('role', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('status', 'LIKE', '%' . $keyword . '%');
+                            // ลองจับกรณีผู้ใช้ใส่ตัวเลข อยากหา ID
+                            if (ctype_digit($keyword)) {
+                                $w->orWhere('id', (int)$keyword);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            $UsersList = $q->orderBy('id', 'desc')->paginate(10)->appends($request->query());
+
+            return view('users.list', compact('UsersList'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+            // หรือจะ: return view('errors.404');
+        }
     }
-
-    // ยังสามารถกรองสถานะแบบเลือกจากดรอปดาวน์ได้เหมือนเดิม (ถ้ามี)
-    if ($request->filled('status')) {
-        $q->where('status', $request->status);
-    }
-
-    $UsersList = $q->orderBy('id', 'desc')->paginate(10)->withQueryString();
-
-    return view('users.list', compact('UsersList'));
-}
-    
-
 } //class

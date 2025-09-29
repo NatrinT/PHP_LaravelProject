@@ -5,15 +5,55 @@
 
 @section('content')
     <div class="container-xl mt-5">
-        
-    <form method="GET" action="{{ route('users.search') }}" 
-          class="input-group ms-auto me-3" style="max-width: 300px;">
-        <input type="text" name="q" class="form-control" placeholder="Search..."
-               value="{{ request('q') }}">
-        <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
-            <i class="bi bi-search" style="color:#e8f0ff;"></i>
-        </button>
-    </form>
+
+        <div class="d-flex justify-content-end">
+            <form method="GET" action="{{ route('users.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
+                style="max-width: 600px;">
+
+                {{-- Radios --}}
+                <div class="btn-group btn-group-sm flex-wrap me-2" role="group" aria-label="Search by">
+                    @php $by = request('by','all'); @endphp
+                    <input type="radio" class="btn-check" name="by" id="by-all" value="all"
+                        {{ $by === 'all' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-all">All</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-name" value="name"
+                        {{ $by === 'name' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-name">Name</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-email" value="email"
+                        {{ $by === 'email' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-email">Email</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-phone" value="phone"
+                        {{ $by === 'phone' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-phone">Phone</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-role" value="role"
+                        {{ $by === 'role' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-role">Role</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-status" value="status"
+                        {{ $by === 'status' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-status">Status</label>
+
+                    <input type="radio" class="btn-check" name="by" id="by-id" value="id"
+                        {{ $by === 'id' ? 'checked' : '' }}>
+                    <label class="btn btn-outline-secondary" for="by-id">ID</label>
+                </div>
+
+                {{-- Keyword box + button --}}
+                <div class="input-group" style="max-width: 280px;">
+                    <input type="text" name="keyword" class="form-control" placeholder="Search..."
+                        value="{{ request('keyword') }}">
+                    <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
+                        <i class="bi bi-search" style="color:#e8f0ff;"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
 
         <div class="d-flex justify-content-between align-items-center mb-0 rounded-top-4"
             style="height:68px; background:#020025;">
@@ -58,7 +98,8 @@
                                 </span>
                             </td>
                             <td class="text-end">
-                                <a href="/users/{{ $row->id }}" class="icon-action text-secondary me-3" title="Edit">
+                                <a href="/users/{{ $row->id }}" class="icon-action text-secondary me-3"
+                                    title="Edit">
                                     <i class="bi bi-gear"></i>
                                 </a>
                                 <a href="/users/reset/{{ $row->id }}" class="icon-action text-info me-3"

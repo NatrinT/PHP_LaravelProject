@@ -58,7 +58,7 @@ Route::put('/lease/reset/{id}',  [LeaseController::class, 'resetPassword']);
 
 //invoice crud
 Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
-Route::get('/invoices/search', [InvoiceController::class, 'index'])->name('invoices.search');
+Route::get('/invoices/search', [InvoiceController::class, 'search'])->name('invoices.search');
 Route::get('/invoice/adding',  [InvoiceController::class, 'adding']);
 Route::post('/invoice',  [InvoiceController::class, 'create']);
 Route::get('/invoice/{id}',  [InvoiceController::class, 'edit']);
@@ -69,6 +69,7 @@ Route::put('/invoice/reset/{id}',  [InvoiceController::class, 'resetPassword']);
 
 //announcement crud
 Route::get('/announcement', [AnnouncementController::class, 'index']);
+Route::get('/announcement/search', [AnnouncementController::class, 'search'])->name('announcement.search');
 Route::get('/announcement/adding',  [AnnouncementController::class, 'adding']);
 Route::post('/announcement',  [AnnouncementController::class, 'create']);
 Route::get('/announcement/{id}',  [AnnouncementController::class, 'edit']);

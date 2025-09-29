@@ -1,0 +1,128 @@
+/* ===== Table base (อิงจาก invoice) ===== */
+.table-modern thead th {
+    font-weight: 600;
+    color: #344767;
+    line-height: 2.3rem;
+    font-size: 17px;
+}
+.table-modern tbody tr:hover {
+    background: #f8fafc;
+    font-size: 15px;
+}
+.table-modern td {
+    line-height: 2.7rem;
+    color: #344767;
+}
+
+/* ปุ่ม Add (reuse จาก invoice) */
+.btn-add-user {
+    background: #e8f0ff;
+    color: #fff;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 14px;
+    transition: width 0.28s ease, border-radius 0.28s ease, padding 0.28s ease;
+}
+.btn-add-user .btn-text {
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.btn-add-user:hover {
+    width: 200px;
+    border-radius: 999px;
+    padding-left: 14px;
+}
+.btn-add-user:hover .btn-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ไอคอน action */
+.icon-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 4px;
+    transition: transform 0.2s, opacity 0.2s;
+    text-decoration: none !important;
+}
+.icon-action:hover {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+/* Pagination */
+nav ul.pagination .page-item .page-link {
+    color: #020025 !important;
+    border-color: #dee2e6 !important;
+}
+nav ul.pagination .page-item .page-link:hover {
+    color: #fff !important;
+    background: #020025 !important;
+    border-color: #020025 !important;
+}
+nav ul.pagination .page-item.active .page-link {
+    color: #fff !important;
+    background: #020025 !important;
+    border-color: #020025 !important;
+}
+
+/* ===== Announcement-specific ===== */
+.announcement-page .announcement-header {
+    height: 68px;
+    background: #020025;
+    color: #e8f0ff;
+}
+
+.table-announcement .thumb-ann {
+    width: 90px;
+    height: 60px;
+    object-fit: cover;
+    border-radius:0 0 12px 12px; 
+    border: 1px solid #e6e9ef;
+}
+
+/* ตัดข้อความยาวด้วย ellipsis */
+.table-announcement .text-title,
+.table-announcement .text-body,
+.table-announcement .text-link {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.table-announcement .text-title {
+    -webkit-line-clamp: 1; /* 1 บรรทัด */
+    font-weight: 600;
+    color: #020025;
+}
+.table-announcement .text-body {
+    -webkit-line-clamp: 2; /* 2 บรรทัด */
+    color: #495057;
+}
+.table-announcement .text-link {
+    -webkit-line-clamp: 1;
+    color: #0d6efd;
+    word-break: break-all;
+}
+
+/* ปุ่มดู/ดาวน์โหลดไฟล์ */
+.table-announcement a.btn-outline-info,
+.table-announcement a.btn-outline-secondary {
+    padding: 2px 8px;
+    font-size: 0.85rem;
+    line-height: 1.4rem;
+    border-radius: 8px;
+}
+
+/* เว้นช่องห่างตาราง */
+.table-wrap {
+    border: 1px solid #e9ecef;
+    border-radius:0 0 12px 12px; 
+    overflow: hidden;
+}
