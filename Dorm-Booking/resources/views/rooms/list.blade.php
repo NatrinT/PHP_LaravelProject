@@ -49,6 +49,10 @@
                             {{ $by === 'rent' ? 'checked' : '' }}>
                         <label class="btn btn-outline-secondary" for="by-rent">Rent</label>
 
+                        <input type="radio" class="btn-check" name="by" id="by-branch" value="branch"
+                            {{ $by === 'branch' ? 'checked' : '' }}>
+                        <label class="btn btn-outline-secondary" for="by-rent">Branch</label>
+
                         <input type="radio" class="btn-check" name="by" id="by-id" value="id"
                             {{ $by === 'id' ? 'checked' : '' }}>
                         <label class="btn btn-outline-secondary" for="by-id">ID</label>
@@ -88,7 +92,8 @@
                             <th style="width:160px;">Type</th>
                             <th style="width:160px;">Status</th>
                             <th style="width:160px;">Monthly Rent</th>
-                            <th class="text-center">Note</th>
+                            <th class="text-center td-note">Note</th>
+                            <th class="text-center">Branch</th>
                             <th style="width:160px;" class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -121,7 +126,8 @@
                                     </span>
                                 </td>
                                 <td>{{ number_format($row->monthly_rent, 2) }}</td>
-                                <td class="text-muted">{{ $row->note }}</td>
+                                <td class="td-note">{{ $row->note }}</td>
+                                <td class="text-muted">{{ $row->branch }}</td>
 
                                 <td class="text-center">
                                     {{-- ปุ่ม action แบบ users: icon-action + tooltip title --}}

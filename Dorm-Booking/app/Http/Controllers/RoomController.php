@@ -58,6 +58,8 @@ class RoomController extends Controller
 
             'monthly_rent.required' => 'กรุณากรอกข้อมูล',
             'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
+
+            'branch.required' => 'กรุณากรอกข้อมูล',
         ];
 
 
@@ -67,6 +69,7 @@ class RoomController extends Controller
             'floor' => 'required|integer|min:1',
             'type' => 'required',
             'status' => 'required',
+            'branch' => 'required',
             'monthly_rent' => 'required|numeric|min:500',
         ], $messages);
 
@@ -87,7 +90,8 @@ class RoomController extends Controller
                 'type' => strip_tags($request->input('type')),
                 'status' => strip_tags($request->input('status')),
                 'monthly_rent' => strip_tags($request->input('monthly_rent')),
-                'note' => strip_tags($request->input('note')),
+                'note' => strip_tags(strtoupper($request->input('note'))),
+                'branch' => strip_tags($request->input('branch')),
             ]);
             // แสดง Alert ก่อน return
             Alert::success('เพิ่มข้อมูลสำเร็จ');
@@ -113,7 +117,8 @@ class RoomController extends Controller
                 $status = $room->status;
                 $monthly_rent = $room->monthly_rent;
                 $note = $room->note;
-                return view('rooms.edit', compact('id', 'room_no', 'floor', 'type', 'status', 'monthly_rent', 'note'));
+                $branch = $room->branch;
+                return view('rooms.edit', compact('id', 'room_no', 'floor', 'type', 'status', 'monthly_rent', 'note','branch'));
             }
         } catch (\Exception $e) {
             //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
@@ -135,6 +140,7 @@ class RoomController extends Controller
             'type.required' => 'กรุณากรอกข้อมูล',
 
             'status.required' => 'กรุณากรอกข้อมูล',
+            'branch.required' => 'กรุณากรอกข้อมูล',
 
             'monthly_rent.required' => 'กรุณากรอกข้อมูล',
             'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
@@ -145,6 +151,7 @@ class RoomController extends Controller
             'floor' => 'required|numeric|min:1',
             'type' => 'required',
             'status' => 'required',
+            'branch' => 'required',
             'monthly_rent' => 'required|numeric|min:500',
         ], $messages);
 
@@ -163,6 +170,7 @@ class RoomController extends Controller
                 'status' => strip_tags($request->input('status')),
                 'monthly_rent' => strip_tags($request->input('monthly_rent')),
                 'note' => strip_tags($request->input('note')),
+                'branch' => strip_tags(strtoupper($request->input('branch'))),
             ]);
             // แสดง Alert ก่อน return
             Alert::success('ปรับปรุงข้อมูลสำเร็จ');
@@ -212,7 +220,7 @@ class RoomController extends Controller
             $by      = $request->input('by', 'all');
 
             // กันค่า by ที่ไม่อนุญาต
-            $allowed = ['all', 'room_no', 'floor', 'type', 'status', 'rent', 'id'];
+            $allowed = ['all', 'room_no', 'floor', 'type', 'status', 'rent','branch', 'id'];
             if (!in_array($by, $allowed, true)) {
                 $by = 'all';
             }
@@ -261,6 +269,10 @@ class RoomController extends Controller
                             $rooms->whereRaw('1=0');
                         }
                         break;
+                    
+                    case 'branch':
+                        $rooms->where('branch', 'LIKE', '%' . strtoupper($keyword) . '%');
+                        break;
 
                     case 'all':
                     default:
@@ -270,7 +282,8 @@ class RoomController extends Controller
                                 ->orWhere('type', 'LIKE', '%' . $keyword . '%')
                                 ->orWhere('status', 'LIKE', '%' . $keyword . '%')
                                 ->orWhere('monthly_rent', 'LIKE', '%' . $keyword . '%')
-                                ->orWhere('note', 'LIKE', '%' . $keyword . '%');
+                                ->orWhere('note', 'LIKE', '%' . $keyword . '%')
+                                ->orWhere('branch', 'LIKE', '%' . $keyword . '%');
                             if (ctype_digit($keyword)) {
                                 $w->orWhere('id', (int)$keyword);
                             }

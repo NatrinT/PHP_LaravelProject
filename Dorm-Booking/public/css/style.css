@@ -3,7 +3,6 @@
     flex: 1 1 100%;
 }
 
-
 /* phone (sm < 768px) */
 @media (max-width: 767px) {
     body {
@@ -61,14 +60,14 @@
     .login-img {
         width: 350px;
         height: 400px;
-    } 
+    }
 }
 
-@media (min-width: 1400px) { 
+@media (min-width: 1400px) {
     .bg-img {
         height: 60vh !important;
     }
- }
+}
 
 body {
     width: 100%;
@@ -83,9 +82,8 @@ body {
 
 .container-fluid {
     margin: 0 !important;
-    padding: 0 5%!important; /* หรือปรับเฉพาะ top/bottom ถ้าต้องการ */
+    padding: 0 10% !important; /* หรือปรับเฉพาะ top/bottom ถ้าต้องการ */
 }
-
 
 .bg-img {
     min-height: 40vh;
@@ -99,16 +97,19 @@ body {
 }
 
 .navbar-style {
+    position: fixed; /* ทำให้ navbar อยู่บนสุดของ viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999 !important; /* ชนะทุกชั้น */
+    pointer-events: auto;
     background-color: transparent !important;
+    transition: background-color 0.7s;
 }
 
-.navbar {
-  position: fixed;   /* ติดบนหน้าจอ */
-  top: 0;            /* ตำแหน่งบนสุด */
-  left: 0;
-  width: 100%;       /* กว้างเต็มหน้าจอ */
-  padding: 10px 20px;
-  z-index: 1000;     /* ให้อยู่ด้านบนเนื้อหา */
+.navbar-scrolled {
+    background: rgba(0, 0, 0, 0.55) !important;
+    backdrop-filter: saturate(140%) blur(6px);
 }
 
 .contenthome-wrapper {
@@ -269,4 +270,157 @@ input:focus,
     left: 0;
     width: 100%;
     z-index: 1000;
+}
+
+.footer {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+.footer-link {
+    color: #dcdcdc;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: #f39c12;
+}
+
+.footer-social {
+    font-size: 1.2rem;
+    color: #dcdcdc;
+    transition: 0.3s;
+}
+
+.footer-social:hover {
+    color: #f39c12;
+}
+
+.payment-card {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    height: 60px;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-bottom: 5px;
+    border-radius: 10px;
+    padding: 35px 10px;
+}
+
+.payment-card p {
+    margin: 0;
+}
+
+.image-payment {
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+}
+
+:root {
+    --hero-blue: #0d6efd;
+    --hero-blue-dark: #0b5ed7;
+    --hero-overlay: rgba(3, 18, 43, 0.45);
+    --hero-radius: 20px;
+}
+
+/* พื้นหลังภาพเต็มกว้าง + โอเวอร์เลย์ + blob โค้งซ้าย */
+.dorm-hero {
+    margin: 24px 0;
+}
+.dorm-hero__bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, var(--hero-overlay), var(--hero-overlay)),
+        url("{{ asset('images/hero-dorm.jpg') }}") center/cover no-repeat;
+    z-index: 0;
+}
+/* Blob สีน้ำเงินทับด้านซ้าย */
+.dorm-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 42vw;
+    min-width: 360px;
+    max-width: 720px;
+    background: radial-gradient(
+        120% 120% at 0% 50%,
+        var(--hero-blue) 0%,
+        var(--hero-blue-dark) 70%,
+        var(--hero-blue) 100%
+    );
+    clip-path: ellipse(100% 80% at 0% 50%);
+    opacity: 0.95;
+    z-index: 1;
+    filter: saturate(115%);
+}
+.dorm-hero > .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* ความสูงรวมประมาณครึ่งจอ */
+.min-vh-50 {
+    min-height: 30vh;
+}
+
+/* ภาพมือถือ/ม็อกอัพ */
+.dorm-hero__phone {
+    max-height: 520px;
+    width: auto;
+    filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.25));
+}
+
+/* ฟอร์ม */
+.dorm-hero__form .form-control {
+    height: 52px;
+    border-radius: 12px;
+    border: 0;
+    padding-left: 44px;
+    background: rgba(255, 255, 255, 0.9);
+}
+.dorm-hero__input::placeholder {
+    color: #6b778c;
+}
+.dorm-hero__inputIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b778c;
+    font-size: 1rem;
+}
+.dorm-hero__btn {
+    height: 52px;
+    border-radius: 12px;
+    border: 0;
+    padding: 0 20px;
+    font-weight: 800;
+    background: #ff6a2d;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(255, 106, 45, 0.28);
+}
+.dorm-hero__btn:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+}
+
+
+/* Responsive ปรับสัดส่วน blob/รูป */
+@media (max-width: 1199.98px) {
+    .dorm-hero__phone {
+        max-height: 460px;
+    }
+}
+@media (max-width: 991.98px) {
+    .dorm-hero::before {
+        width: 100%;
+        min-width: 0;
+        clip-path: ellipse(120% 70% at 50% 0%);
+    }
+    .dorm-hero__phone {
+        max-height: 320px;
+    }
+    .min-vh-50 {
+        min-height: 60vh;
+    }
 }

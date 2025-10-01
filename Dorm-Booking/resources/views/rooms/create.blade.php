@@ -111,6 +111,18 @@
                     </div>
 
                     <div class="form-group row mb-2">
+                        <label class="col-sm-2"> Branch </label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="branch" required placeholder="Branch">{{ old('branch') }}
+                            @if (isset($errors))
+                                @if ($errors->has('branch'))
+                                    <div class="text-danger"> {{ $errors->first('branch') }}</div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-2">
                         <label class="col-sm-2"> </label>
                         <div class="col-sm-5">
 

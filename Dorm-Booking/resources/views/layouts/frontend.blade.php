@@ -13,82 +13,82 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/contentBody.css') }}" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     @yield('css_before')
 </head>
 
 <body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-style">
+            <div class="container-fluid ">
+                <a href="/">
+                    <p class="app-icon"></p>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white animate-text" aria-current="page"
+                                href="/">หอพัก</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active text-white animate-text" aria-current="page"
+                                href="/">ข่าวสาร/ประกาศ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white animate-text"
+                                href="https://devbanban.com/?p=4425">ช่วยเหลือ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white animate-text"
+                                href="https://devbanban.com/?p=4425">การจองของฉัน</a>
+                        </li>
+
+
+                        @if (session('user_role') === 'ADMIN')
+                            <li class="nav-item">
+                                <a class="nav-link text-danger animate-text" href="/dashboard"
+                                    target="_blank">จัดการหลังบ้าน</a>
+                            </li>
+                        @endif
+
+
+                    </ul>
+                    @if (!session('user_id'))
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-outline-light text-white d-flex align-items-center"
+                                data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
+                                <ion-icon name="person-outline" class="me-2"></ion-icon> เข้าสู่ระบบ
+                            </button>
+                            <a href="/register" style="text-decoration: none">
+                                <button type="button" class="btn btn-primary text-white mx-2">ลงทะเบียน</button>
+                            </a>
+                        </div>
+                    @endif
+                    @if (session('user_id'))
+                        <div class="mx-3 d-flex fs-6"
+                            style="align-items: center; justify-content: center; color: white;"><ion-icon
+                                name="person-circle-outline" class="fs-4"></ion-icon>&nbsp;{{ session('user_name') }}
+                        </div>
+                        <button type="button" class="btn btn-danger text-white mx-2"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ออกจากระบบ</button>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+                            @csrf
+                        </form>
+                    @endif
+                </div>
+            </div>
+        </nav>
+    </header>
     <div class="bg-img">
         <div class="container-fluid p-0">
             <div class="row">
                 <div class="col-12 col-sm-12 col-md-12">
-                    <nav class="navbar navbar-expand-lg navbar-style">
-                        <div class="container-fluid ">
-                            <a href="/">
-                                <p class="app-icon"></p>
-                            </a>
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                    <li class="nav-item">
-                                        <a class="nav-link active text-white animate-text" aria-current="page"
-                                            href="/">หอพัก</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link active text-white animate-text" aria-current="page"
-                                            href="/">ข่าวสาร/ประกาศ</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-white animate-text"
-                                            href="https://devbanban.com/?p=4425">ช่วยเหลือ</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-white animate-text"
-                                            href="https://devbanban.com/?p=4425">การจองของฉัน</a>
-                                    </li>
 
-
-                                    @if (session('user_role') === 'ADMIN')
-                                        <li class="nav-item">
-                                            <a class="nav-link text-danger animate-text" href="/dashboard"
-                                                target="_blank">จัดการหลังบ้าน</a>
-                                        </li>
-                                    @endif
-
-
-                                </ul>
-                                @if (!session('user_id'))
-                                    <div class="d-flex">
-                                        <button type="button"
-                                            class="btn btn-outline-light text-white d-flex align-items-center"
-                                            data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
-                                            <ion-icon name="person-outline" class="me-2"></ion-icon> เข้าสู่ระบบ
-                                        </button>
-                                        <a href="/register" style="text-decoration: none">
-                                            <button type="button"
-                                                class="btn btn-primary text-white mx-2">ลงทะเบียน</button>
-                                        </a>
-                                    </div>
-                                @endif
-                                @if (session('user_id'))
-                                    <div class="mx-3 d-flex fs-6"
-                                        style="align-items: center; justify-content: center; color: white;"><ion-icon
-                                            name="person-circle-outline" class="fs-4"></ion-icon>&nbsp;{{ session('user_name') }}
-                                    </div>
-                                    <button type="button" class="btn btn-danger text-white mx-2"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ออกจากระบบ</button>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                        style="display:none;">
-                                        @csrf
-                                    </form>
-                                @endif
-                            </div>
-                        </div>
-                    </nav>
                 </div>
             </div>
             <div class="container contenthome-wrapper">
@@ -104,6 +104,111 @@
             @yield('contentBody')
         </div>
     </div>
+
+    <footer class="footer text-light">
+        <section class="dorm-hero position-relative overflow-hidden">
+            <!-- พื้นหลังภาพ -->
+            <div class="dorm-hero__bg"></div>
+
+            <div class="container position-relative">
+                <div class="row align-items-center min-vh-50 py-4">
+                    <!-- LEFT: phone/illustration -->
+                    <div class="col-lg-5 mb-4 mb-lg-0 text-center text-lg-start me-3">
+                        <img src="{{ asset('images/notebook-mockup.png') }}" alt="Dorm Booking App"
+                            class="img-fluid dorm-hero__phone">
+                    </div>
+
+                    <!-- RIGHT: headline + form + badges -->
+                    <div class="col-lg-6 text-center text-lg-start text-white">
+                        <h1 class="display-8 fw-bolder mb-2">
+                            อัปเดตเคล็ดลับเลือกหอพัก โปรฯ ล่าสุด และรีวิวจริงอยู่เสมอ
+                        </h1>
+                        <p class="lead fw-semibold opacity-90 mb-4">
+                            รับข่าวสาร โปรโมชั่น ได้ทันทวงที
+                        </p>
+
+                        <!-- Email subscribe -->
+                        <form class="dorm-hero__form d-flex gap-2 flex-column flex-sm-row mb-4" action="#"
+                            method="post">
+                            @csrf
+                            <div class="flex-grow-1 position-relative">
+                                <input type="email" class="form-control dorm-hero__input"
+                                    placeholder="กรอกอีเมลของคุณ" required>
+                                <span class="dorm-hero__inputIcon">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </span>
+                            </div>
+                            <button type="submit" class="btn dorm-hero__btn">สมัครรับจดหมายข่าว</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container py-5">
+            <div class="row">
+                <!-- Logo + Description -->
+                <div class="col-md-4 mb-4">
+                    <img src="{{ asset('images/app_logo.png') }}" alt="">
+                    <p class="small">
+                        ห้องพักสะดวกสบาย ราคาย่อมเยา สิ่งอำนวยความสะดวกครบครัน
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-4 mb-4">
+                    <h6 class="fw-bold">เกี่ยวกับ Dorm Booking</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#" class="footer-link">หน้าหลัก</a></li>
+                        <li><a href="#" class="footer-link">ห้องพัก</a></li>
+                        <li><a href="#" class="footer-link">โปรโมชั่น</a></li>
+                        <li><a href="#" class="footer-link">วิธีการจอง</a></li>
+                        <li><a href="#" class="footer-link">ติดต่อเรา</a></li>
+                    </ul>
+                    <h6 class="fw-bold mt-5">ติดต่อเรา</h6>
+                    <p class="small mb-1">📍 กรุงเทพฯ, ประเทศไทย</p>
+                    <p class="small mb-1">📞 081-234-5678</p>
+                    <p class="small mb-3">✉️ info@dormapartment.com</p>
+
+                    <!-- Social icons -->
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-social"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="footer-social"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-md-4 mb-4">
+                    <h6>รองรับการชำระเงินหลากหลาย</h6>
+                    <ul class="list-unstyled small">
+                        <li class="payment-card">
+                            <img src="{{ asset('images/credit_card.png') }}" class="image-payment">
+                            <p class="text-center ms-3">บัตรเครดิต/เดบิต</p>
+                        </li>
+                        <li class="payment-card"><img src="{{ asset('images/promptpay.png') }}"
+                                class="image-payment">
+                            <p class="text-center ms-3">QR พร้อมเพย์</p>
+                        </li>
+                        <li class="payment-card"><img src="{{ asset('images/mobilebanking.png') }}"
+                                class="image-payment">
+                            <p class="text-center ms-3">Mobile Banking</p>
+                        </li>
+                        <li class="payment-card"><img src="{{ asset('images/truemoney.png') }}"
+                                class="image-payment">
+                            <p class="text-center ms-3">Truemoney</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="text-center mt-4 small border-top pt-3">
+                © 2025 Dorm Apartment. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
 
     <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
         tabindex="-1">
@@ -218,10 +323,6 @@
             }
         </script>
 
-
-        <footer class="mt-5 mb-2">
-            <p class="text-center">by devbanban.com @2025</p>
-        </footer>
 
         @yield('footer')
 
