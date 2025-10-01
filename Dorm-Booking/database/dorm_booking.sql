@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 29, 2025 at 01:34 PM
+-- Generation Time: Oct 01, 2025 at 09:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -80,7 +80,8 @@ INSERT INTO `invoices` (`id`, `lease_id`, `billing_period`, `due_date`, `amount_
 (2, 1, '2025-05', '2026-09-24', 5000.00, 300.00, 200.00, 5500.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/vYGSRkQY5BHhXS9gXx7BoVmg5c1qZo7BJ57Mpf85.jpg', '2025-09-22 18:19:13', '2025-09-22 18:19:13'),
 (3, 1, '2025-05', '2026-09-24', 5000.00, 300.00, 2.00, 5302.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/wZ0BRf9V4n2sCQz13b9IDBsIr77lbvw1iVPrT4zf.jpg', '2025-09-22 18:19:34', '2025-09-22 18:19:34'),
 (4, 2, '2025-05', '2025-05-26', 2500.00, 1000.00, 200.00, 3700.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/nWdGbOs3wjWA5j2PzehxYp7XGp6Px6sVH3gOX095.jpg', '2025-09-22 18:22:15', '2025-09-22 18:22:15'),
-(5, 1, '2024-03', '2025-09-18', 5000.00, 1231.00, 1231.00, 7462.00, 'PAID', NULL, 'PENDING', 'uploads/receipts/MTvdlntVVZqQkwbDbGs4D1Yat1ATEN4Jw6YZD2Ah.png', '2025-09-29 17:27:41', '2025-09-29 17:27:41');
+(5, 1, '2024-03', '2025-09-18', 5000.00, 1231.00, 1231.00, 7462.00, 'PAID', NULL, 'PENDING', 'uploads/receipts/MTvdlntVVZqQkwbDbGs4D1Yat1ATEN4Jw6YZD2Ah.png', '2025-09-29 17:27:41', '2025-09-29 17:27:41'),
+(6, 4, '2024-03', '2025-09-18', 123123.00, 11.00, 11.00, 123145.00, 'PAID', NULL, 'CONFIRMED', 'uploads/receipts/3NUqhVFNrmxIlrl7OpqdBz9sVYTvUYKbrzG0gMBf.png', '2025-10-01 12:39:13', '2025-10-01 12:39:39');
 
 -- --------------------------------------------------------
 
@@ -99,18 +100,41 @@ CREATE TABLE `leases` (
   `status` enum('PENDING','ACTIVE','ENDED','CANCELED') NOT NULL DEFAULT 'PENDING',
   `contract_file_url` varchar(500) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `leases`
 --
 
-INSERT INTO `leases` (`id`, `user_id`, `room_id`, `start_date`, `end_date`, `rent_amount`, `deposit_amount`, `status`, `contract_file_url`, `created_at`, `updated_at`) VALUES
-(1, 11, 5, '2025-09-22', '2026-10-24', 5000.00, 2000.00, 'ACTIVE', 'uploads/contracts/keV63zDv8rmPtU1usejbinVvwlQPtt52YZ1IbDC1.png', '2025-09-22 17:24:29', '2025-09-28 17:16:41'),
-(2, 9, 7, '2025-09-22', '2026-01-21', 2500.00, 1000.00, 'ENDED', 'uploads/contracts/ywhIlQrvhClEj8n3D8mCWTgWXgN0hiiQRhXBl4no.jpg', '2025-09-22 18:21:18', '2025-09-28 16:31:40'),
-(3, 4, 7, '2025-09-24', '2025-10-11', 506.00, 12312.00, 'ACTIVE', 'uploads/contracts/muKAZqyHh1bia5OlEzhax0dYbKLVqI9sSJ5Gw241.png', '2025-09-28 17:51:58', '2025-09-28 17:52:05'),
-(4, 3, 8, '2025-09-01', '2025-09-28', 123123.00, 123123.00, 'ACTIVE', 'uploads/contracts/wod0i5va019q1WNSimKCJaEpX03HLTzmWfUwHOWG.png', '2025-09-28 17:56:27', '2025-09-28 17:56:27');
+INSERT INTO `leases` (`id`, `user_id`, `room_id`, `start_date`, `end_date`, `rent_amount`, `deposit_amount`, `status`, `contract_file_url`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 11, 5, '2025-09-22', '2026-10-24', 5000.00, 2000.00, 'ACTIVE', 'uploads/contracts/keV63zDv8rmPtU1usejbinVvwlQPtt52YZ1IbDC1.png', '2025-09-22 17:24:29', '2025-09-28 17:16:41', NULL),
+(2, 9, 7, '2025-09-22', '2026-01-21', 2500.00, 1000.00, 'ENDED', 'uploads/contracts/ywhIlQrvhClEj8n3D8mCWTgWXgN0hiiQRhXBl4no.jpg', '2025-09-22 18:21:18', '2025-09-28 16:31:40', NULL),
+(3, 4, 7, '2025-09-24', '2025-10-11', 506.00, 12312.00, 'ACTIVE', 'uploads/contracts/muKAZqyHh1bia5OlEzhax0dYbKLVqI9sSJ5Gw241.png', '2025-09-28 17:51:58', '2025-09-28 17:52:05', NULL),
+(4, 3, 8, '2025-09-01', '2025-09-28', 123123.00, 123123.00, 'ACTIVE', 'uploads/contracts/wod0i5va019q1WNSimKCJaEpX03HLTzmWfUwHOWG.png', '2025-09-28 17:56:27', '2025-10-01 14:13:46', '2025-10-01 14:13:46');
+
+--
+-- Triggers `leases`
+--
+DELIMITER $$
+CREATE TRIGGER `before_lease_delete_unpaid_guard` BEFORE DELETE ON `leases` FOR EACH ROW BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM invoices
+    WHERE lease_id = OLD.id
+      AND (
+           status IN ('DRAFT','ISSUED','OVERDUE')
+        OR payment_status IS NULL
+        OR payment_status <> 'CONFIRMED'
+      )
+  ) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Cannot delete lease: unpaid invoices exist';
+  END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -133,11 +157,11 @@ CREATE TABLE `rooms` (
 --
 
 INSERT INTO `rooms` (`id`, `room_no`, `floor`, `type`, `status`, `monthly_rent`, `note`) VALUES
-(4, '224', 2, 'STANDARD', 'MAINTENANCE', 2500.00, 'Haha, Benten'),
-(5, '128', 8, 'DELUXE', 'OCCUPIED', 4500.00, 'this room is for black gay that horny, mai wai leawwwwww~~~'),
+(5, '128', 8, 'DELUXE', 'AVAILABLE', 4500.00, 'this room is for black gay that horny, mai wai leawwwwww~~~'),
 (6, '123', 3, 'STANDARD', 'MAINTENANCE', 2378.00, 'Eiei'),
 (7, '002', 4, 'STANDARD', 'OCCUPIED', 2000.00, 'mai me rai mak bok rag pua'),
-(8, '334', 3, 'STANDARD', 'OCCUPIED', 1500.00, 'mai me rai ja bok rok');
+(8, '334', 5, 'STANDARD', 'AVAILABLE', 1500.00, 'mai me rai ja bok rok'),
+(10, '555', 4, 'STANDARD', 'AVAILABLE', 2222.00, 'ddSSSSS');
 
 -- --------------------------------------------------------
 
@@ -189,7 +213,8 @@ ALTER TABLE `announcement`
 --
 ALTER TABLE `invoices`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `Foreign key lease_id` (`lease_id`);
+  ADD KEY `Foreign key lease_id` (`lease_id`),
+  ADD KEY `idx_invoices_lease_status` (`lease_id`,`payment_status`,`status`);
 
 --
 -- Indexes for table `leases`
@@ -227,7 +252,7 @@ ALTER TABLE `announcement`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `leases`
@@ -239,7 +264,7 @@ ALTER TABLE `leases`
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`

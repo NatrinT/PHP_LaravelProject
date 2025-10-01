@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LeaseModel extends Model
 {
+    use SoftDeletes; // สำคัญ: ให้ delete() เป็น Soft Delete (อัปเดต deleted_at)
+
     protected $table = 'leases';
     protected $primaryKey = 'id';
     public $incrementing = true;
-
-    // ในตารางมี created_at / updated_at อยู่แล้ว
     public $timestamps = true;
 
     protected $fillable = [
@@ -31,7 +32,6 @@ class LeaseModel extends Model
         'deposit_amount' => 'decimal:2',
     ];
 
-    // ความสัมพันธ์ (ถ้ามีโมเดลเหล่านี้)
     public function user()
     {
         return $this->belongsTo(UsersModel::class, 'user_id', 'id');
@@ -45,5 +45,11 @@ class LeaseModel extends Model
     public function invoices()
     {
         return $this->hasMany(InvoiceModel::class, 'lease_id', 'id');
+    }
+
+    // ใช้เช็คว่ามีใบแจ้งหนี้ค้างชำระอยู่หรือไม่
+    public function hasUnpaidInvoices(): bool
+    {
+        return $this->invoices()->unpaid()->exists();
     }
 }

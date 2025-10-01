@@ -12,6 +12,7 @@ use Illuminate\Pagination\Paginator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LeaseController extends Controller
 {
@@ -216,34 +217,40 @@ class LeaseController extends Controller
         }
     }
 
+    // use Illuminate\Support\Facades\DB;
+    // use RealRashid\SweetAlert\Facades\Alert;
+
     public function remove($id)
     {
         try {
-            $lease = LeaseModel::find($id);
+            $lease = \App\Models\LeaseModel::with('room', 'invoices')->find($id);
             if (!$lease) {
                 Alert::error('ไม่พบสัญญาเช่า');
                 return redirect('/lease');
             }
 
-            // ลบไฟล์สัญญาถ้ามี
-            if ($lease->contract_file_url && Storage::disk('public')->exists($lease->contract_file_url)) {
-                Storage::disk('public')->delete($lease->contract_file_url);
+            if ($lease->hasUnpaidInvoices()) {
+                Alert::error('ลบไม่ได้', 'มีใบแจ้งหนี้ที่ยังไม่ชำระ');
+                return redirect('/lease');
             }
 
-            // คืนห้องว่าง ไม่ว่าลบ Lease ที่สถานะอะไร
-            if ($lease->room) {
-                $lease->room->update(['status' => 'AVAILABLE']);
-            }
-
-            $lease->delete();
+            DB::transaction(function () use ($lease) {
+                // ปลดสถานะห้องให้ว่าง
+                if ($lease->room) {
+                    $lease->room->update(['status' => 'AVAILABLE']);
+                }
+                // Soft delete (จะอัปเดต deleted_at)
+                $lease->delete();
+            });
 
             Alert::success('ลบสัญญาสำเร็จ');
-            return redirect('/lease');
-        } catch (\Exception $e) {
-            Alert::error('เกิดข้อผิดพลาด: ' . $e->getMessage());
-            return redirect('/lease');
+        } catch (\Throwable $e) {
+            Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบสัญญาได้');
         }
+
+        return redirect('/lease');
     }
+
 
     public function search(Request $request)
     {

@@ -105,7 +105,7 @@
         integrity="sha384-YbCrDk0kJm9x2kN8p1o7rRG0mE0M2mC9i5zK2y/8kC7Z6vJ1m1n3qJZqVfI0iZVJ" crossorigin="anonymous">
     </script>
 
-    {{-- ✅ Page-level JS (สำคัญ: ทำให้ script จากหน้าลูกถูก inject จริง) --}}
+    {{-- Page-level JS (สำคัญ: ทำให้ script จากหน้าลูกถูก inject จริง) --}}
     @yield('js_before')
 
     {{-- >>>>>>> ตรงนี้สำคัญ <<<<<<< --}}

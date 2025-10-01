@@ -9,7 +9,7 @@ class InvoiceModel extends Model
     protected $table = 'invoices';
     protected $primaryKey = 'id';
     public $incrementing = true;
-    public $timestamps = true; // ใช้ได้เลย
+    public $timestamps = true;
 
     protected $fillable = [
         'lease_id',
@@ -19,9 +19,9 @@ class InvoiceModel extends Model
         'amount_utilities',
         'amount_other',
         'total_amount',
-        'status',
+        'status',           // DRAFT | ISSUED | PAID | OVERDUE | CANCELED
+        'payment_status',   // PENDING | CONFIRMED | FAILED
         'paid_at',
-        'payment_status',
         'receipt_file_url',
     ];
 
@@ -37,5 +37,21 @@ class InvoiceModel extends Model
     public function lease()
     {
         return $this->belongsTo(LeaseModel::class, 'lease_id', 'id');
+    }
+
+    /**
+     * Scope: ใบแจ้งหนี้ที่ "ยังไม่จ่าย"
+     * นิยามว่าเป็นบิลที่:
+     *  - status ยังอยู่ใน DRAFT/ISSUED/OVERDUE (ยังไม่เป็น PAID/CANCELED)
+     *    หรือ
+     *  - payment_status ไม่ใช่ CONFIRMED (หรือเป็น NULL)
+     */
+    public function scopeUnpaid($q)
+    {
+        return $q->where(function ($w) {
+            $w->whereIn('status', ['DRAFT', 'ISSUED', 'OVERDUE'])
+              ->orWhereNull('payment_status')
+              ->orWhere('payment_status', '!=', 'CONFIRMED');
+        });
     }
 }
