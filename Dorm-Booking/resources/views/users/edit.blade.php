@@ -88,9 +88,9 @@
                             {{-- <input type="text" class="form-control" name="role" required placeholder="role"
                                 value="{{ old('role') }}"> --}}
                             <select class="form-control" name="status" required>
-                                <option value="ACTIVE" {{ $status == 'ACTIVE' ? 'selected' : '' }}>Active</option>
-                                <option value="SUSPENDED" {{ $status == 'SUSPENDED' ? 'selected' : '' }}>Suspended</option>
-                                <option value="DELETED" {{ $status == 'DELETED' ? 'selected' : '' }}>Delete</option>
+                                <option value="ACTIVE" {{ $status == 'ACTIVE' ? 'selected' : '' }}>ใช้งาน</option>
+                                <option value="SUSPENDED" {{ $status == 'SUSPENDED' ? 'selected' : '' }}>ระงับชั่วคราว</option>
+                                <option value="DELETED" {{ $status == 'DELETED' ? 'selected' : '' }}>ลบแล้ว</option>
                             </select>
 
                             @if (isset($errors))

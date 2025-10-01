@@ -92,10 +92,10 @@
             <label class="col-sm-2">Status</label>
             <div class="col-sm-6">
                 <select name="status" class="form-control" required>
-                    <option value="PENDING" {{ $status == 'PENDING' ? 'selected' : '' }}>Pending</option>
-                    <option value="ACTIVE" {{ $status == 'ACTIVE' ? 'selected' : '' }}>Active</option>
-                    <option value="ENDED" {{ $status == 'ENDED' ? 'selected' : '' }}>Ended</option>
-                    <option value="CANCELED" {{ $status == 'CANCELED' ? 'selected' : '' }}>Canceled</option>
+                    <option value="PENDING" {{ $status == 'PENDING' ? 'selected' : '' }}>รอดำเนินการ</option>
+                    <option value="ACTIVE" {{ $status == 'ACTIVE' ? 'selected' : '' }}>กำลังเช่า</option>
+                    <option value="ENDED" {{ $status == 'ENDED' ? 'selected' : '' }}>สิ้นสุด</option>
+                    <option value="CANCELED" {{ $status == 'CANCELED' ? 'selected' : '' }}>ยกเลิก</option>
                 </select>
                 @error('status')
                     <div class="text-danger">{{ $message }}</div>

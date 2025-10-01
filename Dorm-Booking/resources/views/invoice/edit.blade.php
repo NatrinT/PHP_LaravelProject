@@ -105,13 +105,23 @@
             </div>
         </div>
 
-        {{-- Status --}}
+        {{-- Status (TH labels, keep EN values) --}}
         <div class="form-group row mb-2">
-            <label class="col-sm-2">Status</label>
+            <label class="col-sm-2">สถานะใบแจ้งหนี้</label>
             <div class="col-sm-6">
+                @php
+                    $statusChoices = [
+                        'DRAFT' => 'ฉบับร่าง',
+                        'ISSUED' => 'ออกบิล',
+                        'PAID' => 'ชำระแล้ว',
+                        'OVERDUE' => 'ค้างชำระ',
+                        'CANCELED' => 'ยกเลิก',
+                    ];
+                @endphp
                 <select name="status" class="form-control" required>
-                    @foreach (['DRAFT', 'ISSUED', 'PAID', 'OVERDUE', 'CANCELED'] as $st)
-                        <option value="{{ $st }}" {{ $status == $st ? 'selected' : '' }}>{{ $st }}
+                    @foreach ($statusChoices as $value => $labelTh)
+                        <option value="{{ $value }}" {{ old('status', $status) === $value ? 'selected' : '' }}>
+                            {{ $labelTh }}
                         </option>
                     @endforeach
                 </select>
@@ -121,14 +131,23 @@
             </div>
         </div>
 
-        {{-- Payment Status --}}
+        {{-- Payment Status (TH labels, keep EN values) --}}
         <div class="form-group row mb-2">
-            <label class="col-sm-2">Payment Status</label>
+            <label class="col-sm-2">สถานะการชำระเงิน</label>
             <div class="col-sm-6">
+                @php
+                    $paymentChoices = [
+                        'PENDING' => 'รอดำเนินการ',
+                        'CONFIRMED' => 'ยืนยันแล้ว',
+                        'FAILED' => 'ล้มเหลว',
+                    ];
+                @endphp
                 <select name="payment_status" class="form-control" required>
-                    @foreach (['PENDING', 'CONFIRMED', 'FAILED'] as $pst)
-                        <option value="{{ $pst }}" {{ $payment_status == $pst ? 'selected' : '' }}>
-                            {{ $pst }}</option>
+                    @foreach ($paymentChoices as $value => $labelTh)
+                        <option value="{{ $value }}"
+                            {{ old('payment_status', $payment_status) === $value ? 'selected' : '' }}>
+                            {{ $labelTh }}
+                        </option>
                     @endforeach
                 </select>
                 @error('payment_status')
@@ -136,6 +155,7 @@
                 @enderror
             </div>
         </div>
+
 
         {{-- Receipt file --}}
         <div class="form-group row mb-2">

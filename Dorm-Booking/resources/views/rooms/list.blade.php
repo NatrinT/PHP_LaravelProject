@@ -86,7 +86,7 @@
                             <th style="width:100px;">Room No.</th>
                             <th style="width:100px;">Floor</th>
                             <th style="width:160px;">Type</th>
-                            <th style="width:160px;">Status</th>
+                            <th style="width:160px;">Status</th> {{-- เปลี่ยนหัวคอลัมน์เป็นไทย --}}
                             <th style="width:160px;">Monthly Rent</th>
                             <th class="text-center">Note</th>
                             <th style="width:160px;" class="text-center">Actions</th>
@@ -95,55 +95,55 @@
                     <tbody>
                         @foreach ($RoomList as $i => $row)
                             @php
-                                // เหมือน users: map สถานะ -> สี badge/dot
-                                // ปรับชื่อสถานะตามระบบคุณ (Available / Occupied / Maintenance ฯลฯ)
-                                $statusMap = [
+                                // สี dot ตามสถานะ
+                                $statusColorMap = [
                                     'AVAILABLE' => 'success',
                                     'OCCUPIED' => 'danger',
                                     'MAINTENANCE' => 'warning',
                                     'INACTIVE' => 'secondary',
                                 ];
+                                // ป้ายภาษาไทย
+                                $statusLabelMap = [
+                                    'AVAILABLE' => 'ว่าง',
+                                    'OCCUPIED' => 'มีผู้เช่า',
+                                    'MAINTENANCE' => 'ปิดปรับปรุง',
+                                    'INACTIVE' => 'ปิดใช้งาน',
+                                ];
+
                                 $key = strtoupper($row->status ?? '');
-                                $color = $statusMap[$key] ?? 'secondary';
-                                $statusText = ucfirst(strtolower($row->status ?? ''));
+                                $color = $statusColorMap[$key] ?? 'secondary';
+                                $text = $statusLabelMap[$key] ?? ($row->status ?? '-');
                             @endphp
                             <tr>
-                                {{-- running index แบบ users: ใช้ firstItem()+$i --}}
+                                {{-- running index --}}
                                 <td class="text-muted text-center">{{ $RoomList->firstItem() + $i }}</td>
 
                                 <td class="text-center fw-semibold">{{ $row->room_no }}</td>
                                 <td>{{ $row->floor }}</td>
                                 <td>{{ $row->type }}</td>
+
                                 <td>
                                     <span class="status">
                                         <span class="status-dot bg-{{ $color }}"></span>
-                                        {{ $statusText }}
+                                        {{ $text }}
                                     </span>
                                 </td>
+
                                 <td>{{ number_format($row->monthly_rent, 2) }}</td>
                                 <td class="text-muted">{{ $row->note }}</td>
 
                                 <td class="text-center">
-                                    {{-- ปุ่ม action แบบ users: icon-action + tooltip title --}}
                                     <a href="/room/{{ $row->id }}" class="icon-action text-secondary me-3"
                                         title="Edit">
                                         <i class="bi bi-gear"></i>
                                     </a>
-
-                                    {{-- ถ้าต้องการปุ่มอื่นให้เหมือน users (เช่น reset) ใส่เพิ่มได้ที่นี่
-                                        <a href="/room/reset/{{ $row->id }}" class="icon-action text-info me-3" title="Reset">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                        </a>
-                                        --}}
-
                                     <button type="button" class="icon-action text-danger"
                                         onclick="deleteConfirm({{ $row->id }})" title="Delete">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
                                     <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
                                         method="POST" style="display:none;">
-                                        @csrf
-                                        @method('delete')
+                                        @csrf @method('delete')
                                     </form>
                                 </td>
                             </tr>
@@ -151,6 +151,7 @@
                     </tbody>
                 </table>
             </div>
+
 
             {{-- ส่วนสรุป/เพจจิเนชันแบบเดียวกับ users --}}
             <div class="d-flex justify-content-between align-items-center mt-3">
