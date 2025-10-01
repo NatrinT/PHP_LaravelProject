@@ -31,6 +31,11 @@ class LeaseController extends Controller
     {
         Paginator::useBootstrap();
         $LeasesList = LeaseModel::with(['user', 'room'])
+            ->withCount([
+                'invoices as unpaid_invoices_count' => function ($q) {
+                    $q->unpaid();
+                }
+            ])
             ->orderBy('id', 'desc')
             ->paginate(10);
 
@@ -268,7 +273,12 @@ class LeaseController extends Controller
             }
 
             // base query + join ความสัมพันธ์ที่จำเป็น
-            $q = LeaseModel::with(['user', 'room']);
+            $q = LeaseModel::with(['user', 'room'])
+                ->withCount([
+                    'invoices as unpaid_invoices_count' => function ($q2) {
+                        $q2->unpaid();
+                    }
+                ]);
 
             // ถ้ามี keyword ค่อยประกอบเงื่อนไข
             if ($keyword !== '') {

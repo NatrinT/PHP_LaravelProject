@@ -89,7 +89,7 @@
                         <th class="text-center">Rent amount</th>
                         <th class="text-center" style="width:100px;">Deposit</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center" style="width:160px;">Actions</th>
+                        <th class="text-center" style="width:200px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,6 +104,10 @@
                             ];
                             $key = strtoupper($row->status ?? '');
                             $color = $statusMap[$key] ?? 'secondary';
+
+                            // มีใบแจ้งหนี้ค้างจ่ายหรือไม่ (มาจาก withCount)
+                            $unpaid = (int) ($row->unpaid_invoices_count ?? 0);
+                            $hasUnpaid = $unpaid > 0;
                         @endphp
 
                         <tr>
@@ -135,20 +139,34 @@
                                     <span class="status-dot bg-{{ $color }}"></span>
                                     {{ ucfirst(strtolower($row->status)) }}
                                 </span>
+                                @if ($hasUnpaid)
+                                    <span class="badge bg-danger ms-2">Unpaid {{ $unpaid }}</span>
+                                @endif
                             </td>
                             <td class="text-center">
                                 <a href="/lease/{{ $row->id }}" class="icon-action text-secondary me-3"
                                     title="Edit">
                                     <i class="bi bi-gear"></i>
                                 </a>
-                                <button type="button" class="icon-action text-danger"
-                                    onclick="deleteConfirm({{ $row->id }})" title="Delete">
-                                    <i class="bi bi-x-circle"></i>
-                                </button>
-                                <form id="delete-form-{{ $row->id }}" action="/lease/remove/{{ $row->id }}"
-                                    method="POST" style="display:none;">
-                                    @csrf @method('delete')
-                                </form>
+
+                                @if ($hasUnpaid)
+                                    {{-- ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ --}}
+                                    <button type="button" class="icon-action text-secondary"
+                                        title="ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ {{ $unpaid }} ใบ" disabled
+                                        style="opacity:.45; cursor:not-allowed;">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                @else
+                                    {{-- ลบได้: ยืนยันก่อนลบ --}}
+                                    <button type="button" class="icon-action text-danger"
+                                        onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    <form id="delete-form-{{ $row->id }}"
+                                        action="/lease/remove/{{ $row->id }}" method="POST" style="display:none;">
+                                        @csrf @method('delete')
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
