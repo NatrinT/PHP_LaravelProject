@@ -78,7 +78,7 @@ Route::delete('/announcement/remove/{id}',  [AnnouncementController::class, 'rem
 Route::get('/announcement/reset/{id}',  [AnnouncementController::class, 'reset']);
 Route::put('/announcement/reset/{id}',  [AnnouncementController::class, 'resetPassword']);
 
-Route::get('/dashboard', [HomeController::class, 'backend'])->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -90,7 +90,7 @@ Route::get('/checkmail', [AuthController::class, 'checkmail'])->name('users.chec
  
 //login เสร็จไปหน้า Dashboard
 Route::middleware('auth:admin')->group(function () {
-    Route::get('/dashboard', [HomeController::class, 'backend'])->name('dashboard');
+    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 });
 
 //admin crud

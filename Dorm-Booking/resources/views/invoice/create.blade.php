@@ -98,15 +98,26 @@
             </div>
         </div>
 
-        {{-- Status --}}
+        {{-- Status (TH labels, keep EN values) --}}
         <div class="form-group row mb-2">
-            <label class="col-sm-2">Status</label>
+            <label class="col-sm-2">สถานะใบแจ้งหนี้</label>
             <div class="col-sm-6">
+                @php
+                    $statusChoices = [
+                        // ถ้าอยากมีฉบับร่าง ให้ปลดคอมเมนต์บรรทัด DRAFT ได้เลย
+                        // 'DRAFT'    => 'ฉบับร่าง',
+                        'ISSUED' => 'ออกบิล',
+                        'PAID' => 'ชำระแล้ว',
+                        'OVERDUE' => 'ค้างชำระ',
+                        'CANCELED' => 'ยกเลิก',
+                    ];
+                @endphp
                 <select name="status" class="form-control" required>
-                    <option value="ISSUED" {{ old('status') === 'ISSUED' ? 'selected' : '' }}>ISSUED</option>
-                    <option value="PAID" {{ old('status') === 'PAID' ? 'selected' : '' }}>PAID</option>
-                    <option value="OVERDUE" {{ old('status') === 'OVERDUE' ? 'selected' : '' }}>OVERDUE</option>
-                    <option value="CANCELED" {{ old('status') === 'CANCELED' ? 'selected' : '' }}>CANCELED</option>
+                    @foreach ($statusChoices as $value => $labelTh)
+                        <option value="{{ $value }}" {{ old('status') === $value ? 'selected' : '' }}>
+                            {{ $labelTh }}
+                        </option>
+                    @endforeach
                 </select>
                 @error('status')
                     <div class="text-danger">{{ $message }}</div>
@@ -114,21 +125,31 @@
             </div>
         </div>
 
-        {{-- Payment Status --}}
+
+        {{-- Payment Status (TH labels, keep EN values) --}}
         <div class="form-group row mb-2">
-            <label class="col-sm-2">Payment Status</label>
+            <label class="col-sm-2">สถานะการชำระเงิน</label>
             <div class="col-sm-6">
+                @php
+                    $paymentChoices = [
+                        'PENDING' => 'รอดำเนินการ',
+                        'CONFIRMED' => 'ยืนยันแล้ว',
+                        'FAILED' => 'ล้มเหลว',
+                    ];
+                @endphp
                 <select name="payment_status" class="form-control" required>
-                    <option value="PENDING" {{ old('payment_status') === 'PENDING' ? 'selected' : '' }}>PENDING</option>
-                    <option value="CONFIRMED" {{ old('payment_status') === 'CONFIRMED' ? 'selected' : '' }}>CONFIRMED
-                    </option>
-                    <option value="FAILED" {{ old('payment_status') === 'FAILED' ? 'selected' : '' }}>FAILED</option>
+                    @foreach ($paymentChoices as $value => $labelTh)
+                        <option value="{{ $value }}" {{ old('payment_status') === $value ? 'selected' : '' }}>
+                            {{ $labelTh }}
+                        </option>
+                    @endforeach
                 </select>
                 @error('payment_status')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
         </div>
+
 
         {{-- Receipt file --}}
         <div class="form-group row mb-2">

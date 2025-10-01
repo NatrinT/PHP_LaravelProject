@@ -88,30 +88,39 @@
                         <th class="text-center">End date</th>
                         <th class="text-center">Rent amount</th>
                         <th class="text-center" style="width:100px;">Deposit</th>
-                        <th class="text-center">Status</th>
+                        <th class="text-center">Status</th> {{-- เปลี่ยนหัวคอลัมน์เป็นไทย --}}
                         <th class="text-center" style="width:200px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($LeasesList as $i => $row)
                         @php
-                            // แม็ปสถานะ → สี Bootstrap
-                            $statusMap = [
+                            // สี dot ตามสถานะ
+                            $statusColorMap = [
                                 'ACTIVE' => 'success', // เขียว
                                 'PENDING' => 'warning', // ส้ม
                                 'ENDED' => 'secondary', // เทา
                                 'CANCELED' => 'danger', // แดง
                             ];
+                            // ป้ายภาษาไทย
+                            $statusLabelMap = [
+                                'ACTIVE' => 'กำลังเช่า',
+                                'PENDING' => 'รอดำเนินการ',
+                                'ENDED' => 'สิ้นสุด',
+                                'CANCELED' => 'ยกเลิก',
+                            ];
                             $key = strtoupper($row->status ?? '');
-                            $color = $statusMap[$key] ?? 'secondary';
+                            $color = $statusColorMap[$key] ?? 'secondary';
+                            $label = $statusLabelMap[$key] ?? ($row->status ?? '-');
 
-                            // มีใบแจ้งหนี้ค้างจ่ายหรือไม่ (มาจาก withCount)
+                            // จำนวนบิลค้างชำระ (มาจาก withCount)
                             $unpaid = (int) ($row->unpaid_invoices_count ?? 0);
                             $hasUnpaid = $unpaid > 0;
                         @endphp
 
                         <tr>
                             <td class="text-muted text-center">{{ $row->id }}</td>
+
                             <td class="text-start">
                                 @if ($row->contract_file_url)
                                     @php $ext = pathinfo($row->contract_file_url, PATHINFO_EXTENSION); @endphp
@@ -128,21 +137,24 @@
                                     @endif
                                 @endif
                             </td>
+
                             <td><b>{{ $row->user->full_name }}</b></td>
                             <td class="text-center">{{ $row->room->room_no }}</td>
                             <td class="text-center">{{ \Carbon\Carbon::parse($row->start_date)->format('d/m/Y') }}</td>
                             <td class="text-center">{{ \Carbon\Carbon::parse($row->end_date)->format('d/m/Y') }}</td>
                             <td class="text-center">{{ number_format($row->rent_amount, 2) }}</td>
                             <td class="text-center">{{ number_format($row->deposit_amount, 2) }}</td>
+
                             <td class="text-start">
                                 <span class="status">
                                     <span class="status-dot bg-{{ $color }}"></span>
-                                    {{ ucfirst(strtolower($row->status)) }}
+                                    {{ $label }} {{-- แสดงสถานะภาษาไทย --}}
                                 </span>
                                 @if ($hasUnpaid)
-                                    <span class="badge bg-danger ms-2">Unpaid {{ $unpaid }}</span>
+                                    <span class="badge bg-danger ms-2">ค้างชำระ {{ $unpaid }} ใบ</span>
                                 @endif
                             </td>
+
                             <td class="text-center">
                                 <a href="/lease/{{ $row->id }}" class="icon-action text-secondary me-3"
                                     title="Edit">
@@ -173,6 +185,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <div class="d-flex justify-content-between align-items-center mt-3">
             <span class="text-muted small">

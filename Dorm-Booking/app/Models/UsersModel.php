@@ -10,7 +10,7 @@ class UsersModel extends Authenticatable
 {
     protected $table = 'users';
     protected $primaryKey = 'id';
-    protected $fillable = ['email', 'pass_hash', 'full_name', 'phone', 'role', 'status', 'created_at', 'updated_at'];
+    protected $fillable = ['email', 'pass_hash', 'full_name', 'phone', 'role', 'status', 'create_at', 'updated_at'];
     public $timestamps = false;
 
     public function getAuthPassword()

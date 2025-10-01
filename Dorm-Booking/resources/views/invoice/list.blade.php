@@ -69,8 +69,8 @@
 
                 {{-- keyword --}}
                 <div class="input-group" style="max-width: 300px;">
-                    <input type="text" name="keyword" class="form-control" placeholder="Search... (18/09/2025 เมื่อเลือก Due Date)"
-                        value="{{ request('keyword') }}">
+                    <input type="text" name="keyword" class="form-control"
+                        placeholder="Search... (18/09/2025 เมื่อเลือก Due Date)" value="{{ request('keyword') }}">
                     <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">
                         <i class="bi bi-search" style="color:#e8f0ff;"></i>
                     </button>
@@ -100,8 +100,8 @@
                         <th style="width:160px;">Billing Period</th>
                         <th style="width:160px;">Due Date</th>
                         <th style="width:160px;">Amount (Total)</th>
-                        <th style="width:140px;">Invoice Status</th>
-                        <th style="width:140px;">Payment Status</th>
+                        <th style="width:140px;">สถานะใบแจ้งหนี้</th> {{-- เดิม: Invoice Status --}}
+                        <th style="width:160px;">สถานะการชำระเงิน</th> {{-- เดิม: Payment Status --}}
                         <th style="width:120px;" class="text-center">Receipt</th>
                         <th style="width:160px;" class="text-center">Actions</th>
                     </tr>
@@ -109,46 +109,67 @@
                 <tbody>
                     @foreach ($InvoiceList as $i => $row)
                         @php
-                            // Invoice Status mapping
-                            $statusMap = [
+                            // ===== Mapping class (คงไว้ตาม CSS เดิม) =====
+                            $statusClassMap = [
                                 'DRAFT' => 'draft',
                                 'ISSUED' => 'issued',
                                 'PAID' => 'paid',
                                 'OVERDUE' => 'overdue',
                                 'CANCELED' => 'canceled',
                             ];
-                            $statusKey = strtoupper($row->status ?? '');
-                            $statusClass = $statusMap[$statusKey] ?? 'draft';
-                            $statusText = ucfirst(strtolower($row->status ?? ''));
-
-                            // Payment Status mapping
-                            $paymentMap = [
+                            $paymentClassMap = [
                                 'PENDING' => 'pending',
                                 'CONFIRMED' => 'confirmed',
                                 'FAILED' => 'failed',
                             ];
+
+                            // ===== ป้ายภาษาไทย =====
+                            $statusLabelTH = [
+                                'DRAFT' => 'ฉบับร่าง',
+                                'ISSUED' => 'ออกบิล',
+                                'PAID' => 'ชำระแล้ว',
+                                'OVERDUE' => 'ค้างชำระ',
+                                'CANCELED' => 'ยกเลิก',
+                            ];
+                            $paymentLabelTH = [
+                                'PENDING' => 'รอดำเนินการ',
+                                'CONFIRMED' => 'ยืนยันแล้ว',
+                                'FAILED' => 'ล้มเหลว',
+                            ];
+
+                            $statusKey = strtoupper($row->status ?? '');
                             $payKey = strtoupper($row->payment_status ?? '');
-                            $payClass = $paymentMap[$payKey] ?? 'pending';
-                            $payText = ucfirst(strtolower($row->payment_status ?? ''));
+
+                            $statusClass = $statusClassMap[$statusKey] ?? 'draft';
+                            $payClass = $paymentClassMap[$payKey] ?? 'pending';
+
+                            $statusTextTH = $statusLabelTH[$statusKey] ?? ($row->status ?? '-');
+                            $payTextTH = $paymentLabelTH[$payKey] ?? ($row->payment_status ?? '-');
                         @endphp
+
                         <tr>
                             <td class="text-muted text-center">{{ $row->id }}</td>
                             <td class="text-center">{{ $row->lease_id }}</td>
                             <td>{{ $row->billing_period }}</td>
                             <td>{{ \Carbon\Carbon::parse($row->due_date)->format('d/m/Y') }}</td>
                             <td>฿{{ number_format($row->total_amount, 2) }}</td>
+
+                            {{-- สถานะใบแจ้งหนี้ (ไทย) --}}
                             <td>
                                 <span class="status status-{{ $statusClass }}">
                                     <span class="status-dot"></span>
-                                    {{ $statusText }}
+                                    {{ $statusTextTH }}
                                 </span>
                             </td>
+
+                            {{-- สถานะการชำระเงิน (ไทย) --}}
                             <td>
                                 <span class="payment payment-{{ $payClass }}">
                                     <span class="status-dot"></span>
-                                    {{ $payText }}
+                                    {{ $payTextTH }}
                                 </span>
                             </td>
+
                             <td class="text-center">
                                 @if ($row->receipt_file_url)
                                     <a href="{{ asset('storage/' . $row->receipt_file_url) }}" target="_blank"
@@ -159,6 +180,7 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
+
                             <td class="text-center">
                                 <a href="/invoice/{{ $row->id }}" class="icon-action text-secondary me-3"
                                     title="Edit">
@@ -170,8 +192,7 @@
                                 </button>
                                 <form id="delete-form-{{ $row->id }}" action="/invoice/remove/{{ $row->id }}"
                                     method="POST" style="display:none;">
-                                    @csrf
-                                    @method('delete')
+                                    @csrf @method('delete')
                                 </form>
                             </td>
                         </tr>
@@ -179,6 +200,7 @@
                 </tbody>
             </table>
         </div>
+
 
         {{-- Summary + Pagination --}}
         <div class="d-flex justify-content-between align-items-center mt-3">

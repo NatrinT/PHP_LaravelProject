@@ -73,9 +73,9 @@
                             {{-- <input type="text" class="form-control" name="phone" required placeholder="phone"
                                 minlength="3" value="{{ old('phone') }}"> --}}
                             <select class="form-control" name="status" required>
-                                <option value="AVAILABLE">Available</option>
-                                <option value="OCCUPIED">Occupied</option>
-                                <option value="MAINTENANCE">Maintenance</option>
+                                <option value="AVAILABLE">ว่าง</option>
+                                <option value="OCCUPIED">มีผู้เช่า</option>
+                                <option value="MAINTENANCE">ปิดปรับปรุง</option>
                             </select>
                             @if (isset($errors))
                                 @if ($errors->has('status'))

@@ -75,15 +75,30 @@
                         <th style="width:200px;">Email</th>
                         <th style="width:140px;">Phone</th>
                         <th style="width:120px;">Role</th>
-                        <th style="width:140px;">Status</th>
+                        <th style="width:140px;">Status</th> {{-- เปลี่ยนหัวข้อคอลัมน์เป็นไทย --}}
                         <th style="width:160px;" class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($UsersList as $i => $row)
                         @php
-                            $statusMap = ['ACTIVE' => 'success', 'SUSPENDED' => 'danger', 'INACTIVE' => 'secondary'];
-                            $color = $statusMap[strtoupper($row->status ?? '')] ?? 'secondary';
+                            // แผนที่สี Badge ตามสถานะ (จาก enum: ACTIVE | SUSPENDED | DELETED)
+                            $statusColorMap = [
+                                'ACTIVE' => 'success',
+                                'SUSPENDED' => 'danger',
+                                'DELETED' => 'secondary',
+                            ];
+
+                            // ป้ายภาษาไทยสำหรับสถานะ
+                            $statusLabelMap = [
+                                'ACTIVE' => 'ใช้งาน',
+                                'SUSPENDED' => 'ระงับชั่วคราว',
+                                'DELETED' => 'ลบแล้ว',
+                            ];
+
+                            $statusKey = strtoupper($row->status ?? '');
+                            $color = $statusColorMap[$statusKey] ?? 'secondary';
+                            $label = $statusLabelMap[$statusKey] ?? ($row->status ?? '-');
                         @endphp
                         <tr>
                             <td class="text-muted text-center">{{ $UsersList->firstItem() + $i }}</td>
@@ -94,7 +109,7 @@
                             <td>
                                 <span class="status">
                                     <span class="status-dot bg-{{ $color }}"></span>
-                                    {{ ucfirst(strtolower($row->status)) }}
+                                    {{ $label }}
                                 </span>
                             </td>
                             <td class="text-end">
@@ -120,6 +135,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <div class="d-flex justify-content-between align-items-center mt-3">
             <span class="text-muted small">

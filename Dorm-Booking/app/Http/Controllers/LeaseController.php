@@ -106,7 +106,7 @@ class LeaseController extends Controller
                 'end_date'         => $request->end_date,
                 'rent_amount'      => $request->rent_amount,
                 'deposit_amount'   => $request->deposit_amount,
-                'status'           => 'ACTIVE',
+                'status'           => 'PENDING',
                 'contract_file_url' => $path,
             ]);
             // อัปเดตสถานะห้องเป็น OCCUPIED

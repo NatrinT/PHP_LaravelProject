@@ -83,9 +83,9 @@
                             {{-- <input type="text" class="form-control" name="role" required placeholder="role"
                                 value="{{ old('role') }}"> --}}
                             <select class="form-control" name="status" required>
-                                <option value="AVAILABLE" {{ $status == 'AVAILABLE' ? 'selected' : '' }}>Available</option>
-                                <option value="OCCUPIED" {{ $status == 'OCCUPIED' ? 'selected' : '' }}>Occupied</option>
-                                <option value="MAINTENANCE" {{ $status == 'MAINTENANCE' ? 'selected' : '' }}>Maintenance
+                                <option value="AVAILABLE" {{ $status == 'AVAILABLE' ? 'selected' : '' }}>ว่าง</option>
+                                <option value="OCCUPIED" {{ $status == 'OCCUPIED' ? 'selected' : '' }}>มีผู้เช่า</option>
+                                <option value="MAINTENANCE" {{ $status == 'MAINTENANCE' ? 'selected' : '' }}>ปิดปรับปรุง
                                 </option>
                             </select>
                             @if (isset($errors))
