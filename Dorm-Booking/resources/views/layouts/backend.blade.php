@@ -107,6 +107,9 @@
 
     {{-- ✅ Page-level JS (สำคัญ: ทำให้ script จากหน้าลูกถูก inject จริง) --}}
     @yield('js_before')
+
+    {{-- >>>>>>> ตรงนี้สำคัญ <<<<<<< --}}
+    @include('sweetalert::alert')
 </body>
 
 </html>

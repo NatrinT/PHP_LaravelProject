@@ -176,7 +176,6 @@
 
     <link href="{{ asset('css/room.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         function deleteConfirm(id) {
             Swal.fire({

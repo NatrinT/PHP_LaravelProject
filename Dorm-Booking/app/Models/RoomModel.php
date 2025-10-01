@@ -11,4 +11,9 @@ class RoomModel extends Model
     protected $fillable = ['room_no', 'floor', 'type', 'status','monthly_rent','note'];
     public $incrementing = true; // ถ้า primary key เป็นตัวเลข auto increment
     public $timestamps = false;
+
+    public function leases()
+    {
+        return $this->hasMany(LeaseModel::class, 'room_id', 'id');
+    }
 }

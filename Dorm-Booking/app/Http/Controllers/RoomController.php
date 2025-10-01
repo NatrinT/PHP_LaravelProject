@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
@@ -177,12 +179,28 @@ class RoomController extends Controller
         try {
             $room = RoomModel::find($id);  //query หาว่ามีไอดีนี้อยู่จริงไหม 
             $room->delete();
+
+            // ถ้ามี lease ผูกอยู่ ไม่ต้องไปให้ DB โยน 1451
+            $hasLease = DB::table('leases')->where('room_id', $id)->exists();
+            if ($hasLease) {
+                Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบห้องนี้ได้ เนื่องจากมีสัญญาเช่าที่อ้างอิงอยู่');
+                return redirect('/room');
+            }
+
             Alert::success('ลบข้อมูลสำเร็จ');
             return redirect('/room');
+        } catch (QueryException $e) {
+            // ห้าม return JSON/404 ที่นี่ ไม่งั้น swal ไม่โชว์
+            if ($e->getCode() === '23000' && isset($e->errorInfo[1]) && (int)$e->errorInfo[1] === 1451) {
+                Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบห้องนี้ได้ เนื่องจากมีสัญญาเช่าที่อ้างอิงอยู่');
+            } else {
+                Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้');
+            }
         } catch (\Exception $e) {
-            //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            // return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
             return view('errors.404');
         }
+        return redirect('/room');
     } //remove 
 
     public function search(Request $request)
