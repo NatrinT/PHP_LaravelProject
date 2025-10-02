@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2025 at 09:15 AM
+-- Generation Time: Oct 02, 2025 at 09:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -72,17 +72,6 @@ CREATE TABLE `invoices` (
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `invoices`
---
-
-INSERT INTO `invoices` (`id`, `lease_id`, `billing_period`, `due_date`, `amount_rent`, `amount_utilities`, `amount_other`, `total_amount`, `status`, `paid_at`, `payment_status`, `receipt_file_url`, `created_at`, `updated_at`) VALUES
-(2, 1, '2025-05', '2026-09-24', 5000.00, 300.00, 200.00, 5500.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/vYGSRkQY5BHhXS9gXx7BoVmg5c1qZo7BJ57Mpf85.jpg', '2025-09-22 18:19:13', '2025-09-22 18:19:13'),
-(3, 1, '2025-05', '2026-09-24', 5000.00, 300.00, 2.00, 5302.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/wZ0BRf9V4n2sCQz13b9IDBsIr77lbvw1iVPrT4zf.jpg', '2025-09-22 18:19:34', '2025-09-22 18:19:34'),
-(4, 2, '2025-05', '2025-05-26', 2500.00, 1000.00, 200.00, 3700.00, 'ISSUED', NULL, 'PENDING', 'uploads/receipts/nWdGbOs3wjWA5j2PzehxYp7XGp6Px6sVH3gOX095.jpg', '2025-09-22 18:22:15', '2025-09-22 18:22:15'),
-(5, 1, '2024-03', '2025-09-18', 5000.00, 1231.00, 1231.00, 7462.00, 'PAID', NULL, 'PENDING', 'uploads/receipts/MTvdlntVVZqQkwbDbGs4D1Yat1ATEN4Jw6YZD2Ah.png', '2025-09-29 17:27:41', '2025-09-29 17:27:41'),
-(6, 4, '2024-03', '2025-09-18', 123123.00, 11.00, 11.00, 123145.00, 'PAID', NULL, 'CONFIRMED', 'uploads/receipts/3NUqhVFNrmxIlrl7OpqdBz9sVYTvUYKbrzG0gMBf.png', '2025-10-01 12:39:13', '2025-10-01 12:39:39');
-
 -- --------------------------------------------------------
 
 --
@@ -109,10 +98,8 @@ CREATE TABLE `leases` (
 --
 
 INSERT INTO `leases` (`id`, `user_id`, `room_id`, `start_date`, `end_date`, `rent_amount`, `deposit_amount`, `status`, `contract_file_url`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 11, 5, '2025-09-22', '2026-10-24', 5000.00, 2000.00, 'ACTIVE', 'uploads/contracts/keV63zDv8rmPtU1usejbinVvwlQPtt52YZ1IbDC1.png', '2025-09-22 17:24:29', '2025-09-28 17:16:41', NULL),
-(2, 9, 7, '2025-09-22', '2026-01-21', 2500.00, 1000.00, 'ENDED', 'uploads/contracts/ywhIlQrvhClEj8n3D8mCWTgWXgN0hiiQRhXBl4no.jpg', '2025-09-22 18:21:18', '2025-09-28 16:31:40', NULL),
-(3, 4, 7, '2025-09-24', '2025-10-11', 506.00, 12312.00, 'ACTIVE', 'uploads/contracts/muKAZqyHh1bia5OlEzhax0dYbKLVqI9sSJ5Gw241.png', '2025-09-28 17:51:58', '2025-09-28 17:52:05', NULL),
-(4, 3, 8, '2025-09-01', '2025-09-28', 123123.00, 123123.00, 'ACTIVE', 'uploads/contracts/wod0i5va019q1WNSimKCJaEpX03HLTzmWfUwHOWG.png', '2025-09-28 17:56:27', '2025-10-01 14:13:46', '2025-10-01 14:13:46');
+(5, 11, 37, '2025-10-01', '2025-10-04', 12333.00, 111.00, 'PENDING', 'uploads/contracts/P6Pnm2DyTVO80afjY25pyP7oMBntaiOdw2LlwqGJ.png', '2025-10-02 21:35:43', '2025-10-02 21:35:51', '2025-10-02 21:35:51'),
+(6, 11, 37, '2025-10-01', '2025-10-04', 12333.00, 111.00, 'PENDING', 'uploads/contracts/fuBiKi9v7wGoKhNEDvHCps5y1AtxulMbiHAVbmwy.png', '2025-10-02 21:36:07', '2025-10-02 22:15:28', '2025-10-02 22:15:28');
 
 --
 -- Triggers `leases`
@@ -149,19 +136,52 @@ CREATE TABLE `rooms` (
   `type` enum('STANDARD','DELUXE','LUXURY') NOT NULL DEFAULT 'STANDARD',
   `status` enum('AVAILABLE','OCCUPIED','MAINTENANCE') NOT NULL DEFAULT 'AVAILABLE',
   `monthly_rent` decimal(10,2) NOT NULL,
-  `note` text DEFAULT NULL
+  `note` text DEFAULT NULL,
+  `branch` varchar(50) DEFAULT NULL,
+  `image` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `rooms`
 --
 
-INSERT INTO `rooms` (`id`, `room_no`, `floor`, `type`, `status`, `monthly_rent`, `note`) VALUES
-(5, '128', 8, 'DELUXE', 'AVAILABLE', 4500.00, 'this room is for black gay that horny, mai wai leawwwwww~~~'),
-(6, '123', 3, 'STANDARD', 'MAINTENANCE', 2378.00, 'Eiei'),
-(7, '002', 4, 'STANDARD', 'OCCUPIED', 2000.00, 'mai me rai mak bok rag pua'),
-(8, '334', 5, 'STANDARD', 'AVAILABLE', 1500.00, 'mai me rai ja bok rok'),
-(10, '555', 4, 'STANDARD', 'AVAILABLE', 2222.00, 'ddSSSSS');
+INSERT INTO `rooms` (`id`, `room_no`, `floor`, `type`, `status`, `monthly_rent`, `note`, `branch`, `image`) VALUES
+(13, 'SK101', 1, 'STANDARD', 'AVAILABLE', 3500.00, 'หอพักย่านศรีนครินทร์ ห้องกว้าง โปร่งสบาย มีที่จอดรถและระบบรักษาความปลอดภัย 24 ชม. เดินทางสะดวกใกล้แหล่งของกินและคอมมูนิตี้มอลล์ จุดขึ้นรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/uauilQYOqn1vAThpmoAaxwVsyUbCF72rgBaKjQ4D.png'),
+(14, 'SK102', 1, 'STANDARD', 'AVAILABLE', 3500.00, 'หอพักย่านศรีนครินทร์ ห้องกว้าง โปร่งสบาย มีที่จอดรถและระบบรักษาความปลอดภัย 24 ชม. เดินทางสะดวกใกล้แหล่งของกินและคอมมูนิตี้มอลล์ จุดขึ้นรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/GlLp0mPBs7ZFd3tr9RH557oB0Qzdw52B8vaCfUcT.png'),
+(15, 'SK103', 1, 'STANDARD', 'AVAILABLE', 3500.00, 'หอพักย่านศรีนครินทร์ ห้องกว้าง โปร่งสบาย มีที่จอดรถและระบบรักษาความปลอดภัย 24 ชม. เดินทางสะดวกใกล้แหล่งของกินและคอมมูนิตี้มอลล์ จุดขึ้นรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/hhlvvChs05omwHnTsv6oe0n2R8tc0dcOWXBHZKIG.png'),
+(16, 'SK104', 1, 'STANDARD', 'AVAILABLE', 3500.00, 'หอพักย่านศรีนครินทร์ ห้องกว้าง โปร่งสบาย มีที่จอดรถและระบบรักษาความปลอดภัย 24 ชม. เดินทางสะดวกใกล้แหล่งของกินและคอมมูนิตี้มอลล์ จุดขึ้นรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/zq1xZE8NgB96MbFeyqzV4OqR7uv5wbtkfnnmFm4J.png'),
+(17, 'SK105', 1, 'STANDARD', 'AVAILABLE', 3500.00, 'หอพักย่านศรีนครินทร์ ห้องกว้าง โปร่งสบาย มีที่จอดรถและระบบรักษาความปลอดภัย 24 ชม. เดินทางสะดวกใกล้แหล่งของกินและคอมมูนิตี้มอลล์ จุดขึ้นรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/DGAXcRDYrAmZXdbFwA0405jQ59qaXuIDVCYJhP6t.png'),
+(18, 'SK201', 2, 'DELUXE', 'AVAILABLE', 5500.00, 'ห้อง DELUXE ฟังก์ชันครบ พร้อมแสงธรรมชาติและบรรยากาศเงียบสงบ ศรีนครินทร์โลเคชันเยี่ยม ใกล้แหล่งไลฟ์สไตล์ เดินทางสะดวกทุกเส้นทาง', 'SRINAKARIN', 'uploads/rooms/HQi1Oj6DFv12BwOE7b1fcwwQx7smCpn9TqEWxtGe.png'),
+(19, 'SK202', 2, 'DELUXE', 'AVAILABLE', 5500.00, 'ห้อง DELUXE ฟังก์ชันครบ พร้อมแสงธรรมชาติและบรรยากาศเงียบสงบ ศรีนครินทร์โลเคชันเยี่ยม ใกล้แหล่งไลฟ์สไตล์ เดินทางสะดวกทุกเส้นทาง', 'SRINAKARIN', 'uploads/rooms/Sqvlzn5mYs0yU5dDsp55zbsYJ0GMsjAWd9gZUnh1.png'),
+(20, 'SK203', 2, 'DELUXE', 'AVAILABLE', 5500.00, 'ห้อง DELUXE ฟังก์ชันครบ พร้อมแสงธรรมชาติและบรรยากาศเงียบสงบ ศรีนครินทร์โลเคชันเยี่ยม ใกล้แหล่งไลฟ์สไตล์ เดินทางสะดวกทุกเส้นทาง', 'SRINAKARIN', 'uploads/rooms/1zThXOKWObMzgjZGHVqJAtc6lgsXAnhProrOrlmF.png'),
+(21, 'SK204', 2, 'DELUXE', 'AVAILABLE', 5500.00, 'ห้อง DELUXE ฟังก์ชันครบ พร้อมแสงธรรมชาติและบรรยากาศเงียบสงบ ศรีนครินทร์โลเคชันเยี่ยม ใกล้แหล่งไลฟ์สไตล์ เดินทางสะดวกทุกเส้นทาง', 'SRINAKARIN', 'uploads/rooms/vjBfHhZe47BNHiWbyXvzQN2xVY8Myshu5QA6u1t4.png'),
+(22, 'SK301', 3, 'STANDARD', 'AVAILABLE', 7900.00, 'สไตล์โรงแรมระดับพรีเมียม สิ่งอำนวยความสะดวกครบ เข้าออกปลอดภัย ที่ตั้งศรีนครินทร์ เดินทางสะดวก ใกล้ห้าง ร้านอาหาร และรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/am57i3xKE8kbbWLAM9UBHdoZZ3wkJ0QY1BZudaTz.png'),
+(23, 'SK302', 3, 'STANDARD', 'AVAILABLE', 7900.00, 'สไตล์โรงแรมระดับพรีเมียม สิ่งอำนวยความสะดวกครบ เข้าออกปลอดภัย ที่ตั้งศรีนครินทร์ เดินทางสะดวก ใกล้ห้าง ร้านอาหาร และรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/zSzFqHDyJKgQwc9OIJ5Crv6Fg6H5n6eUzFhmLJkM.png'),
+(24, 'SK303', 3, 'STANDARD', 'AVAILABLE', 7900.00, 'สไตล์โรงแรมระดับพรีเมียม สิ่งอำนวยความสะดวกครบ เข้าออกปลอดภัย ที่ตั้งศรีนครินทร์ เดินทางสะดวก ใกล้ห้าง ร้านอาหาร และรถสาธารณะ', 'SRINAKARIN', 'uploads/rooms/vWgRScDCmBWL5SL9vZGqTC8DdFCRWrKqs0brY6Zw.png'),
+(25, 'RM101', 1, 'STANDARD', 'AVAILABLE', 5300.00, 'ที่พักสบาย ราคาคุ้ม ห้องสะอาด พร้อมอินเทอร์เน็ต/จุดซักผ้า (ขึ้นกับอาคาร) โซนพระราม 9 ใกล้ห้าง สำนักงาน และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/QUINjwf1qI677Vid2uMKWFcK6AnAmCMmJmgD6ZiY.png'),
+(26, 'RM102', 1, 'STANDARD', 'AVAILABLE', 5300.00, 'ที่พักสบาย ราคาคุ้ม ห้องสะอาด พร้อมอินเทอร์เน็ต/จุดซักผ้า (ขึ้นกับอาคาร) โซนพระราม 9 ใกล้ห้าง สำนักงาน และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/V9ZeEz9s4VZc6W1MRmY4WtqWLQcABdBZA6VyuFCz.png'),
+(27, 'RM103', 1, 'STANDARD', 'AVAILABLE', 5300.00, 'ที่พักสบาย ราคาคุ้ม ห้องสะอาด พร้อมอินเทอร์เน็ต/จุดซักผ้า (ขึ้นกับอาคาร) โซนพระราม 9 ใกล้ห้าง สำนักงาน และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/5sHRdGLAM2GPzXYHdZNRg3lUW4yBjvECuVEWD9dq.png'),
+(28, 'RM104', 1, 'STANDARD', 'AVAILABLE', 5300.00, 'ที่พักสบาย ราคาคุ้ม ห้องสะอาด พร้อมอินเทอร์เน็ต/จุดซักผ้า (ขึ้นกับอาคาร) โซนพระราม 9 ใกล้ห้าง สำนักงาน และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/jH1PAKEEZoBa2qRL6pV0h9u6VusJHmRqZvPHRp2M.png'),
+(29, 'RM105', 1, 'STANDARD', 'AVAILABLE', 5300.00, 'ที่พักสบาย ราคาคุ้ม ห้องสะอาด พร้อมอินเทอร์เน็ต/จุดซักผ้า (ขึ้นกับอาคาร) โซนพระราม 9 ใกล้ห้าง สำนักงาน และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/wNVwAu8GyULMD0ykdOyxLQPWk9KqdYigylPUYW1J.png'),
+(30, 'RM201', 2, 'DELUXE', 'AVAILABLE', 8700.00, 'ห้องดีลักซ์สไตล์โมเดิร์น ฟังก์ชันครบ เตียงใหญ่ พื้นที่เก็บของเยอะ พระราม 9 เดินทางสะดวก ใกล้คอมมูนิตี้มอลล์และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/jGnohPuK7ryvuNdV9SLRZWKnm3REGSRzP3DPdhL6.png'),
+(31, 'RM202', 2, 'DELUXE', 'AVAILABLE', 8700.00, 'ห้องดีลักซ์สไตล์โมเดิร์น ฟังก์ชันครบ เตียงใหญ่ พื้นที่เก็บของเยอะ พระราม 9 เดินทางสะดวก ใกล้คอมมูนิตี้มอลล์และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/s0GMBkRoOT1ErzUnOlemvk39S2HEan7zX1AqrBqX.png'),
+(32, 'RM203', 2, 'DELUXE', 'AVAILABLE', 8700.00, 'ห้องดีลักซ์สไตล์โมเดิร์น ฟังก์ชันครบ เตียงใหญ่ พื้นที่เก็บของเยอะ พระราม 9 เดินทางสะดวก ใกล้คอมมูนิตี้มอลล์และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/5OJ93HsYPpPQ2XLsPZwJqH5nz7i080Dkgv9pDwgr.png'),
+(33, 'RM204', 2, 'DELUXE', 'AVAILABLE', 8700.00, 'ห้องดีลักซ์สไตล์โมเดิร์น ฟังก์ชันครบ เตียงใหญ่ พื้นที่เก็บของเยอะ พระราม 9 เดินทางสะดวก ใกล้คอมมูนิตี้มอลล์และจุดขึ้นรถสาธารณะ', 'RAMA9', 'uploads/rooms/m9fLRk1BE0OfKjZDEbkekLph5ludYbHwSjMD5Z9W.png'),
+(34, 'RM301', 3, 'STANDARD', 'AVAILABLE', 11500.00, 'ห้องหรูทันสมัย แสงธรรมชาติดี ระเบียง/พื้นที่เก็บของ ครบฟังก์ชันใกล้ MRT พระราม 9–ศูนย์การค้า เดินทางสะดวกทุกเส้นทาง', 'RAMA9', 'uploads/rooms/dohEuMbczhhv3giY9YDo2vcb5eGwKa7Qwz5jm0Lj.png'),
+(35, 'RM302', 3, 'STANDARD', 'AVAILABLE', 11500.00, 'ห้องหรูทันสมัย แสงธรรมชาติดี ระเบียง/พื้นที่เก็บของ ครบฟังก์ชันใกล้ MRT พระราม 9–ศูนย์การค้า เดินทางสะดวกทุกเส้นทาง', 'RAMA9', 'uploads/rooms/OhKFS2D4YVnZj1eBB8uPjKmNsVVtm9u8BVla5XgD.png'),
+(36, 'RM303', 3, 'STANDARD', 'AVAILABLE', 11500.00, 'ห้องหรูทันสมัย แสงธรรมชาติดี ระเบียง/พื้นที่เก็บของ ครบฟังก์ชันใกล้ MRT พระราม 9–ศูนย์การค้า เดินทางสะดวกทุกเส้นทาง', 'RAMA9', 'uploads/rooms/ZET19WA043272HcPMPucj5pawYFHGqLVgecXnlzt.png'),
+(37, 'AS101', 1, 'STANDARD', 'AVAILABLE', 6700.00, 'ห้องสแตนดาร์ดกะทัดรัด อยู่สบาย เฟอร์นิเจอร์พื้นฐานครบทำเลอโศก เดินทางสะดวก ใกล้ BTS/MRT ร้านอาหารและออฟฟิศ', 'ASOKE', 'uploads/rooms/oejvJYyvl2ISkk5SVp369JhJgSz4lio19l2QWIlO.png'),
+(38, 'AS102', 1, 'STANDARD', 'AVAILABLE', 6700.00, 'ห้องสแตนดาร์ดกะทัดรัด อยู่สบาย เฟอร์นิเจอร์พื้นฐานครบทำเลอโศก เดินทางสะดวก ใกล้ BTS/MRT ร้านอาหารและออฟฟิศ', 'ASOKE', 'uploads/rooms/vyBYufsYeA5PBZbLD41QZ9SIgS1toaeC4uB8QqL3.png'),
+(39, 'AS103', 1, 'STANDARD', 'AVAILABLE', 6700.00, 'ห้องสแตนดาร์ดกะทัดรัด อยู่สบาย เฟอร์นิเจอร์พื้นฐานครบทำเลอโศก เดินทางสะดวก ใกล้ BTS/MRT ร้านอาหารและออฟฟิศ', 'ASOKE', 'uploads/rooms/yQWgU8r7Wx1iBe8aRTrRgcQml2RZVnhwKz0TXvl4.png'),
+(40, 'AS104', 1, 'STANDARD', 'AVAILABLE', 6700.00, 'ห้องสแตนดาร์ดกะทัดรัด อยู่สบาย เฟอร์นิเจอร์พื้นฐานครบทำเลอโศก เดินทางสะดวก ใกล้ BTS/MRT ร้านอาหารและออฟฟิศ', 'ASOKE', 'uploads/rooms/4kUl0tpiFaImwCY4uDuca8V6Q2uJDD4w4X1J1RXg.png'),
+(41, 'AS105', 1, 'STANDARD', 'AVAILABLE', 6700.00, 'ห้องสแตนดาร์ดกะทัดรัด อยู่สบาย เฟอร์นิเจอร์พื้นฐานครบทำเลอโศก เดินทางสะดวก ใกล้ BTS/MRT ร้านอาหารและออฟฟิศ', 'ASOKE', 'uploads/rooms/s6ji8dppi4GvzCJRHE7g3d5vhwtKRTRQWXVEN0v7.png'),
+(42, 'AS201', 2, 'DELUXE', 'AVAILABLE', 9900.00, 'ดีลักซ์โทนอบอุ่น อยู่สบายทั้งวัน เฟอร์นิเจอร์พร้อมทำเลอโศก เดินไม่ไกลถึง BTS อโศก และ MRT สุขุมวิท', 'ASOKE', 'uploads/rooms/qhplu9VJax9ubraGuQiKE9xAf8qX78SgaLSnpQr5.png'),
+(43, 'AS202', 2, 'DELUXE', 'AVAILABLE', 9900.00, 'ดีลักซ์โทนอบอุ่น อยู่สบายทั้งวัน เฟอร์นิเจอร์พร้อมทำเลอโศก เดินไม่ไกลถึง BTS อโศก และ MRT สุขุมวิท', 'ASOKE', 'uploads/rooms/OvfDkaqEyElh7USHny7URq4EQm6n9jhV1yMedzNc.png'),
+(44, 'AS203', 2, 'DELUXE', 'AVAILABLE', 9900.00, 'ดีลักซ์โทนอบอุ่น อยู่สบายทั้งวัน เฟอร์นิเจอร์พร้อมทำเลอโศก เดินไม่ไกลถึง BTS อโศก และ MRT สุขุมวิท', 'ASOKE', 'uploads/rooms/UTNxZAAp7cD0y9hQ3jPO9TcfQhIVlK1dNAywkXo6.png'),
+(45, 'AS204', 2, 'DELUXE', 'AVAILABLE', 9900.00, 'ดีลักซ์โทนอบอุ่น อยู่สบายทั้งวัน เฟอร์นิเจอร์พร้อมทำเลอโศก เดินไม่ไกลถึง BTS อโศก และ MRT สุขุมวิท', 'ASOKE', 'uploads/rooms/MBJByYPTrgmPNqZlnPTCxSdlrUcsftLQxft5Sg4c.png'),
+(46, 'AS301', 3, 'STANDARD', 'AVAILABLE', 15900.00, 'ความสบายระดับโรงแรม สิ่งอำนวยความสะดวกครบ คีย์การ์ด/กล้อง 24 ชม.รายล้อมคาเฟ่–ร้านอาหาร เดินทางง่ายทุกเส้นทาง', 'ASOKE', 'uploads/rooms/ZHFchmFM08x6HtUfJV0aG3oTDgMZlpzmCl0twTn9.png'),
+(47, 'AS302', 3, 'STANDARD', 'AVAILABLE', 15900.00, 'ความสบายระดับโรงแรม สิ่งอำนวยความสะดวกครบ คีย์การ์ด/กล้อง 24 ชม.รายล้อมคาเฟ่–ร้านอาหาร เดินทางง่ายทุกเส้นทาง', 'ASOKE', 'uploads/rooms/eDskGWDOa3c7QGxyRyKg2akeewojbzQ83Bjlguto.png'),
+(48, 'AS303', 3, 'STANDARD', 'AVAILABLE', 15900.00, 'ความสบายระดับโรงแรม สิ่งอำนวยความสะดวกครบ คีย์การ์ด/กล้อง 24 ชม.รายล้อมคาเฟ่–ร้านอาหาร เดินทางง่ายทุกเส้นทาง', 'ASOKE', 'uploads/rooms/Y0atkEox0BtNaXdoToNOq3ybmr1newglcBI8Hm8N.png');
 
 -- --------------------------------------------------------
 
@@ -252,19 +272,19 @@ ALTER TABLE `announcement`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `leases`
 --
 ALTER TABLE `leases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `users`

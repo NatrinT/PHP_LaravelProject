@@ -9,6 +9,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage; // ✅ เพิ่มสำหรับจัดการไฟล์
 
 class RoomController extends Controller
 {
@@ -40,10 +41,6 @@ class RoomController extends Controller
 
     public function create(Request $request)
     {
-        // echo '<pre>';
-        // dd($_POST);
-        // exit();
-
         //vali msg 
         $messages = [
             'room_no.required' => 'กรุณากรอกข้อมูล',
@@ -60,19 +57,25 @@ class RoomController extends Controller
             'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
 
             'branch.required' => 'กรุณากรอกข้อมูล',
-        ];
 
+            // ✅ บังคับอัปโหลดรูปภาพ
+            'image.required' => 'กรุณาอัปโหลดรูปห้อง',
+            'image.mimes'    => 'รองรับเฉพาะไฟล์ jpg, jpeg, png, webp',
+            'image.max'      => 'ไฟล์ต้องไม่เกิน 5MB',
+        ];
 
         //rule 
         $validator = Validator::make($request->all(), [
-            'room_no' => 'required|unique:rooms',
-            'floor' => 'required|integer|min:1',
-            'type' => 'required',
-            'status' => 'required',
-            'branch' => 'required',
+            'room_no'      => 'required|unique:rooms',
+            'floor'        => 'required|integer|min:1',
+            'type'         => 'required',
+            'status'       => 'required',
+            'branch'       => 'required',
             'monthly_rent' => 'required|numeric|min:500',
-        ], $messages);
 
+            // ✅ บังคับว่าต้องมีไฟล์รูป
+            'image'        => 'required|file|mimes:jpg,jpeg,png,webp|max:5120',
+        ], $messages);
 
         //check vali 
         if ($validator->fails()) {
@@ -82,18 +85,24 @@ class RoomController extends Controller
         }
 
         try {
+            // เก็บไฟล์ลง storage/app/public/uploads/rooms
+            $path = null;
+            if ($request->hasFile('image')) { // จะเป็น true เพราะ validate required แล้ว
+                $path = $request->file('image')->store('uploads/rooms', 'public');
+            }
 
             //ปลอดภัย: กัน XSS ที่มาจาก <script>, <img onerror=...> ได้
             RoomModel::create([
-                'room_no' => strip_tags($request->input('room_no')),
-                'floor' => strip_tags($request->input('floor')),
-                'type' => strip_tags($request->input('type')),
-                'status' => strip_tags($request->input('status')),
-                'monthly_rent' => strip_tags($request->input('monthly_rent')),
-                'note' => strip_tags(strtoupper($request->input('note'))),
-                'branch' => strip_tags($request->input('branch')),
+                'room_no'       => strip_tags($request->input('room_no')),
+                'floor'         => strip_tags($request->input('floor')),
+                'type'          => strip_tags($request->input('type')),
+                'status'        => strip_tags($request->input('status')),
+                'monthly_rent'  => strip_tags($request->input('monthly_rent')),
+                'note'          => strip_tags(strtoupper($request->input('note'))),
+                'branch'        => strip_tags($request->input('branch')),
+                'image'         => $path, // ✅ เก็บพาธรูป (จำเป็นต้องมีแล้ว)
             ]);
-            // แสดง Alert ก่อน return
+
             Alert::success('เพิ่มข้อมูลสำเร็จ');
             return redirect('/room');
         } catch (\Exception $e) {
@@ -101,7 +110,6 @@ class RoomController extends Controller
             //return view('errors.404');
         }
     } //fun create
-
 
 
     public function edit($id)
@@ -118,7 +126,8 @@ class RoomController extends Controller
                 $monthly_rent = $room->monthly_rent;
                 $note = $room->note;
                 $branch = $room->branch;
-                return view('rooms.edit', compact('id', 'room_no', 'floor', 'type', 'status', 'monthly_rent', 'note','branch'));
+                $image = $room->image; // ✅ ส่งพาธรูปไปด้วย (ถ้าจะ preview ในฟอร์ม)
+                return view('rooms.edit', compact('id', 'room_no', 'floor', 'type', 'status', 'monthly_rent', 'note', 'branch', 'image'));
             }
         } catch (\Exception $e) {
             //return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
@@ -144,6 +153,10 @@ class RoomController extends Controller
 
             'monthly_rent.required' => 'กรุณากรอกข้อมูล',
             'monthly_rent.min' => 'ค่าเช่าต้องไม่ต่ำกว่า 500 บาท',
+
+            // ✅ validate รูปภาพ (อัปเดต)
+            'image.mimes' => 'รองรับเฉพาะไฟล์ jpg, jpeg, png, webp',
+            'image.max'   => 'ไฟล์ต้องไม่เกิน 5MB',
         ];
 
         $validator = Validator::make($request->all(), [
@@ -153,6 +166,7 @@ class RoomController extends Controller
             'status' => 'required',
             'branch' => 'required',
             'monthly_rent' => 'required|numeric|min:500',
+            'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120', // ✅
         ], $messages);
 
         //check 
@@ -164,6 +178,20 @@ class RoomController extends Controller
 
         try {
             $room = RoomModel::find($id);
+            if (!$room) {
+                Alert::error('ไม่พบห้องนี้');
+                return redirect('/room');
+            }
+
+            // ✅ จัดการไฟล์ภาพ: ถ้าอัปโหลดใหม่ ให้ลบไฟล์เก่า (ถ้ามี) แล้วค่อยอัปเดตพาธใหม่
+            $path = $room->image;
+            if ($request->hasFile('image')) {
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+                $path = $request->file('image')->store('uploads/rooms', 'public');
+            }
+
             $room->update([
                 'floor' => strip_tags($request->input('floor')),
                 'type' => strip_tags($request->input('type')),
@@ -171,6 +199,7 @@ class RoomController extends Controller
                 'monthly_rent' => strip_tags($request->input('monthly_rent')),
                 'note' => strip_tags($request->input('note')),
                 'branch' => strip_tags(strtoupper($request->input('branch'))),
+                'image' => $path, // ✅ อัปเดตพาธรูป (คงของเดิมถ้าไม่อัปใหม่)
             ]);
             // แสดง Alert ก่อน return
             Alert::success('ปรับปรุงข้อมูลสำเร็จ');
@@ -185,31 +214,45 @@ class RoomController extends Controller
     public function remove($id)
     {
         try {
-            $room = RoomModel::find($id);  //query หาว่ามีไอดีนี้อยู่จริงไหม 
-            $room->delete();
+            $room = RoomModel::find($id);
+            if (!$room) {
+                Alert::error('ไม่พบห้องนี้');
+                return redirect('/room');
+            }
 
-            // ถ้ามี lease ผูกอยู่ ไม่ต้องไปให้ DB โยน 1451
-            $hasLease = DB::table('leases')->where('room_id', $id)->exists();
+            // ✅ เช็คก่อนว่ามีสัญญาเช่าอ้างอิงอยู่หรือไม่
+            $hasLease = DB::table('leases')
+                ->where('room_id', $id)
+                ->exists();
+
             if ($hasLease) {
                 Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบห้องนี้ได้ เนื่องจากมีสัญญาเช่าที่อ้างอิงอยู่');
                 return redirect('/room');
             }
 
+            // ✅ ลบไฟล์รูป (ถ้ามีใน storage)
+            if (!empty($room->image) && Storage::disk('public')->exists($room->image)) {
+                Storage::disk('public')->delete($room->image);
+            }
+
+            // ✅ ปลอดภัยแล้ว ค่อยลบ record
+            $room->delete();
+
             Alert::success('ลบข้อมูลสำเร็จ');
             return redirect('/room');
         } catch (QueryException $e) {
-            // ห้าม return JSON/404 ที่นี่ ไม่งั้น swal ไม่โชว์
+            // สำรองกรณีมีข้อจำกัด FK อื่น ๆ
             if ($e->getCode() === '23000' && isset($e->errorInfo[1]) && (int)$e->errorInfo[1] === 1451) {
                 Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบห้องนี้ได้ เนื่องจากมีสัญญาเช่าที่อ้างอิงอยู่');
             } else {
                 Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้');
             }
+            return redirect('/room');
         } catch (\Exception $e) {
-            // return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
             return view('errors.404');
         }
-        return redirect('/room');
-    } //remove 
+    }
+    //remove 
 
     public function search(Request $request)
     {
@@ -220,7 +263,7 @@ class RoomController extends Controller
             $by      = $request->input('by', 'all');
 
             // กันค่า by ที่ไม่อนุญาต
-            $allowed = ['all', 'room_no', 'floor', 'type', 'status', 'rent','branch', 'id'];
+            $allowed = ['all', 'room_no', 'floor', 'type', 'status', 'rent', 'branch', 'id'];
             if (!in_array($by, $allowed, true)) {
                 $by = 'all';
             }
@@ -269,7 +312,7 @@ class RoomController extends Controller
                             $rooms->whereRaw('1=0');
                         }
                         break;
-                    
+
                     case 'branch':
                         $rooms->where('branch', 'LIKE', '%' . strtoupper($keyword) . '%');
                         break;
@@ -293,10 +336,10 @@ class RoomController extends Controller
             }
 
             $RoomList = $rooms->orderBy('id', 'desc')
-                ->paginate(10)
+                ->paginate(5)
                 ->appends($request->query());
 
-            return view('room.list', compact('RoomList'));
+            return view('rooms.list', compact('RoomList'));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

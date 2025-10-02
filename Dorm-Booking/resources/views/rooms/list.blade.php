@@ -89,11 +89,12 @@
                             <th style="width:70px;" class="text-center">#</th>
                             <th style="width:100px;">Room No.</th>
                             <th style="width:100px;">Floor</th>
-                            <th style="width:160px;">Type</th>
-                            <th style="width:160px;">Status</th> {{-- เปลี่ยนหัวคอลัมน์เป็นไทย --}}
+                            <th style="width:120px;">Type</th>
+                            <th style="width:100px;">Status</th> {{-- เปลี่ยนหัวคอลัมน์เป็นไทย --}}
                             <th style="width:160px;">Monthly Rent</th>
                             <th class="text-center td-note">Note</th>
                             <th class="text-center">Branch</th>
+                            <th class="text-center">Image</th>
                             <th style="width:160px;" class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -137,6 +138,18 @@
                                 <td>{{ number_format($row->monthly_rent, 2) }}</td>
                                 <td class="td-note">{{ $row->note }}</td>
                                 <td class="text-muted">{{ $row->branch }}</td>
+
+                                {{-- ✅ Photo column (เหมือนแนว receipt ของ invoice) --}}
+                                <td class="text-center">
+                                    @if (!empty($row->image))
+                                        <a href="{{ asset('storage/' . $row->image) }}" target="_blank"
+                                            class="icon-action text-info me-2" title="View Photo">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
 
                                 <td class="text-center">
                                     <a href="/room/{{ $row->id }}" class="icon-action text-secondary me-3"

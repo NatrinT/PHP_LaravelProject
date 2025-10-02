@@ -33,7 +33,7 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link active text-white animate-text" aria-current="page"
-                                href="/">หอพัก</a>
+                                href="/showRoom">หอพัก</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active text-white animate-text" aria-current="page"

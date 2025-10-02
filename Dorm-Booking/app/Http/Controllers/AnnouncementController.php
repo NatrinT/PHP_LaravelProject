@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AnnouncementController extends Controller
 {
@@ -126,7 +127,7 @@ class AnnouncementController extends Controller
 
         //rule 
         $validator = Validator::make($request->all(), [
-            'title' => 'required|unique:announcement',
+            'title' => Rule::unique('announcement','title')->ignore($id),
             'body' => 'required|min:1',
             'link' => 'required|min:1',
             'image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',

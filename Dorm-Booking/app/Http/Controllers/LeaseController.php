@@ -109,8 +109,8 @@ class LeaseController extends Controller
                 'status'           => 'PENDING',
                 'contract_file_url' => $path,
             ]);
-            // อัปเดตสถานะห้องเป็น OCCUPIED
-            $room->update(['status' => 'OCCUPIED']);
+            // อัปเดตสถานะห้องเป็น AVAILABLE
+            $room->update(['status' => 'AVAILABLE']);
 
             Alert::success('เพิ่มสัญญาเช่าสำเร็จ');
             return redirect('/lease');

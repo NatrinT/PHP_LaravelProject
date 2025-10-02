@@ -14,6 +14,11 @@ use App\Http\Controllers\UsersController;
 //home page
 Route::get('/', [HomeController::class, 'index']);
 
+// searchRoom
+Route::get('/showRoom', [HomeController::class, 'showRoom']);
+Route::get('/searchRoom', [HomeController::class, 'searchRoom'])->name('searchRoom');
+
+
 //login
 
 

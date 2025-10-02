@@ -9,6 +9,7 @@ use App\Models\UsersModel;
 use App\Models\LeaseModel;
 use App\Models\RoomModel;
 use App\Models\InvoiceModel;
+use Illuminate\Pagination\Paginator;
 
 class HomeController extends Controller
 {
@@ -161,5 +162,114 @@ class HomeController extends Controller
             'other12'  => $m12['seriesOther'],
             'total12'  => $m12['seriesTotal'],
         ]);
+    }
+
+    public function showRoom(Request $request)
+    {
+        Paginator::useBootstrap();
+
+        $rooms = RoomModel::where('status', 'AVAILABLE')
+            ->orderBy('id', 'desc')
+            ->paginate(12);
+
+        // dropdown data (ดึงจาก DB + การันตีว่ามีทั้ง 3 type)
+        $typesDb  = RoomModel::select('type')->distinct()->orderBy('type')->pluck('type')->toArray();
+        $types    = array_values(array_unique(array_merge(['STANDARD', 'DELUXE', 'LUXURY'], $typesDb)));
+
+        // สาขาใน DB ใช้ EN: SRINAKARIN / RAMA9 / ASOKE
+        $branches = RoomModel::select('branch')->distinct()->orderBy('branch')->pluck('branch')->toArray();
+
+        return view('searchRoom.homepage', [
+            'rooms'    => $rooms,
+            'types'    => $types,
+            'branches' => $branches,
+        ]);
+    }
+
+    public function searchRoom(Request $request)
+    {
+        Paginator::useBootstrap();
+
+        // ===== รับค่าและ normalize ให้ตรงกับ DB =====
+        $branch   = trim((string) $request->query('branch', ''));  // คาดว่าจะเป็น SRINAKARIN/RAMA9/ASOKE หรือว่าง
+        $type     = trim((string) $request->query('type', ''));    // STANDARD/DELUXE/LUXURY หรือว่าง
+        $roomNo   = trim((string) $request->query('roomNo', ''));
+        $start    = trim((string) $request->query('start_date', ''));
+        $end      = trim((string) $request->query('end_date', ''));
+
+        // ถ้าเลือกวันเดียว ให้ใช้วันเดียวกันทั้ง start/end
+        if ($start && !$end) {
+            $end = $start;
+        }
+
+        // map ภาษาไทย -> โค้ดอังกฤษ (กันพลาดแม้ว่าหน้าบ้านจะส่ง EN อยู่แล้ว)
+        $branchMap = [
+            'ศรีนครินทร์' => 'SRINAKARIN',
+            'SRINAKARIN'   => 'SRINAKARIN',
+            'พระราม 9'     => 'RAMA9',
+            'RAMA 9'       => 'RAMA9',
+            'RAMA9'        => 'RAMA9',
+            'อโศก'         => 'ASOKE',
+            'ASOKE'        => 'ASOKE',
+            ''             => '',
+        ];
+        $branch = $branchMap[$branch] ?? strtoupper($branch);
+
+        $allowedTypes = ['STANDARD', 'DELUXE', 'LUXURY'];
+        $type = strtoupper($type);
+        if (!in_array($type, $allowedTypes, true)) {
+            $type = ''; // ถ้าค่ามั่ว ๆ มา ให้ถือว่าไม่กรอง
+        }
+
+        $q = RoomModel::query();
+
+        // กรองสาขา (เป๊ะกับค่าใน DB)
+        if ($branch !== '') {
+            $q->where('branch', $branch);
+        }
+
+        // กรองรูปแบบห้อง (ENUM ใน DB เป็นตัวพิมพ์ใหญ่)
+        if ($type !== '') {
+            $q->where('type', $type);
+        }
+
+        // ชื่อ/เลขห้อง
+        if ($roomNo !== '') {
+            $q->where('room_no', 'LIKE', "%{$roomNo}%");
+        }
+
+        // ===== กรอง “ความว่างตามช่วงเวลา” จากตาราง leases =====
+        // เงื่อนไข: ต้อง "ไม่มี" lease (ACTIVE/PENDING) ที่ช่วงวันที่ซ้อนกับช่วงที่ค้นหา
+        if ($start && $end) {
+            $q->whereNotExists(function ($sub) use ($start, $end) {
+                $sub->select(DB::raw(1))
+                    ->from('leases')
+                    ->whereColumn('leases.room_id', 'rooms.id')
+                    ->whereNull('leases.deleted_at')                 // ไม่สน lease ที่ถูกลบแล้ว
+                    ->whereIn('leases.status', ['ACTIVE', 'PENDING']) // ปรับตามธุรกิจคุณ
+                    ->where(function ($w) use ($start, $end) {
+                        $w->whereBetween('leases.start_date', [$start, $end])
+                            ->orWhereBetween('leases.end_date', [$start, $end])
+                            ->orWhere(function ($z) use ($start, $end) {
+                                $z->where('leases.start_date', '<=', $start)
+                                    ->where('leases.end_date', '>=', $end);
+                            });
+                    });
+            });
+        } else {
+            // ถ้าไม่เลือกวันที่ ให้แสดงเฉพาะห้องว่างตามสถานะ
+            $q->where('status', 'AVAILABLE');
+        }
+
+        $rooms = $q->orderBy('id', 'desc')
+            ->paginate(12)
+            ->appends($request->query());
+
+        // dropdown data (สำหรับแสดงผลเดิม)
+        $typesDb  = RoomModel::select('type')->distinct()->orderBy('type')->pluck('type')->toArray();
+        $types    = array_values(array_unique(array_merge(['STANDARD', 'DELUXE', 'LUXURY'], $typesDb)));
+        $branches = RoomModel::select('branch')->distinct()->orderBy('branch')->pluck('branch')->toArray();
+
+        return view('searchRoom.homepage', compact('rooms', 'types', 'branches'));
     }
 }

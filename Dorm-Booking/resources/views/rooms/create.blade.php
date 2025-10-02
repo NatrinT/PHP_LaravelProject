@@ -11,17 +11,15 @@
 
 @section('content')
 
-
     <div class="container mt-4">
         <div class="row">
             <div class="col-sm-9">
 
                 <h3> :: form Add Room :: </h3>
 
-
-                <form action="/room/" method="post">
+                {{-- ✅ ต้องใส่ enctype เพื่อรองรับการอัปโหลดรูป --}}
+                <form action="/room/" method="post" enctype="multipart/form-data">
                     @csrf
-
 
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> Room No. </label>
@@ -40,7 +38,7 @@
                         <label class="col-sm-2"> Floor </label>
                         <div class="col-sm-6">
                             <input type="number" class="form-control" name="floor" required placeholder="Floor"
-                                min="1">
+                                min="1" value="{{ old('floor') }}">
                             @if (isset($errors))
                                 @if ($errors->has('floor'))
                                     <div class="text-danger"> {{ $errors->first('floor') }}</div>
@@ -52,12 +50,10 @@
                     <div class="form-group row mb-2">
                         <label class="col-sm-2">Type </label>
                         <div class="col-sm-6">
-                            {{-- <input type="text" class="form-control" name="full_name" required placeholder="full_name"
-                                minlength="3" value="{{ old('full_name') }}"> --}}
                             <select class="form-control" name="type" required>
-                                <option value="STANDARD">Standard</option>
-                                <option value="DELUXE">Deluxe</option>
-                                <option value="LUXURY">Luxury</option>
+                                <option value="STANDARD" {{ old('type')=='STANDARD' ? 'selected' : '' }}>Standard</option>
+                                <option value="DELUXE"   {{ old('type')=='DELUXE' ? 'selected' : '' }}>Deluxe</option>
+                                <option value="LUXURY"   {{ old('type')=='LUXURY' ? 'selected' : '' }}>Luxury</option>
                             </select>
                             @if (isset($errors))
                                 @if ($errors->has('type'))
@@ -70,12 +66,10 @@
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> Status </label>
                         <div class="col-sm-6">
-                            {{-- <input type="text" class="form-control" name="phone" required placeholder="phone"
-                                minlength="3" value="{{ old('phone') }}"> --}}
                             <select class="form-control" name="status" required>
-                                <option value="AVAILABLE">ว่าง</option>
-                                <option value="OCCUPIED">มีผู้เช่า</option>
-                                <option value="MAINTENANCE">ปิดปรับปรุง</option>
+                                <option value="AVAILABLE"   {{ old('status')=='AVAILABLE' ? 'selected' : '' }}>ว่าง</option>
+                                <option value="OCCUPIED"    {{ old('status')=='OCCUPIED' ? 'selected' : '' }}>มีผู้เช่า</option>
+                                <option value="MAINTENANCE" {{ old('status')=='MAINTENANCE' ? 'selected' : '' }}>ปิดปรับปรุง</option>
                             </select>
                             @if (isset($errors))
                                 @if ($errors->has('status'))
@@ -88,7 +82,8 @@
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> Monthly Rent </label>
                         <div class="col-sm-6">
-                            <input type="number" class="form-control" name="monthly_rent" required placeholder="Monthly rent min with 500 baht"
+                            <input type="number" class="form-control" name="monthly_rent" required
+                                placeholder="Monthly rent min with 500 baht"
                                 value="{{ old('monthly_rent') }}" min="500">
                             @if (isset($errors))
                                 @if ($errors->has('monthly_rent'))
@@ -113,7 +108,8 @@
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> Branch </label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" name="branch" required placeholder="Branch">{{ old('branch') }}
+                            <input type="text" class="form-control" name="branch" required placeholder="Branch"
+                                value="{{ old('branch') }}">
                             @if (isset($errors))
                                 @if ($errors->has('branch'))
                                     <div class="text-danger"> {{ $errors->first('branch') }}</div>
@@ -122,10 +118,22 @@
                         </div>
                     </div>
 
+                    {{-- ✅ Photo (เหมือนแพทเทิร์น receipt ของ invoice) --}}
+                    <div class="form-group row mb-2">
+                        <label class="col-sm-2"> Photo </label>
+                        <div class="col-sm-6">
+                            <input type="file" class="form-control" name="image" accept="image/*" required>
+                            @if (isset($errors))
+                                @if ($errors->has('image'))
+                                    <div class="text-danger"> {{ $errors->first('image') }}</div>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="form-group row mb-2">
                         <label class="col-sm-2"> </label>
                         <div class="col-sm-5">
-
                             <button type="submit" class="btn btn-primary"> Save </button>
                             <a href="/room" class="btn btn-danger">cancel</a>
                         </div>
