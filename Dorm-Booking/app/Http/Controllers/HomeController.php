@@ -15,6 +15,25 @@ class HomeController extends Controller
 {
     public function index()
     {
+        Paginator::useBootstrap();
+
+        $rooms = RoomModel::where('status', 'AVAILABLE')
+            ->orderBy('id', 'desc')
+            ->paginate(12);
+
+        // dropdown data (ดึงจาก DB + การันตีว่ามีทั้ง 3 type)
+        $typesDb  = RoomModel::select('type')->distinct()->orderBy('type')->pluck('type')->toArray();
+        $types    = array_values(array_unique(array_merge(['STANDARD', 'DELUXE', 'LUXURY'], $typesDb)));
+
+        // สาขาใน DB ใช้ EN: SRINAKARIN / RAMA9 / ASOKE
+        $branches = RoomModel::select('branch')->distinct()->orderBy('branch')->pluck('branch')->toArray();
+
+        return view('home.homepage', [
+            'rooms'    => $rooms,
+            'types'    => $types,
+            'branches' => $branches,
+        ]);
+
         return view('home.homepage');
     }
 

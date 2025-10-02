@@ -33,11 +33,11 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link active text-white animate-text" aria-current="page"
-                                href="/showRoom">หอพัก</a>
+                                href="{{ route('rooms.show') }}">หอพัก</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active text-white animate-text" aria-current="page"
-                                href="/">ข่าวสาร/ประกาศ</a>
+                                href="{{ route('home') }}">ข่าวสาร/ประกาศ</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white animate-text"

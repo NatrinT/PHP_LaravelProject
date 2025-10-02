@@ -12,10 +12,10 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 
 //home page
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // searchRoom
-Route::get('/showRoom', [HomeController::class, 'showRoom']);
+Route::get('/showRoom', [HomeController::class, 'showRoom'])->name('rooms.show');
 Route::get('/searchRoom', [HomeController::class, 'searchRoom'])->name('searchRoom');
 
 
