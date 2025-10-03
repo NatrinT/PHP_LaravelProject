@@ -1,157 +1,124 @@
 @extends('home')
 
+@section('title', 'Add Room')
+
 @section('css_before')
-@endsection
-
-@section('header')
-@endsection
-
-@section('sidebarMenu')
+  <link href="{{ asset('css/createroom.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
+<div class="ship-wrap mt-5">
+  <div class="ship-card">
+    <h2 class="ship-title">Add Room</h2>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-sm-9">
+    {{-- ✅ ต้องใส่ enctype เพื่อรองรับการอัปโหลดรูป --}}
+    <form action="/room/" method="post" enctype="multipart/form-data" class="ship-form">
+      @csrf
 
-                <h3> :: form Add Room :: </h3>
-
-                {{-- ✅ ต้องใส่ enctype เพื่อรองรับการอัปโหลดรูป --}}
-                <form action="/room/" method="post" enctype="multipart/form-data">
-                    @csrf
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Room No. </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="room_no" required placeholder="Room Number"
-                                minlength="3" value="{{ old('room_no') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('room_no'))
-                                    <div class="text-danger"> {{ $errors->first('room_no') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Floor </label>
-                        <div class="col-sm-6">
-                            <input type="number" class="form-control" name="floor" required placeholder="Floor"
-                                min="1" value="{{ old('floor') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('floor'))
-                                    <div class="text-danger"> {{ $errors->first('floor') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2">Type </label>
-                        <div class="col-sm-6">
-                            <select class="form-control" name="type" required>
-                                <option value="STANDARD" {{ old('type')=='STANDARD' ? 'selected' : '' }}>Standard</option>
-                                <option value="DELUXE"   {{ old('type')=='DELUXE' ? 'selected' : '' }}>Deluxe</option>
-                                <option value="LUXURY"   {{ old('type')=='LUXURY' ? 'selected' : '' }}>Luxury</option>
-                            </select>
-                            @if (isset($errors))
-                                @if ($errors->has('type'))
-                                    <div class="text-danger"> {{ $errors->first('type') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Status </label>
-                        <div class="col-sm-6">
-                            <select class="form-control" name="status" required>
-                                <option value="AVAILABLE"   {{ old('status')=='AVAILABLE' ? 'selected' : '' }}>ว่าง</option>
-                                <option value="OCCUPIED"    {{ old('status')=='OCCUPIED' ? 'selected' : '' }}>มีผู้เช่า</option>
-                                <option value="MAINTENANCE" {{ old('status')=='MAINTENANCE' ? 'selected' : '' }}>ปิดปรับปรุง</option>
-                            </select>
-                            @if (isset($errors))
-                                @if ($errors->has('status'))
-                                    <div class="text-danger"> {{ $errors->first('status') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Monthly Rent </label>
-                        <div class="col-sm-6">
-                            <input type="number" class="form-control" name="monthly_rent" required
-                                placeholder="Monthly rent min with 500 baht"
-                                value="{{ old('monthly_rent') }}" min="500">
-                            @if (isset($errors))
-                                @if ($errors->has('monthly_rent'))
-                                    <div class="text-danger"> {{ $errors->first('monthly_rent') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Note </label>
-                        <div class="col-sm-7">
-                            <textarea name="note" class="form-control" rows="4" placeholder="Note some text for this room">{{ old('note') }}</textarea>
-                            @if (isset($errors))
-                                @if ($errors->has('note'))
-                                    <div class="text-danger"> {{ $errors->first('note') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Branch </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="branch" required placeholder="Branch"
-                                value="{{ old('branch') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('branch'))
-                                    <div class="text-danger"> {{ $errors->first('branch') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    {{-- ✅ Photo (เหมือนแพทเทิร์น receipt ของ invoice) --}}
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Photo </label>
-                        <div class="col-sm-6">
-                            <input type="file" class="form-control" name="image" accept="image/*" required>
-                            @if (isset($errors))
-                                @if ($errors->has('image'))
-                                    <div class="text-danger"> {{ $errors->first('image') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> </label>
-                        <div class="col-sm-5">
-                            <button type="submit" class="btn btn-primary"> Save </button>
-                            <a href="/room" class="btn btn-danger">cancel</a>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
+      {{-- Room No. --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-hash"></i></div>
+        <div class="ship-field">
+          <input type="text" name="room_no" value="{{ old('room_no') }}" placeholder="Room Number" required minlength="3">
+          @if(isset($errors) && $errors->has('room_no'))
+            <div class="ship-error">{{ $errors->first('room_no') }}</div>
+          @endif
         </div>
-    </div>
+      </div>
 
-@endsection
+      {{-- Floor + Type (2 คอลัมน์) --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-building"></i></div>
+        <div class="ship-field ship-grid-2">
+          <div>
+            <input type="number" name="floor" value="{{ old('floor') }}" placeholder="Floor" min="1" required>
+            @if(isset($errors) && $errors->has('floor'))
+              <div class="ship-error">{{ $errors->first('floor') }}</div>
+            @endif
+          </div>
+          <div class="ship-select-wrap">
+            <select name="type" required>
+              <option value="STANDARD" {{ old('type')=='STANDARD' ? 'selected' : '' }}>Standard</option>
+              <option value="DELUXE"   {{ old('type')=='DELUXE'   ? 'selected' : '' }}>Deluxe</option>
+              <option value="LUXURY"   {{ old('type')=='LUXURY'   ? 'selected' : '' }}>Luxury</option>
+            </select>
+            <i class="bi bi-caret-down-fill ship-caret"></i>
+            @if(isset($errors) && $errors->has('type'))
+              <div class="ship-error">{{ $errors->first('type') }}</div>
+            @endif
+          </div>
+        </div>
+      </div>
 
-@section('footer')
-@endsection
+      {{-- Status --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-toggle-on"></i></div>
+        <div class="ship-field">
+          <div class="ship-select-wrap">
+            <select name="status" required>
+              <option value="AVAILABLE"   {{ old('status')=='AVAILABLE'   ? 'selected' : '' }}>ว่าง</option>
+              <option value="OCCUPIED"    {{ old('status')=='OCCUPIED'    ? 'selected' : '' }}>มีผู้เช่า</option>
+              <option value="MAINTENANCE" {{ old('status')=='MAINTENANCE' ? 'selected' : '' }}>ปิดปรับปรุง</option>
+            </select>
+            <i class="bi bi-caret-down-fill ship-caret"></i>
+          </div>
+          @if(isset($errors) && $errors->has('status'))
+            <div class="ship-error">{{ $errors->first('status') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('js_before')
-@endsection
+      {{-- Monthly Rent --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="ship-field">
+          <input type="number" name="monthly_rent" value="{{ old('monthly_rent') }}" placeholder="Monthly rent min 500 baht" min="500" required>
+          @if(isset($errors) && $errors->has('monthly_rent'))
+            <div class="ship-error">{{ $errors->first('monthly_rent') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('js_before')
+      {{-- Note (textarea) --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-journal-text"></i></div>
+        <div class="ship-field">
+          <textarea name="note" rows="4" placeholder="Note some text for this room">{{ old('note') }}</textarea>
+          @if(isset($errors) && $errors->has('note'))
+            <div class="ship-error">{{ $errors->first('note') }}</div>
+          @endif
+        </div>
+      </div>
+
+      {{-- Branch --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-geo-alt"></i></div>
+        <div class="ship-field">
+          <input type="text" name="branch" value="{{ old('branch') }}" placeholder="Branch" required>
+          @if(isset($errors) && $errors->has('branch'))
+            <div class="ship-error">{{ $errors->first('branch') }}</div>
+          @endif
+        </div>
+      </div>
+
+      {{-- Photo --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-image"></i></div>
+        <div class="ship-field">
+          <input type="file" name="image" accept="image/*" class="ship-file" required>
+          @if(isset($errors) && $errors->has('image'))
+            <div class="ship-error">{{ $errors->first('image') }}</div>
+          @endif
+        </div>
+      </div>
+
+      {{-- ปุ่ม --}}
+      <div class="ship-actions">
+        <a href="{{ url('/room') }}" class="btn-ghost">Back to list</a>
+        <button type="submit" class="btn-primary-outline">Add</button>
+      </div>
+    </form>
+
+  </div>
+</div>
 @endsection

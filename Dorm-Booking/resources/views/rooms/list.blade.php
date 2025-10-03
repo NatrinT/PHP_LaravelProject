@@ -14,7 +14,7 @@
     @endsection
 
     @section('content')
-        <div class="container-xl mt-5">
+        <div class="container-xl mt-3">
 
             {{-- Search: เลือกวิธีค้นหาด้วย radio + คงค่าที่เลือกไว้ด้วย request('by') --}}
             <div class="d-flex justify-content-end mb-3">

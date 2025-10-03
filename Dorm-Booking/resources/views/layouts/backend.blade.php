@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <div class="container-fluid p-0">
+    <div class="col d-flex flex-column main-content">
         <div class="row g-0">
 
             {{-- ===== Sidebar (ซ้าย) ===== --}}

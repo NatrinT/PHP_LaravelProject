@@ -1,46 +1,35 @@
-/* ===== Sidebar ===== */
+/* ===== Sidebar (fixed, no hover expand) ===== */
 .sbv.sidebar {
-  width: 70px;              /* ความกว้างตอนย่อ */
+  width: 260px;              /* คงที่ตลอด */
   min-height: 100vh;
   position: fixed;
   top: 0;
+  left: 0;
   background: #020025;
   color: #e8f0ff;
-  transition: width 0.3s;   /* ทำให้เวลาขยาย/ย่อมี animation */
   overflow-x: hidden;
   white-space: nowrap;
-}
-/* hover แล้วขยาย */
-.sbv.sidebar:hover {
-  width: 260px;
-}
-/* เมนู - ซ่อนข้อความตอนย่อ */
-.sbv-link span {
-  display: none;
+  z-index: 1000;
 }
 
-/* hover แล้วโชว์ข้อความ */
-.sbv.sidebar:hover .sbv-link span {
-  display: inline;
-}
+/* ไม่ต้องมี hover ขยาย */
+/* .sbv.sidebar:hover { width: 260px; } */
 
-/* ไอคอน fix ไว้กลาง */
+/* เมนู: แสดงข้อความตลอด */
+.sbv-link span { display: inline; }
+
+/* ไอคอน */
 .sbv-link i {
   font-size: 1.05rem;
   width: 1.25rem;
   text-align: center;
 }
 
-/* effect เวลา hover */
-.sbv-link i,
-.sbv-link span {
-  transition: transform 0.2s ease, color 0.2s ease;
+/* hover effect เบา ๆ */
+.sbv-link i, .sbv-link span {
+  transition: transform .2s ease, color .2s ease;
 }
-
-.sbv-link:hover i,
-.sbv-link:hover span {
-  transform: scale(1.1);  /* ขยาย 1.2 เท่า */
-}
+.sbv-link:hover i, .sbv-link:hover span { transform: scale(1.1); }
 
 /* Brand */
 .brand-mark{
@@ -55,15 +44,14 @@
   padding:.5rem .75rem;
   margin:.25rem .25rem;
   border-radius:12px;
-  color:#e8f0ff; text-decoration:none;   /* ตัดเส้นใต้ */
+  color:#e8f0ff; text-decoration:none;
   transition: background .15s, color .15s;
-  line-height: 1;            /* กัน line-height จาก bootstrap */
-  box-sizing: border-box;
+  line-height:1;
+  box-sizing:border-box;
 }
-.sbv-link i{ 
+.sbv-link i{
   font-size:1.05rem; width:1.25rem; text-align:center;
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex; align-items:center;
 }
 .sbv-link:hover{ background:rgba(255,255,255,.12); color:#fff; }
 
@@ -76,67 +64,30 @@
 /* Logout */
 .sbv-link.danger:hover{ background:rgba(255,255,255,.12); color:#fff; }
 
-.sbv.sidebar .brand-name {
-  display: none;
-}
-.sbv.sidebar:hover .brand-name {
-  display: inline;
-}
+/* โลโก้: โชว์แบบเต็มตลอด */
+.logo-mini { display: none; }
+.logo-full { display: block; height: 100%; width: auto; object-fit: contain; }
 
-/* ฝั่งขวาให้พื้นหลังอ่อน */
+/* พื้นหลังฝั่งขวา */
 body{ background:#F8FAFC; }
 
-.brand-logo {
-  width: 150px;      /* ขนาดโลโก้ */
-  height: 35px;
-  object-fit: contain;
-}
-.brand-name {
-  font-weight: 700;
-  letter-spacing: .5px;
-  color: #fff;
-}
+/* Main content ขยับขวาให้พอดีกับ sidebar */
+.main-content { margin-left: 200px; }
 
-.logo-mini {
-  height:74px;          /* ประมาณ 36–40px */
-  width:auto;
-  object-fit:contain;
-  display:block;
-  margin:0 auto;
-}
-
-/* โลโก้เต็ม (ตอน hover) */
-.logo-full {
-  height:100%;          /* ประมาณ 24–28px */
-  width:auto;
-  object-fit:contain;
-  display:none;
-}
-
-/* สลับโชว์ */
-.sbv.sidebar .logo-mini { display:block; }
-.sbv.sidebar .logo-full { display:none; }
-.sbv.sidebar:hover .logo-mini { display:none; }
-.sbv.sidebar:hover .logo-full { display:block; }
-
+/* Pagination สวย ๆ */
 .pagination .page-link {
-  border: none !important;       /* ตัดกรอบ */
-  background-color: transparent; /* ไม่มีพื้นหลัง */
-  color: #2563EB;                /* สีข้อความ/เลข */
-  box-shadow: none !important;   /* ตัดเงา */
-  transition: background-color 0.2s, color 0.2s;
-  border-radius: 10px !important;
+  border:none !important;
+  background-color:transparent;
+  color:#2563EB;
+  box-shadow:none !important;
+  transition: background-color .2s, color .2s;
+  border-radius:10px !important;
 }
 .pagination .page-link:hover {
-  background-color: #2563EB; /* พื้นหลังฟ้า */
-  color: #fff;              /* ตัวอักษรขาว */
-  border-radius: 10px !important;       /* ทำให้มุมโค้ง */
+  background-color:#2563EB; color:#fff;
+  border-radius:10px !important;
 }
-/* active (หน้าปัจจุบัน) */
 .pagination .page-item.active .page-link {
-  background-color: #2563EB;
-  border: none;
-  color: #fff;
-  border-radius: 10px !important;
-  font-weight: 600;
+  background-color:#2563EB; border:none; color:#fff;
+  border-radius:10px !important; font-weight:600;
 }

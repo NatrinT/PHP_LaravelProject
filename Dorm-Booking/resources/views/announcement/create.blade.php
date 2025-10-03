@@ -1,100 +1,70 @@
 @extends('home')
 
+@section('title', 'Add Announcement')
+
 @section('css_before')
-@endsection
-
-@section('header')
-@endsection
-
-@section('sidebarMenu')
+  <link href="{{ asset('css/addanc.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
+<div class="ship-wrap mt-5">
+  <div class="ship-card">
+    <h2 class="ship-title">Add Announcement</h2>
 
+    <form action="{{ url('/announcement') }}" method="post" enctype="multipart/form-data" class="ship-form">
+      @csrf
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-sm-9">
-
-                <h3> :: form Add Announcement :: </h3>
-
-
-                <form action="{{ url('/announcement') }}" method="post" enctype="multipart/form-data">
-
-                    @csrf
-
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Title </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="title" required placeholder="Title"
-                                minlength="1" value="{{ old('title') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('title'))
-                                    <div class="text-danger"> {{ $errors->first('title') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Body </label>
-                        <div class="col-sm-7">
-                            <textarea name="body" class="form-control" rows="4" placeholder="Body of content">{{ old('body') }}</textarea>
-                            @if (isset($errors))
-                                @if ($errors->has('body'))
-                                    <div class="text-danger"> {{ $errors->first('body') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Link </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="link" required placeholder="Link News"
-                                minlength="1" value="{{ old('link') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('link'))
-                                    <div class="text-danger"> {{ $errors->first('link') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Image </label>
-                        <div class="col-sm-6">
-                            <input type="file" name="image" class="form-control" accept="application/pdf,image/*">
-                            @error('image')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> </label>
-                        <div class="col-sm-5">
-
-                            <button type="submit" class="btn btn-primary"> Save </button>
-                            <a href="/announcement" class="btn btn-danger">cancel</a>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
+      {{-- Title --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-type"></i></div>
+        <div class="ship-field">
+          <input type="text" name="title" value="{{ old('title') }}" placeholder="Title" required minlength="1">
+          @if(isset($errors) && $errors->has('title'))
+            <div class="ship-error">{{ $errors->first('title') }}</div>
+          @endif
         </div>
-    </div>
+      </div>
 
-@endsection
+      {{-- Body --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-card-text"></i></div>
+        <div class="ship-field">
+          <textarea name="body" rows="5" placeholder="Body of content">{{ old('body') }}</textarea>
+          @if(isset($errors) && $errors->has('body'))
+            <div class="ship-error">{{ $errors->first('body') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('footer')
-@endsection
+      {{-- Link --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-link-45deg"></i></div>
+        <div class="ship-field">
+          <input type="text" name="link" value="{{ old('link') }}" placeholder="Link News" required minlength="1">
+          @if(isset($errors) && $errors->has('link'))
+            <div class="ship-error">{{ $errors->first('link') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('js_before')
-@endsection
+      {{-- Image / File --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-image"></i></div>
+        <div class="ship-field">
+          <input type="file" name="image" accept="application/pdf,image/*" class="ship-file">
+          @error('image')
+            <div class="ship-error">{{ $message }}</div>
+          @enderror
+        </div>
+      </div>
 
-@section('js_before')
+      {{-- Actions --}}
+      <div class="ship-actions">
+        <a href="{{ url('/announcement') }}" class="btn-ghost">Back to list</a>
+        <button type="submit" class="btn-primary-outline">Add</button>
+      </div>
+    </form>
+
+  </div>
+</div>
 @endsection

@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-    <div class="container-xl mt-5">
+    <div class="container-xl mt-3">
 
         {{-- Search: ค้นหาสัญญาเช่าแบบเลือกเงื่อนไข + คงค่าที่เลือกไว้ --}}
         <div class="d-flex justify-content-end mb-3">

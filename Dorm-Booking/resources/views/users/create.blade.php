@@ -1,120 +1,85 @@
 @extends('home')
 
+@section('title', 'Add User')
+
 @section('css_before')
-@endsection
-
-@section('header')
-@endsection
-
-@section('sidebarMenu')
+    {{-- ใช้ Bootstrap Icons ที่มีอยู่แล้วใน layout --}}
+    <link href="{{ asset('css/createuser.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
+<div class="ship-wrap mt-5">
+  <div class="ship-card">
+    <h2 class="ship-title">Add User</h2>
 
+    <form action="/users/" method="post" class="ship-form">
+      @csrf
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-sm-9">
-
-                <h3> :: form Add User :: </h3>
-
-
-                <form action="/users/" method="post">
-                    @csrf
-
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Email </label>
-                        <div class="col-sm-6">
-                            <input type="email" class="form-control" name="email" required placeholder="email"
-                                minlength="3" value="{{ old('email') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('email'))
-                                    <div class="text-danger"> {{ $errors->first('email') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Password </label>
-                        <div class="col-sm-6">
-                            <input type="password" class="form-control" name="pass_hash" required placeholder="Password"
-                                minlength="3">
-                            @if (isset($errors))
-                                @if ($errors->has('pass_hash'))
-                                    <div class="text-danger"> {{ $errors->first('pass_hash') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2">Name </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="full_name" required placeholder="full_name"
-                                minlength="3" value="{{ old('full_name') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('full_name'))
-                                    <div class="text-danger"> {{ $errors->first('full_name') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Phone </label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" name="phone" required placeholder="phone"
-                                minlength="3" value="{{ old('phone') }}">
-                            @if (isset($errors))
-                                @if ($errors->has('phone'))
-                                    <div class="text-danger"> {{ $errors->first('phone') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> Role </label>
-                        <div class="col-sm-6">
-                            {{-- <input type="text" class="form-control" name="role" required placeholder="role"
-                                value="{{ old('role') }}"> --}}
-                            <select class="form-control" name="role" required>
-                                <option value="MEMBER">MEMBER</option>
-                                <option value="STAFF">STAFF</option>
-                                <option value="ADMIN">ADMIN</option>
-                            </select>
-                            @if (isset($errors))
-                                @if ($errors->has('role'))
-                                    <div class="text-danger"> {{ $errors->first('role') }}</div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row mb-2">
-                        <label class="col-sm-2"> </label>
-                        <div class="col-sm-5">
-
-                            <button type="submit" class="btn btn-primary"> Save </button>
-                            <a href="/users" class="btn btn-danger">cancel</a>
-                        </div>
-                    </div>
-
-                </form>
-
-            </div>
+      {{-- Name --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-person"></i></div>
+        <div class="ship-field">
+          <input type="text" name="full_name" value="{{ old('full_name') }}" placeholder="Name" required minlength="3">
+          @if(isset($errors) && $errors->has('full_name'))
+            <div class="ship-error">{{ $errors->first('full_name') }}</div>
+          @endif
         </div>
-    </div>
+      </div>
 
-@endsection
+      {{-- Phone + Role (วางคู่กันแบบภาพตัวอย่าง Phone + Mobile) --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-telephone"></i></div>
+        <div class="ship-field ship-grid-2">
+          <div>
+            <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Phone Number" required minlength="3">
+            @if(isset($errors) && $errors->has('phone'))
+              <div class="ship-error">{{ $errors->first('phone') }}</div>
+            @endif
+          </div>
+          <div class="ship-select-wrap">
+            <select name="role" required>
+              <option value="" disabled {{ old('role') ? '' : 'selected' }}>Role</option>
+              <option value="MEMBER" {{ old('role')=='MEMBER'?'selected':'' }}>MEMBER</option>
+              <option value="STAFF"  {{ old('role')=='STAFF'?'selected':'' }}>STAFF</option>
+              <option value="ADMIN"  {{ old('role')=='ADMIN'?'selected':'' }}>ADMIN</option>
+            </select>
+            <i class="bi bi-caret-down-fill ship-caret"></i>
+            @if(isset($errors) && $errors->has('role'))
+              <div class="ship-error">{{ $errors->first('role') }}</div>
+            @endif
+          </div>
+        </div>
+      </div>
 
-@section('footer')
-@endsection
+      {{-- Email --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-at"></i></div>
+        <div class="ship-field">
+          <input type="email" name="email" value="{{ old('email') }}" placeholder="Email" required minlength="3">
+          @if(isset($errors) && $errors->has('email'))
+            <div class="ship-error">{{ $errors->first('email') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('js_before')
-@endsection
+      {{-- Password --}}
+      <div class="ship-row">
+        <div class="ship-icon"><i class="bi bi-lock"></i></div>
+        <div class="ship-field">
+          <input type="password" name="pass_hash" placeholder="Password" required minlength="3">
+          @if(isset($errors) && $errors->has('pass_hash'))
+            <div class="ship-error">{{ $errors->first('pass_hash') }}</div>
+          @endif
+        </div>
+      </div>
 
-@section('js_before')
+      {{-- ปุ่ม --}}
+      <div class="ship-actions">
+        <a href="{{ url('/users') }}" class="btn-ghost">Back to list</a>
+        <button type="submit" class="btn-primary-outline">Add</button>
+      </div>
+    </form>
+
+  </div>
+</div>
 @endsection

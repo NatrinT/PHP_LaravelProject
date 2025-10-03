@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-    <div class="container-xl mt-5">
+    <div class="container-xl mt-3">
 
         {{-- Search --}}
         <div class="d-flex justify-content-end mb-3">

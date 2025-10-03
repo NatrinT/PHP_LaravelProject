@@ -4,9 +4,9 @@
 @endsection
 
 @section('content')
-    <div class="container-xl mt-5">
+    <div class="container-xl mt-3">
 
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end mb-3">
             <form method="GET" action="{{ route('users.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
                 style="max-width: 600px;">
 
@@ -43,7 +43,7 @@
                 </div>
 
                 {{-- Keyword box + button --}}
-                <div class="input-group" style="max-width: 280px;">
+                <div class="input-group" style="max-width: 300px;">
                     <input type="text" name="keyword" class="form-control" placeholder="Search..."
                         value="{{ request('keyword') }}">
                     <button class="btn" type="submit" style="background-color:#020025; border-color:#020025;">

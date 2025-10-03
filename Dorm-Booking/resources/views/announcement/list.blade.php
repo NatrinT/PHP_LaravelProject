@@ -15,7 +15,7 @@
 @endsection
 
 @section('content')
-    <div class="container-xl mt-5 announcement-page">
+    <div class="container-xl mt-3 announcement-page">
 
         <div class="d-flex justify-content-end mb-3">
             <form method="GET" action="{{ route('announcement.search') }}" class="d-flex flex-wrap justify-content-end gap-2"
