@@ -28,7 +28,7 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'ไม่พบผู้ใช้'])->withInput();
         }
 
-        if ($user->role === 'ADMIN') {
+        if ($user->role === 'ADMIN' || $user->role === 'STAFF') {
             if (Auth::guard('admin')->attempt([
                 'email' => $request->email,
                 'password' => $request->password
