@@ -76,7 +76,9 @@
                         <th style="width:140px;">Phone</th>
                         <th style="width:120px;">Role</th>
                         <th style="width:140px;">Status</th> {{-- เปลี่ยนหัวข้อคอลัมน์เป็นไทย --}}
-                        <th style="width:160px;" class="text-center">Actions</th>
+                        @if (auth()->user()->role == 'ADMIN')
+                            <th style="width:160px;" class="text-center">Actions</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -112,24 +114,26 @@
                                     {{ $label }}
                                 </span>
                             </td>
-                            <td class="text-end">
-                                <a href="/users/{{ $row->id }}" class="icon-action text-secondary me-3"
-                                    title="Edit">
-                                    <i class="bi bi-gear"></i>
-                                </a>
-                                <a href="/users/reset/{{ $row->id }}" class="icon-action text-info me-3"
-                                    title="Reset Password">
-                                    <i class="bi bi-arrow-repeat"></i>
-                                </a>
-                                <button type="button" class="icon-action text-danger me-1"
-                                    onclick="deleteConfirm({{ $row->id }})" title="Delete">
-                                    <i class="bi bi-x-circle"></i>
-                                </button>
-                                <form id="delete-form-{{ $row->id }}" action="/users/remove/{{ $row->id }}"
-                                    method="POST" style="display:none;">
-                                    @csrf @method('delete')
-                                </form>
-                            </td>
+                            @if (auth()->user()->role == 'ADMIN')
+                                <td class="text-end">
+                                    <a href="/users/{{ $row->id }}" class="icon-action text-secondary me-3"
+                                        title="Edit">
+                                        <i class="bi bi-gear"></i>
+                                    </a>
+                                    <a href="/users/reset/{{ $row->id }}" class="icon-action text-info me-3"
+                                        title="Reset Password">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </a>
+                                    <button type="button" class="icon-action text-danger me-1"
+                                        onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    <form id="delete-form-{{ $row->id }}"
+                                        action="/users/remove/{{ $row->id }}" method="POST" style="display:none;">
+                                        @csrf @method('delete')
+                                    </form>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

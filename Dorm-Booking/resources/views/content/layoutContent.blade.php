@@ -37,11 +37,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-white animate-text" href="{{ route('content.help') }}">ช่วยเหลือ</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white animate-text"
-                                href="{{route('checkout.myBooking')}}">การจองของฉัน</a>
-                        </li>
-
+                        @if (session('user_id'))
+                            <li class="nav-item">
+                                <a class="nav-link text-white animate-text"
+                                    href="{{ route('checkout.myBooking') }}">การจองของฉัน</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white animate-text"
+                                    href="{{ route('payments.history') }}">ประวัติการชำระเงิน</a>
+                            </li>
+                        @endif
 
                         @if (session('user_role') === 'ADMIN')
                             <li class="nav-item">
@@ -323,6 +328,9 @@
         <!-- icons etc. -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+        {{-- >>>>>>> ตรงนี้สำคัญ <<<<<<< --}}
+        @include('sweetalert::alert')
 
 </body>
 

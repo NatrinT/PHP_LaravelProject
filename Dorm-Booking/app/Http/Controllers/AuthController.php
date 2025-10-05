@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\UsersModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AuthController extends Controller
 {
@@ -28,7 +30,7 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'ไม่พบผู้ใช้'])->withInput();
         }
 
-        if ($user->role === 'ADMIN') {
+        if ($user->role === 'ADMIN' || $user->role === 'STAFF') {
             if (Auth::guard('admin')->attempt([
                 'email' => $request->email,
                 'password' => $request->password
@@ -68,6 +70,64 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'ไม่พบอีเมลในระบบ'])->withInput();
         }
     }
+
+    public function register(Request $request)
+    {
+        // echo '<pre>';
+        // dd($_POST);
+        // exit();
+
+        //vali msg 
+        $messages = [
+            'email.required' => 'กรุณากรอกข้อมูล',
+            'email.email' => 'รูปแบบอีเมลไม่ถูกต้อง',
+            'email.unique' => 'Email ซ้ำ เพิ่มใหม่อีกครั้ง',
+
+            'password.required' => 'กรุณากรอกข้อมูล',
+            'password.min' => 'กรอกข้อมูลขั้นต่ำ :min ตัว',
+
+            'full_name.required' => 'กรุณากรอกข้อมูล',
+            'full_name.min' =>  'กรอกข้อมูลขั้นต่ำ :min ตัว',
+
+            'phone.required' => 'กรุณากรอกข้อมูล',
+            'phone.min' => 'กรอกข้อมูลขั้นต่ำ :min ตัว',
+            'phone.max' => 'กรอกข้อมูลขั้นต่ำ :max ตัว',
+
+        ];
+
+        //rule 
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:3',
+            'full_name' => 'required|min:3',
+            'phone' => 'required|min:10|max:10',
+        ], $messages);
+
+        //check vali 
+        if ($validator->fails()) {
+            return redirect('/')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+
+            //ปลอดภัย: กัน XSS ที่มาจาก <script>, <img onerror=...> ได้
+            UsersModel::create([
+                'email' => strip_tags($request->input('email')),
+                'full_name' => strip_tags($request->input('full_name')),
+                'phone' => strip_tags($request->input('phone')),
+                'role' => 'MEMBER',
+                'pass_hash' => bcrypt($request->input('password')),
+            ]);
+            // แสดง Alert ก่อน return
+            Alert::success('สมัครสมาชิกเรียบร้อย', 'กรุณาเข้าสู่ระบบ');
+            return redirect('/');
+        } catch (\Exception $e) {
+            // return response()->json(['error' => $e->getMessage()], 500); //สำหรับ debug
+            return view('errors.404');
+        }
+    } //fun create
 
 
     public function logout(Request $request)

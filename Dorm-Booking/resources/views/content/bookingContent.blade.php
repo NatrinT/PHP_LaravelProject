@@ -137,73 +137,118 @@
 
                         {{-- Booking info --}}
                         <h6 class="fw-bold">ข้อมูลผู้เข้าพัก</h6>
-                        <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm">
+                        <form action="{{ route('checkout.process') }}" method="POST" id="checkoutForm"
+                            enctype="multipart/form-data">
                             @csrf
-                            {{-- ส่งข้อมูลห้องแบบ hidden --}}
+
+                            {{-- ====== ส่งข้อมูลห้องแบบ hidden ====== --}}
                             <input type="hidden" name="room_id" value="{{ $room->id }}">
                             <input type="hidden" name="branch" value="{{ $room->branch }}">
                             <input type="hidden" name="type" value="{{ $room->type }}">
-                            <input type="hidden" name="price" value="{{ number_format($rent, 2, '.', '') }}">
+                            <input type="hidden" name="price"
+                                value="{{ number_format((float) $room->monthly_rent, 2, '.', '') }}">
 
+                            {{-- ====== Prefill ผู้ใช้ที่ล็อกอิน ====== --}}
+                            @php
+                                // รองรับทั้ง auth()->user() และ session('user_id')
+                                $currentUser = auth()->user();
+                                if (!$currentUser && session('user_id')) {
+                                    $currentUser = \App\Models\UsersModel::find(session('user_id'));
+                                }
+
+                                // ดึงชื่อเต็มจาก model หรือ session แล้วแยกเป็น ชื่อ / นามสกุล
+                                $fullName = $currentUser->name ?? (session('user_name') ?? '');
+                                $fullName = trim((string) $fullName);
+
+                                // ถ้ามี fields แยกอยู่แล้วก็ใช้เลย
+                                $firstName = $currentUser->first_name ?? '';
+                                $lastName = $currentUser->last_name ?? '';
+
+                                if ($firstName === '' && $lastName === '') {
+                                    // แตกชื่อเต็มด้วยช่องว่าง: ส่วนแรก = ชื่อ, ที่เหลือ = นามสกุล
+                                    $parts = preg_split('/\s+/', $fullName, 2);
+                                    $firstName = $parts[0] ?? '';
+                                    $lastName = $parts[1] ?? '';
+                                }
+
+                                $email = $currentUser->email ?? (session('user_email') ?? '');
+                                $phone = $currentUser->phone ?? (session('user_phone') ?? '');
+                            @endphp
+
+                            {{-- ====== ข้อมูลผู้เข้าพัก ====== --}}
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">ชื่อ</label>
                                     <input type="text" name="first_name" class="form-control" placeholder="ชิตวร"
-                                        required>
+                                        value="{{ old('first_name', $firstName) }}" required readonly>
                                     @error('first_name')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">นามสกุล</label>
                                     <input type="text" name="last_name" class="form-control" placeholder="โชติช่วง"
-                                        required>
+                                        value="{{ old('last_name', $lastName) }}" required readonly>
                                     @error('last_name')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">อีเมล</label>
                                     <input type="email" name="email" class="form-control"
-                                        placeholder="example@gmail.com" required>
+                                        placeholder="example@gmail.com" value="{{ old('email', $email) }}" required
+                                        readonly>
                                     @error('email')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">เบอร์โทร</label>
                                     <input type="tel" name="phone" class="form-control" placeholder="093456455"
-                                        required>
+                                        value="{{ old('phone', $phone) }}" inputmode="tel" required readonly>
                                     @error('phone')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            {{-- Stay / Period --}}
+                            {{-- ====== ระยะเวลาการเช่า ====== --}}
+                            @php $monthsRent = $monthsRent ?? 1; @endphp
                             <h6 class="fw-bold mt-2">ระยะเวลาการเช่า</h6>
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">วันที่เริ่มเช่า</label>
                                     <input type="date" name="start_date" id="start_date" class="form-control"
-                                        value="{{ $start_date ?? '' }}" min="{{ now()->toDateString() }}"
-                                        {{-- ห้ามย้อนหลัง --}} required>
+                                        value="{{ $start_date ?? '' }}" min="{{ now()->toDateString() }}" required>
+                                    @error('start_date')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6">
                                     <label class="form-label">ระยะเวลาที่เช่า (เดือน)</label>
                                     <input type="number" name="months" id="months" min="1" step="1"
-                                        value="{{ $monthsRent }}" class="form-control">
+                                        value="{{ $monthsRent }}" class="form-control" required>
+                                    @error('months')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">วันที่หมดสัญญาเช่า</label>
+                                    {{-- ใช้ readonly (ไม่ใช้ disabled) เพื่อให้ส่งค่าไปกับฟอร์ม --}}
                                     <input type="date" name="end_date" id="end_date" class="form-control"
-                                        value="{{ $start_date ?? '' }}" required disabled>
+                                        value="{{ $end_date ?? '' }}" readonly required>
+                                    @error('end_date')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
-
-                            {{-- Payment method --}}
+                            {{-- ====== วิธีชำระเงิน ====== --}}
                             <h6 class="fw-bold mt-3">เลือกวิธีชำระเงิน</h6>
                             <div class="d-flex flex-wrap gap-2 mb-3" id="payChoices">
                                 <label class="pay-chip active">
@@ -233,7 +278,8 @@
                                 </label>
                             </div>
 
-                            {{-- Payment sections --}}
+                            {{-- ====== ส่วนกรอกตามวิธีชำระเงิน ====== --}}
+                            {{-- บัตร --}}
                             <div id="paySectionCard">
                                 <div class="row g-3">
                                     <div class="col-md-8">
@@ -248,7 +294,7 @@
                                     <div class="col-md-2">
                                         <label class="form-label">CVV</label>
                                         <input type="text" class="form-control" name="card_cvv" placeholder="***"
-                                            max="3">
+                                            maxlength="4">
                                     </div>
                                 </div>
                                 <div class="form-check mt-3">
@@ -258,23 +304,36 @@
                                 </div>
                             </div>
 
+                            {{-- QR พร้อมเพย์ --}}
                             <div id="paySectionQR" class="d-none">
                                 <div class="alert alert-secondary mb-2">
                                     สแกน QR พร้อมเพย์ ด้วยแอปธนาคารของคุณ ระบบจะยืนยันอัตโนมัติภายใน 1–3 นาที
                                 </div>
-                                <div class="p-3 border rounded-3 text-center">
+                                <div class="p-3 border rounded-3 text-center mb-3">
                                     <div class="text-muted small mb-2">ตัวอย่าง QR (placeholder)</div>
                                     <img src="{{ asset('images/qrCode.jpg') }}" alt="QR PromptPay"
                                         style="max-width:220px;width:100%;border-radius: 10px">
                                 </div>
+
+                                {{-- ต้องแนบสลิปเมื่อเลือกวิธีนี้ --}}
+                                <div class="col-12">
+                                    <label class="form-label">แนบสลิป (จำเป็นเมื่อเลือก QR พร้อมเพย์)</label>
+                                    <input type="file" class="form-control" name="payment_slip" id="payment_slip_qr"
+                                        accept="image/*,application/pdf">
+                                    @error('payment_slip')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
+                            {{-- Mobile Banking --}}
                             <div id="paySectionMobile" class="d-none">
                                 <div class="alert alert-secondary mb-2">โอนผ่าน Mobile Banking และอัปโหลดสลิปยืนยัน</div>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">ธนาคารผู้รับ</label>
-                                        <select class="form-select">
+                                        <select class="form-select" name="mobile_bank">
+                                            <option value="">เลือกธนาคาร</option>
                                             <option>SCB</option>
                                             <option>KBANK</option>
                                             <option>BAY</option>
@@ -287,29 +346,38 @@
                                         <input type="text" class="form-control"
                                             value="DB-{{ now()->format('ymd') }}-{{ $room->id }}" readonly>
                                     </div>
+
+                                    {{-- ไม่บังคับอัปสลิป (แล้วแต่ธุรกิจ); ถ้าจะบังคับ ให้เพิ่ม required ผ่าน JS ได้เหมือน QR --}}
                                     <div class="col-12">
-                                        <label class="form-label">แนบสลิป</label>
+                                        <label class="form-label">แนบสลิป (ไม่บังคับ)</label>
                                         <input type="file" class="form-control" name="mobile_slip"
                                             accept="image/*,application/pdf">
+                                        @error('mobile_slip')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
 
+                            {{-- e-Wallet --}}
                             <div id="paySectionWallet" class="d-none">
                                 <div class="alert alert-secondary mb-2">เลือก e-Wallet ที่รองรับ แล้วดำเนินการต่อ</div>
                                 <div class="row g-2">
-                                    <div class="col-6 col-md-4">
-                                        <button type="button" class="btn w-100 btn-outline-primary">TrueMoney</button>
-                                    </div>
-                                    <div class="col-6 col-md-4">
-                                        <button type="button" class="btn w-100 btn-outline-primary">ShopeePay</button>
-                                    </div>
-                                    <div class="col-6 col-md-4">
-                                        <button type="button" class="btn w-100 btn-outline-primary">AirPay</button>
-                                    </div>
+                                    <div class="col-6 col-md-4"><button type="button"
+                                            class="btn w-100 btn-outline-primary">TrueMoney</button></div>
+                                    <div class="col-6 col-md-4"><button type="button"
+                                            class="btn w-100 btn-outline-primary">ShopeePay</button></div>
+                                    <div class="col-6 col-md-4"><button type="button"
+                                            class="btn w-100 btn-outline-primary">AirPay</button></div>
                                 </div>
                             </div>
 
+                            {{-- เงินสด --}}
+                            <div id="paySectionCash" class="d-none">
+                                <div class="alert alert-secondary">ชำระเงินสดที่เคาน์เตอร์ ณ สาขาที่เลือก</div>
+                            </div>
+
+                            {{-- ====== เงื่อนไข ====== --}}
                             <div class="form-check mt-4">
                                 <input class="form-check-input" type="checkbox" id="accept" required>
                                 <label class="form-check-label" for="accept">
@@ -317,13 +385,14 @@
                                 </label>
                             </div>
 
+                            {{-- ====== ปุ่มส่งฟอร์ม ====== --}}
                             <div class="d-grid d-md-flex gap-2 justify-content-md-end mt-4">
                                 <a href="{{ url()->previous() }}" class="btn btn-light">ย้อนกลับ</a>
-                                <button type="submit" class="btn btn-primary px-4 fw-bold">
-                                    ชำระเงิน & ยืนยันการจอง
-                                </button>
+                                <button type="submit" class="btn btn-primary px-4 fw-bold">ชำระเงิน &
+                                    ยืนยันการจอง</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -493,6 +562,49 @@
         })();
 
         (function() {
+            // ====== Toggle sections by payment method + required slip for QR ======
+            const chips = document.querySelectorAll('#payChoices .pay-chip');
+            const sections = {
+                card: document.getElementById('paySectionCard'),
+                qr: document.getElementById('paySectionQR'),
+                mobile: document.getElementById('paySectionMobile'),
+                wallet: document.getElementById('paySectionWallet'),
+                cash: document.getElementById('paySectionCash'),
+            };
+            const paymentSlipQR = document.getElementById('payment_slip_qr');
+
+            function showSection(val) {
+                Object.values(sections).forEach(s => s && s.classList.add('d-none'));
+                if (sections[val]) sections[val].classList.remove('d-none');
+
+                // required เฉพาะ QR พร้อมเพย์
+                if (paymentSlipQR) {
+                    if (val === 'qr') {
+                        paymentSlipQR.setAttribute('required', 'required');
+                    } else {
+                        paymentSlipQR.removeAttribute('required');
+                        paymentSlipQR.value = ''; // เคลียร์ค่าเผื่อผู้ใช้เปลี่ยนใจ
+                    }
+                }
+            }
+
+            chips.forEach(c => {
+                c.addEventListener('click', () => {
+                    chips.forEach(x => x.classList.remove('active'));
+                    c.classList.add('active');
+                    const radio = c.querySelector('input[type=radio]');
+                    if (radio) {
+                        radio.checked = true;
+                        showSection(radio.value);
+                    }
+                });
+            });
+
+            // init payment UI on load
+            const checked = document.querySelector('#payChoices input[type=radio]:checked');
+            if (checked) showSection(checked.value);
+
+            // ====== Recalc end_date when start_date/months change ======
             const startEl = document.getElementById('start_date');
             const monthsEl = document.getElementById('months');
             const endEl = document.getElementById('end_date');
@@ -504,52 +616,35 @@
                 return `${y}-${m}-${day}`;
             }
 
-            // สร้าง Date แบบปลอดภัย (เลี่ยง timezone เพี้ยน)
             function parseYMD(ymd) {
+                if (!ymd) return null;
                 const [y, m, d] = ymd.split('-').map(Number);
                 return new Date(y, m - 1, d);
             }
 
             function recalcEnd() {
-                const startStr = startEl.value;
-                let months = parseInt(monthsEl.value || '1', 10);
-                if (!startStr || isNaN(months) || months < 1) {
+                const s = parseYMD(startEl.value);
+                const months = parseInt(monthsEl.value || '1', 10);
+                if (!s || isNaN(months) || months < 1) {
                     endEl.value = '';
                     return;
                 }
-
-                const start = parseYMD(startStr);
-
-                // วันที่หมดสัญญา = (start + months เดือน) - 1 วัน
-                const tmp = new Date(start.getFullYear(), start.getMonth() + months, start.getDate());
+                // end = (start + months months) - 1 day
+                const tmp = new Date(s.getFullYear(), s.getMonth() + months, s.getDate());
                 tmp.setDate(tmp.getDate() - 1);
-
                 endEl.value = toYMD(tmp);
             }
-
-            // คำนวณเมื่อผู้ใช้เปลี่ยนค่า
-            startEl.addEventListener('change', recalcEnd);
-            monthsEl.addEventListener('input', recalcEnd);
-            monthsEl.addEventListener('change', recalcEnd);
-
-            // คำนวณครั้งแรกตอนโหลดหน้า
+            startEl && startEl.addEventListener('change', recalcEnd);
+            monthsEl && monthsEl.addEventListener('input', recalcEnd);
+            monthsEl && monthsEl.addEventListener('change', recalcEnd);
             recalcEnd();
-        })();
 
-        (function() {
+            // ====== Confirm before submit ======
             const form = document.getElementById('checkoutForm');
-            if (!form) return;
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault(); // ดักไว้ก่อน
-                const totalText = document.getElementById('grandTotal')?.textContent?.trim() || '';
-                const html = totalText ?
-                    `<div style="font-size:14px">ยอดชำระทั้งหมด <b>THB ${totalText}</b></div>` :
-                    '';
-
+            form && form.addEventListener('submit', function(e) {
+                e.preventDefault();
                 Swal.fire({
                     title: 'ยืนยันการชำระเงิน?',
-                    html,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: 'ใช่, ยืนยัน',
@@ -557,9 +652,37 @@
                     reverseButtons: true,
                     confirmButtonColor: '#0d6efd'
                 }).then((result) => {
-                    if (result.isConfirmed) form.submit(); // ส่งฟอร์มจริง
+                    if (result.isConfirmed) form.submit();
                 });
             });
         })();
+    </script>
+
+
+    (function() {
+    const form = document.getElementById('checkoutForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+    e.preventDefault(); // ดักไว้ก่อน
+    const totalText = document.getElementById('grandTotal')?.textContent?.trim() || '';
+    const html = totalText ?
+    `<div style="font-size:14px">ยอดชำระทั้งหมด <b>THB ${totalText}</b></div>` :
+    '';
+
+    Swal.fire({
+    title: 'ยืนยันการชำระเงิน?',
+    html,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'ใช่, ยืนยัน',
+    cancelButtonText: 'ยกเลิก',
+    reverseButtons: true,
+    confirmButtonColor: '#0d6efd'
+    }).then((result) => {
+    if (result.isConfirmed) form.submit(); // ส่งฟอร์มจริง
+    });
+    });
+    })();
     </script>
 @endsection
