@@ -16,6 +16,11 @@
         height: 200px !important;
         margin-bottom: 15px;
     }
+    .register-img {
+        width: 100% !important;
+        height: 200px !important;
+        
+    }
     .show-pass {
         top: 50%;
         right: 10px;
@@ -55,6 +60,11 @@
         height: 250px !important;
         margin-bottom: 15px;
     }
+    .register-img {
+        width: 100% !important;
+        height: 250px !important;
+        margin-bottom: 15px;
+    }
     .show-pass {
         top: 50%;
         right: 10px;
@@ -70,6 +80,10 @@
 /* desktop (992px+) */
 @media (min-width: 992px) {
     .login-img {
+        width: 350px;
+        height: 400px;
+    }
+    .register-img {
         width: 350px;
         height: 400px;
     }
@@ -150,8 +164,11 @@ body {
     color: white !important;
 }
 
-.modal-body .d-flex {
+#exampleModalToggle .modal-body .d-flex {
     height: 400px;
+}
+#exampleModalToggle3 .modal-body .d-flex {
+    height: 550px;
 }
 
 .login-img {
@@ -159,6 +176,15 @@ body {
     max-width: 350px;
     height: auto;
     background-image: url("../images/login_flatdesign.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: 10;
+}
+.register-img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    background-image: url("../images/register_img.jpg");
     background-size: cover;
     background-position: center;
     z-index: 10;

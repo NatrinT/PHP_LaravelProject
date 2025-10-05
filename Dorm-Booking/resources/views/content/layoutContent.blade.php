@@ -39,7 +39,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white animate-text"
-                                href="https://devbanban.com/?p=4425">การจองของฉัน</a>
+                                href="{{route('checkout.myBooking')}}">การจองของฉัน</a>
                         </li>
 
 
