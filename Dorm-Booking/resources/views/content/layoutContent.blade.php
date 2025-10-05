@@ -267,7 +267,7 @@
             <div class="modal-content">
                 <div class="modal-body p-0">
                     <div class="d-flex" id="display-res">
-                        <div class="register-img flex-shrink-0 rounded"></div>
+                        <div class="register-img flex-shrink-0 rounded mb-1 mb-lg-0"></div>
 
                         <div class="p-4 flex-grow-1 bg-white rounded">
                             <div class="modal-header p-0 mb-3">
@@ -421,17 +421,117 @@
         </div>
 
         <script>
-            function togglePassword() {
-                const password = document.getElementById('password');
-                const icon = document.getElementById('passwordIcon');
-                if (password.type === 'password') {
-                    password.type = 'text';
-                    icon.name = 'eye-outline'; // เปลี่ยน icon
-                } else {
-                    password.type = 'password';
-                    icon.name = 'eye-off-outline';
-                }
+            // toggle eyes
+            function toggleRegisterPassword() {
+                const input = document.getElementById('register_password');
+                const icon = document.getElementById('registerPasswordIcon');
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
             }
+
+            function toggleRegisterConfirm() {
+                const input = document.getElementById('register_confirm_password');
+                const icon = document.getElementById('registerConfirmIcon');
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
+            }
+
+            (function() {
+                const form = document.getElementById('registerForm');
+                if (!form) return;
+
+                // inputs
+                const email = document.getElementById('reg_email');
+                const fullname = document.getElementById('reg_full_name');
+                const phone = document.getElementById('reg_phone');
+                const pwd = document.getElementById('register_password');
+                const cfm = document.getElementById('register_confirm_password');
+
+                // error holders (ข้าง label)
+                const E = {
+                    email: document.getElementById('err_email'),
+                    full_name: document.getElementById('err_full_name'),
+                    phone: document.getElementById('err_phone'),
+                    password: document.getElementById('err_password'),
+                    password_confirmation: document.getElementById('err_password_confirmation'),
+                };
+
+                const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
+                const notBlank = v => (v || '').trim().length > 0;
+
+                function setErr(input, holder, msg) {
+                    if (input) input.classList.toggle('is-invalid', !!msg);
+                    if (holder) holder.textContent = msg || '';
+                }
+
+                function validate() {
+                    let ok = true;
+
+                    // email
+                    if (!notBlank(email.value)) {
+                        setErr(email, E.email, 'กรุณากรอกอีเมล');
+                        ok = false;
+                    } else if (!isEmail(email.value)) {
+                        setErr(email, E.email, 'รูปแบบอีเมลไม่ถูกต้อง');
+                        ok = false;
+                    } else {
+                        setErr(email, E.email, '');
+                    }
+
+                    // fullname
+                    if (!notBlank(fullname.value)) {
+                        setErr(fullname, E.full_name, 'กรุณากรอกชื่อ–นามสกุล');
+                        ok = false;
+                    } else {
+                        setErr(fullname, E.full_name, '');
+                    }
+
+                    if (!notBlank(phone.value)) {
+                        setErr(phone, E.phone, 'กรุณากรอกเบอร์โทร');
+                        ok = false;
+                    } else {
+                        setErr(phone, E.phone, '');
+                    }
+
+                    // password
+                    if (!notBlank(pwd.value)) {
+                        setErr(pwd, E.password, 'กรุณากรอกรหัสผ่าน');
+                        ok = false;
+                    } else if (pwd.value.length < 8) {
+                        setErr(pwd, E.password, 'อย่างน้อย 8 ตัวอักษร');
+                        ok = false;
+                    } else {
+                        setErr(pwd, E.password, '');
+                    }
+
+                    // confirm
+                    if (!notBlank(cfm.value)) {
+                        setErr(cfm, E.password_confirmation, 'กรุณายืนยันรหัสผ่าน');
+                        ok = false;
+                    } else if (cfm.value !== pwd.value) {
+                        setErr(cfm, E.password_confirmation, 'รหัสผ่านไม่ตรงกัน');
+                        ok = false;
+                    } else {
+                        setErr(cfm, E.password_confirmation, '');
+                    }
+
+                    return ok;
+                }
+
+                [email, fullname, phone, pwd, cfm].forEach(i => {
+                    i.addEventListener('input', validate);
+                    i.addEventListener('blur', validate);
+                });
+
+                form.addEventListener('submit', function(e) {
+                    if (!validate()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            })();
         </script>
 
 

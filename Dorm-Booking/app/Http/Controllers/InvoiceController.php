@@ -38,7 +38,7 @@ class InvoiceController extends Controller
 
     public function adding()
     {
-        $leases = LeaseModel::orderBy('id', 'desc')
+        $leases = \App\Models\LeaseModel::orderBy('id', 'desc')
             ->get(['id', 'rent_amount']); // ดึง rent_amount มาด้วย
         return view('invoice.create', compact('leases'));
     }

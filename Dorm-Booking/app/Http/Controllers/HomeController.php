@@ -144,7 +144,7 @@ class HomeController extends Controller
         // ===== Utilities/Rent/Other รายเดือน (สลับ 6M/12M) =====
         // ===== Utilities/Rent/Other รายเดือน (สลับ 6M/12M) =====
         $buildMonthlySeries = function (int $months) {
-            $start = Carbon::now()->startOfMonth()->subMonths($months - 1);
+            $start = \Illuminate\Support\Carbon::now()->startOfMonth()->subMonths($months - 1);
 
             // รายชื่อเดือนในช่วง (YYYY-MM)
             $keys = [];
@@ -153,7 +153,7 @@ class HomeController extends Controller
             }
 
             // ดึงยอดรวมต่อเดือน (ไม่ใช้ JSON_OBJECT)
-            $rows = InvoiceModel::selectRaw("
+            $rows = \App\Models\InvoiceModel::selectRaw("
             billing_period,
             SUM(amount_utilities) AS util,
             SUM(amount_rent)      AS rent,
@@ -172,7 +172,7 @@ class HomeController extends Controller
             $seriesTotal = [];
 
             foreach ($keys as $ym) {
-                $labels[] = Carbon::createFromFormat('Y-m', $ym)->isoFormat('MMM YY');
+                $labels[] = \Illuminate\Support\Carbon::createFromFormat('Y-m', $ym)->isoFormat('MMM YY');
 
                 $row = $rows->get($ym); // stdClass หรือ null
                 $seriesUtil[]  = $row ? (float) $row->util      : 0.0;

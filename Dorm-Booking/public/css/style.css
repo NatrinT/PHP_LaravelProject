@@ -1,8 +1,4 @@
 /* ตั้งค่า default flex-row สำหรับ desktop */
-#display-res > * {
-    flex: 1 1 100%;
-}
-
 /* phone (sm < 768px) */
 @media (max-width: 767px) {
     body {
@@ -10,6 +6,7 @@
     }
     #display-res {
         flex-direction: column !important;
+        align-items: center;
     }
     .login-img {
         width: 100% !important;
@@ -19,7 +16,6 @@
     .register-img {
         width: 100% !important;
         height: 200px !important;
-        
     }
     .show-pass {
         top: 50%;
@@ -165,10 +161,12 @@ body {
 }
 
 #exampleModalToggle .modal-body .d-flex {
-    height: 400px;
+    /* height: 400px; */
+    width: 100%;
 }
 #exampleModalToggle3 .modal-body .d-flex {
-    height: 550px;
+    /* height: 550px; */
+    width: 100%;
 }
 
 .login-img {

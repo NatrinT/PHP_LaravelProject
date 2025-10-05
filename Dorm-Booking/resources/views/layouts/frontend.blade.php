@@ -68,7 +68,6 @@
                                 data-bs-toggle="modal" data-bs-target="#exampleModalToggle3">
                                 <ion-icon name="person-outline" class="me-2"></ion-icon> ลงทะเบียน
                             </button>
-
                         </div>
                     @endif
                     @if (session('user_id'))
@@ -212,15 +211,17 @@
     </footer>
 
 
-    <!-- Login Modal -->
     <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
         tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- ใช้ modal-lg ให้กว้างขึ้น -->
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <div class="d-flex" id="display-res">
+                    <div class="d-flex" id="display-res"> <!-- Flex container -->
+
+                        <!-- รูปด้านซ้าย -->
                         <div class="login-img flex-shrink-0 rounded"></div>
 
+                        <!-- ฟอร์มด้านขวา -->
                         <div class="p-4 flex-grow-1 bg-white rounded">
                             <div class="modal-header p-0 mb-3">
                                 <h5 class="modal-title" id="exampleModalToggleLabel">กรุณาเข้าสู่ระบบ</h5>
@@ -241,13 +242,15 @@
 
                                 <div class="position-relative">
                                     <label>Password</label>
-                                    <input type="password" class="form-control" id="login_password" name="password"
+                                    <input type="password" class="form-control" id="password" name="password"
                                         required placeholder="enter password" value="{{ old('password') }}">
+
+                                    <!-- ปุ่ม show/hide -->
                                     <button type="button" class="btn btn-sm position-absolute show-pass"
-                                        onclick="toggleLoginPassword()" style="right: .5rem; top: 2.1rem;">
-                                        <ion-icon name="eye-off-outline" id="loginPasswordIcon"
-                                            size="10"></ion-icon>
+                                        onclick="togglePassword()">
+                                        <ion-icon name="eye-off-outline" id="passwordIcon" size="10"></ion-icon>
                                     </button>
+
                                     @if (isset($errors) && $errors->has('password'))
                                         <div class="text-danger">{{ $errors->first('password') }}</div>
                                     @endif
@@ -272,14 +275,15 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="exampleModalToggle3" aria-hidden="true" aria-labelledby="exampleModalToggleLabel3"
         tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- ใช้ modal-lg ให้กว้างขึ้น -->
             <div class="modal-content">
                 <div class="modal-body p-0">
-                    <div class="d-flex" id="display-res">
-                        <div class="register-img flex-shrink-0 rounded"></div>
+                    <div class="d-flex" id="display-res"> <!-- Flex container -->
+
+                        <!-- รูปด้านซ้าย -->
+                        <div class="register-img flex-shrink-0 rounded mb-1 mb-lg-0"></div>
 
                         <div class="p-4 flex-grow-1 bg-white rounded">
                             <div class="modal-header p-0 mb-3">
@@ -398,7 +402,6 @@
         </div>
     </div>
 
-    <!-- Forgot Password Modal -->
     <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
         tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -412,7 +415,7 @@
                         และจัดส่งลิงก์สำหรับกรอกแบบฟอร์มเพื่อรีเซ็ตรหัสผ่านใหม่ให้ท่าน</p>
                     <br>
                     <form action="{{ route('users.checkmail') }}" method="GET">
-                        @csrf
+                        @csrf <!-- CSRF สำหรับ GET ไม่จำเป็น แต่ไม่เป็นไร -->
                         <div class="mb-3">
                             <label>Email</label>
                             <input type="email" class="form-control" name="email" required
@@ -428,147 +431,145 @@
                             <button type="submit" class="btn btn-primary">ยืนยัน</button>
                         </div>
                     </form>
+
+
                 </div>
             </div>
         </div>
-    </div>
 
-
-
-
-    <script>
-        // toggle eyes
-        function toggleRegisterPassword() {
-            const input = document.getElementById('register_password');
-            const icon = document.getElementById('registerPasswordIcon');
-            if (!input) return;
-            input.type = input.type === 'password' ? 'text' : 'password';
-            if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
-        }
-
-        function toggleRegisterConfirm() {
-            const input = document.getElementById('register_confirm_password');
-            const icon = document.getElementById('registerConfirmIcon');
-            if (!input) return;
-            input.type = input.type === 'password' ? 'text' : 'password';
-            if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
-        }
-
-        (function() {
-            const form = document.getElementById('registerForm');
-            if (!form) return;
-
-            // inputs
-            const email = document.getElementById('reg_email');
-            const fullname = document.getElementById('reg_full_name');
-            const phone = document.getElementById('reg_phone');
-            const pwd = document.getElementById('register_password');
-            const cfm = document.getElementById('register_confirm_password');
-
-            // error holders (ข้าง label)
-            const E = {
-                email: document.getElementById('err_email'),
-                full_name: document.getElementById('err_full_name'),
-                phone: document.getElementById('err_phone'),
-                password: document.getElementById('err_password'),
-                password_confirmation: document.getElementById('err_password_confirmation'),
-            };
-
-            const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
-            const notBlank = v => (v || '').trim().length > 0;
-
-            function setErr(input, holder, msg) {
-                if (input) input.classList.toggle('is-invalid', !!msg);
-                if (holder) holder.textContent = msg || '';
+        <script>
+            // toggle eyes
+            function toggleRegisterPassword() {
+                const input = document.getElementById('register_password');
+                const icon = document.getElementById('registerPasswordIcon');
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
             }
 
-            function validate() {
-                let ok = true;
-
-                // email
-                if (!notBlank(email.value)) {
-                    setErr(email, E.email, 'กรุณากรอกอีเมล');
-                    ok = false;
-                } else if (!isEmail(email.value)) {
-                    setErr(email, E.email, 'รูปแบบอีเมลไม่ถูกต้อง');
-                    ok = false;
-                } else {
-                    setErr(email, E.email, '');
-                }
-
-                // fullname
-                if (!notBlank(fullname.value)) {
-                    setErr(fullname, E.full_name, 'กรุณากรอกชื่อ–นามสกุล');
-                    ok = false;
-                } else {
-                    setErr(fullname, E.full_name, '');
-                }
-
-                if (!notBlank(phone.value)) {
-                    setErr(phone, E.phone, 'กรุณากรอกเบอร์โทร');
-                    ok = false;
-                } else {
-                    setErr(phone, E.phone, '');
-                }
-
-                // password
-                if (!notBlank(pwd.value)) {
-                    setErr(pwd, E.password, 'กรุณากรอกรหัสผ่าน');
-                    ok = false;
-                } else if (pwd.value.length < 8) {
-                    setErr(pwd, E.password, 'อย่างน้อย 8 ตัวอักษร');
-                    ok = false;
-                } else {
-                    setErr(pwd, E.password, '');
-                }
-
-                // confirm
-                if (!notBlank(cfm.value)) {
-                    setErr(cfm, E.password_confirmation, 'กรุณายืนยันรหัสผ่าน');
-                    ok = false;
-                } else if (cfm.value !== pwd.value) {
-                    setErr(cfm, E.password_confirmation, 'รหัสผ่านไม่ตรงกัน');
-                    ok = false;
-                } else {
-                    setErr(cfm, E.password_confirmation, '');
-                }
-
-                return ok;
+            function toggleRegisterConfirm() {
+                const input = document.getElementById('register_confirm_password');
+                const icon = document.getElementById('registerConfirmIcon');
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+                if (icon) icon.name = input.type === 'password' ? 'eye-off-outline' : 'eye-outline';
             }
 
-            [email, fullname, phone, pwd, cfm].forEach(i => {
-                i.addEventListener('input', validate);
-                i.addEventListener('blur', validate);
-            });
+            (function() {
+                const form = document.getElementById('registerForm');
+                if (!form) return;
 
-            form.addEventListener('submit', function(e) {
-                if (!validate()) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                // inputs
+                const email = document.getElementById('reg_email');
+                const fullname = document.getElementById('reg_full_name');
+                const phone = document.getElementById('reg_phone');
+                const pwd = document.getElementById('register_password');
+                const cfm = document.getElementById('register_confirm_password');
+
+                // error holders (ข้าง label)
+                const E = {
+                    email: document.getElementById('err_email'),
+                    full_name: document.getElementById('err_full_name'),
+                    phone: document.getElementById('err_phone'),
+                    password: document.getElementById('err_password'),
+                    password_confirmation: document.getElementById('err_password_confirmation'),
+                };
+
+                const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim());
+                const notBlank = v => (v || '').trim().length > 0;
+
+                function setErr(input, holder, msg) {
+                    if (input) input.classList.toggle('is-invalid', !!msg);
+                    if (holder) holder.textContent = msg || '';
                 }
-            });
-        })();
-    </script>
+
+                function validate() {
+                    let ok = true;
+
+                    // email
+                    if (!notBlank(email.value)) {
+                        setErr(email, E.email, 'กรุณากรอกอีเมล');
+                        ok = false;
+                    } else if (!isEmail(email.value)) {
+                        setErr(email, E.email, 'รูปแบบอีเมลไม่ถูกต้อง');
+                        ok = false;
+                    } else {
+                        setErr(email, E.email, '');
+                    }
+
+                    // fullname
+                    if (!notBlank(fullname.value)) {
+                        setErr(fullname, E.full_name, 'กรุณากรอกชื่อ–นามสกุล');
+                        ok = false;
+                    } else {
+                        setErr(fullname, E.full_name, '');
+                    }
+
+                    if (!notBlank(phone.value)) {
+                        setErr(phone, E.phone, 'กรุณากรอกเบอร์โทร');
+                        ok = false;
+                    } else {
+                        setErr(phone, E.phone, '');
+                    }
+
+                    // password
+                    if (!notBlank(pwd.value)) {
+                        setErr(pwd, E.password, 'กรุณากรอกรหัสผ่าน');
+                        ok = false;
+                    } else if (pwd.value.length < 8) {
+                        setErr(pwd, E.password, 'อย่างน้อย 8 ตัวอักษร');
+                        ok = false;
+                    } else {
+                        setErr(pwd, E.password, '');
+                    }
+
+                    // confirm
+                    if (!notBlank(cfm.value)) {
+                        setErr(cfm, E.password_confirmation, 'กรุณายืนยันรหัสผ่าน');
+                        ok = false;
+                    } else if (cfm.value !== pwd.value) {
+                        setErr(cfm, E.password_confirmation, 'รหัสผ่านไม่ตรงกัน');
+                        ok = false;
+                    } else {
+                        setErr(cfm, E.password_confirmation, '');
+                    }
+
+                    return ok;
+                }
+
+                [email, fullname, phone, pwd, cfm].forEach(i => {
+                    i.addEventListener('input', validate);
+                    i.addEventListener('blur', validate);
+                });
+
+                form.addEventListener('submit', function(e) {
+                    if (!validate()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            })();
+        </script>
 
 
-    @yield('footer')
+        @yield('footer')
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
-    </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
+        </script>
 
-    <!-- โหลด flatpickr ให้พร้อมก่อน -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <!-- (ถ้าอยากได้ภาษาไทย) -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+        <!-- โหลด flatpickr ให้พร้อมก่อน -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <!-- (ถ้าอยากได้ภาษาไทย) -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 
-    <!-- ตอนนี้ค่อยให้เพจย่อยใส่ JS -->
-    @yield('js_before')
-    <!-- สคริปต์รวมของโปรเจกต์ (ถ้ามี) -->
-    <script src="{{ asset('js/script.js') }}"></script>
+        <!-- ตอนนี้ค่อยให้เพจย่อยใส่ JS -->
+        @yield('js_before')
+        <!-- สคริปต์รวมของโปรเจกต์ (ถ้ามี) -->
+        <script src="{{ asset('js/script.js') }}"></script>
 
-    <!-- icons etc. -->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <!-- icons etc. -->
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 </body>
 

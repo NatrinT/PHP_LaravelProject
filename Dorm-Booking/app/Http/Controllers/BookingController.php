@@ -67,7 +67,7 @@ class BookingController extends Controller
         }
 
         // ฟิลเตอร์สถานะ: รองรับ UPCOMING (ตีความเป็น PENDING หรือ start_date > today)
-        $today = Carbon::today()->toDateString();
+        $today = \Carbon\Carbon::today()->toDateString();
         if ($status !== '') {
             if ($status === 'UPCOMING') {
                 // ให้ UPCOMING = PENDING เท่านั้น เพื่อให้ตรงกับชิป

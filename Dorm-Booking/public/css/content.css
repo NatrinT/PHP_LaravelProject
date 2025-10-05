@@ -1,7 +1,4 @@
 /* ตั้งค่า default flex-row สำหรับ desktop */
-#display-res > * {
-    flex: 1 1 100%;
-}
 
 /* phone (sm < 768px) */
 @media (max-width: 767px) {
@@ -10,11 +7,16 @@
     }
     #display-res {
         flex-direction: column !important;
+        align-items: center;
     }
     .login-img {
         width: 100% !important;
         height: 200px !important;
         margin-bottom: 15px;
+    }
+    .register-img {
+        width: 100% !important;
+        height: 200px !important;
     }
     .show-pass {
         top: 50%;
@@ -55,6 +57,11 @@
         height: 250px !important;
         margin-bottom: 15px;
     }
+    .register-img {
+        width: 100% !important;
+        height: 250px !important;
+        margin-bottom: 15px;
+    }
     .show-pass {
         top: 50%;
         right: 10px;
@@ -70,6 +77,10 @@
 /* desktop (992px+) */
 @media (min-width: 992px) {
     .login-img {
+        width: 350px;
+        height: 400px;
+    }
+    .register-img {
         width: 350px;
         height: 400px;
     }
@@ -150,8 +161,13 @@ body {
     color: white !important;
 }
 
-.modal-body .d-flex {
-    height: 400px;
+#exampleModalToggle .modal-body .d-flex {
+    /* height: 400px; */
+    width: 100%;
+}
+#exampleModalToggle3 .modal-body .d-flex {
+    /* height: 550px; */
+    width: 100%;
 }
 
 .login-img {
@@ -159,6 +175,15 @@ body {
     max-width: 350px;
     height: auto;
     background-image: url("../images/login_flatdesign.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: 10;
+}
+.register-img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    background-image: url("../images/register_img.jpg");
     background-size: cover;
     background-position: center;
     z-index: 10;

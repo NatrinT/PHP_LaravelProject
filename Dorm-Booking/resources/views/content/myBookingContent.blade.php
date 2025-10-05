@@ -182,8 +182,7 @@
                             <option value="UPCOMING" {{ request('status') === 'UPCOMING' ? 'selected' : '' }}>รอเข้าอยู่
                             </option>
                             <option value="ENDED" {{ request('status') === 'ENDED' ? 'selected' : '' }}>สิ้นสุด</option>
-                            <option value="CANCELED" {{ request('status') === 'CANCELED' ? 'selected' : '' }}>ยกเลิก
-                            </option>
+                            <option value="CANCELED" {{ request('status') === 'CANCELED' ? 'selected' : '' }}>ยกเลิก</option>
                         </select>
                     </div>
 
@@ -195,6 +194,7 @@
             </div>
         </div>
 
+        {{-- ตาราง --}}
         <div class="card card-clean" style="min-height:60vh">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
@@ -305,4 +305,5 @@
 @endsection
 
 @section('js_before')
+    {{-- เสริมสคริปต์ถ้าต้องการ --}}
 @endsection
