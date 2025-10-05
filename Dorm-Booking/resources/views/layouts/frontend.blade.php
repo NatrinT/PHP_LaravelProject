@@ -36,14 +36,14 @@
                                 href="{{ route('content.room') }}">หอพัก</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white animate-text"
-                                href="{{route('content.help')}}">ช่วยเหลือ</a>
+                            <a class="nav-link text-white animate-text" href="{{ route('content.help') }}">ช่วยเหลือ</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white animate-text"
-                                href="{{route('checkout.myBooking')}}">การจองของฉัน</a>
-                        </li>
-
+                        @if (session('user_id'))
+                            <li class="nav-item">
+                                <a class="nav-link text-white animate-text"
+                                    href="{{ route('checkout.myBooking') }}">การจองของฉัน</a>
+                            </li>
+                        @endif
 
                         @if (session('user_role') === 'ADMIN')
                             <li class="nav-item">

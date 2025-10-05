@@ -155,31 +155,34 @@
                                 @endif
                             </td>
 
-                            <td class="text-center">
-                                <a href="/lease/{{ $row->id }}" class="icon-action text-secondary me-3"
-                                    title="Edit">
-                                    <i class="bi bi-gear"></i>
-                                </a>
+                            @if (!session('user_role') === 'ADMIN')
+                                <td class="text-center">
+                                    <a href="/lease/{{ $row->id }}" class="icon-action text-secondary me-3"
+                                        title="Edit">
+                                        <i class="bi bi-gear"></i>
+                                    </a>
 
-                                @if ($hasUnpaid)
-                                    {{-- ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ --}}
-                                    <button type="button" class="icon-action text-secondary"
-                                        title="ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ {{ $unpaid }} ใบ" disabled
-                                        style="opacity:.45; cursor:not-allowed;">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                @else
-                                    {{-- ลบได้: ยืนยันก่อนลบ --}}
-                                    <button type="button" class="icon-action text-danger"
-                                        onclick="deleteConfirm({{ $row->id }})" title="Delete">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                    <form id="delete-form-{{ $row->id }}"
-                                        action="/lease/remove/{{ $row->id }}" method="POST" style="display:none;">
-                                        @csrf @method('delete')
-                                    </form>
-                                @endif
-                            </td>
+                                    @if ($hasUnpaid)
+                                        {{-- ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ --}}
+                                        <button type="button" class="icon-action text-secondary"
+                                            title="ลบไม่ได้: มีใบแจ้งหนี้ค้างชำระ {{ $unpaid }} ใบ" disabled
+                                            style="opacity:.45; cursor:not-allowed;">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    @else
+                                        {{-- ลบได้: ยืนยันก่อนลบ --}}
+                                        <button type="button" class="icon-action text-danger"
+                                            onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $row->id }}"
+                                            action="/lease/remove/{{ $row->id }}" method="POST"
+                                            style="display:none;">
+                                            @csrf @method('delete')
+                                        </form>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

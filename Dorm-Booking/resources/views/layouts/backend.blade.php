@@ -52,11 +52,13 @@
                             <i class="bi bi-file-earmark-text fs-4"></i> <span class="fw-bold fs-5">Leases</span>
                         </a>
 
+                        @if (session('user_role') === 'ADMIN')
                         <a href="{{ url('/invoice') }}"
                             class="sbv-link {{ request()->is('invoice*') ? 'active' : '' }}">
                             <i class="bi bi-receipt fs-4"></i> <span class="fw-bold fs-5">Invoices</span>
                         </a>
-
+                        @endif
+                        
                         <a href="{{ url('/announcement') }}"
                             class="sbv-link {{ request()->is('announcement*') ? 'active' : '' }}">
                             <i class="bi bi-megaphone fs-4"></i> <span class="fw-bold fs-5">Announcement</span>
