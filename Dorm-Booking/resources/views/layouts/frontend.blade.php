@@ -45,7 +45,7 @@
                             </li>
                         @endif
 
-                        @if (session('user_role') === 'ADMIN')
+                        @if (session('user_role') === 'ADMIN' || session('user_role') === 'STAFF')
                             <li class="nav-item">
                                 <a class="nav-link text-danger animate-text" href="/dashboard"
                                     target="_blank">จัดการหลังบ้าน</a>

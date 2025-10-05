@@ -58,11 +58,7 @@
                     <i class="fa-solid fa-building text-muted"></i>
                     <select name="branch" class="form-select form-select-sm">
                         <option value="">ทุกสาขา</option>
-                        @foreach ($branches as $br)
-                            <option value="{{ $br }}" {{ request('branch') === $br ? 'selected' : '' }}>
-                                {{ ucwords(strtolower($br)) }}
-                            </option>
-                        @endforeach
+                        {{-- foreach for branches --}}
                     </select>
                 </div>
 
