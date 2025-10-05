@@ -157,7 +157,7 @@
                                 @endif
                             </td>
 
-                            @if (!session('user_role') === 'ADMIN')
+                            @if (session('user_role') === 'ADMIN')
                                 <td class="text-center">
                                     <a href="/lease/{{ $row->id }}" class="icon-action text-secondary me-3"
                                         title="Edit">
