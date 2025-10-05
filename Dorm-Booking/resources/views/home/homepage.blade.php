@@ -10,54 +10,44 @@
 
 @section('contenthome')
     <div class="row">
-        <div class="col-12 text-white fs-2 text-center mt-5">
+        <div class="col-12 text-white fs-2 text-center mt-md-5 mt-4 font-header">
             ราคาถูก วางใจทุกการจองหอพัก ไปกับ DORM Booking
         </div>
 
         {{-- ฟอร์มหลัก --}}
-        <form id="searchForm" method="GET" action="{{ route('searchRoom') }}" class="mt-5">
+        <form id="searchForm" method="GET" action="{{ route('searchRoom') }}" class="mt-4 mt-md-5">
             {{-- ================== แถบเลือก “สาขา” (ทำเป็น radio) ================== --}}
             @php $branchVal = strtoupper(request('branch','')); @endphp
             <div class="d-flex">
                 <div class="tab-menu active"><i class="fas fa-hotel"></i>&nbsp;จองหอพัก</div>
                 <div class="tab-menu"><i class="fa-solid fa-compass"></i>&nbsp;สถานที่ท่องเที่ยว</div>
             </div>
-            <hr>
+            <hr class="m-1 m-md-3">
             <div class="d-flex gap-2 flex-wrap">
                 <input type="radio" name="branch" id="branch_all" value="" class="branch-radio d-none"
                     {{ $branchVal === '' ? 'checked' : '' }}>
-                <label for="branch_all" class="type-hotel">
+                <label for="branch_all" class="type-hotel font-body">
                     <i class="fas fa-hotel"></i>&nbsp;ทุกสาขา
                 </label>
 
-                <input type="radio" name="branch" id="branch_srinakarin" value="SRINAKARIN" class="branch-radio d-none"
-                    {{ $branchVal === 'SRINAKARIN' ? 'checked' : '' }}>
-                <label for="branch_srinakarin" class="type-hotel">
-                    <i class="fas fa-hotel"></i>&nbsp;หอพักดอร์มศรีนครินทร์
-                </label>
-
-                <input type="radio" name="branch" id="branch_rama9" value="RAMA9" class="branch-radio d-none"
-                    {{ $branchVal === 'RAMA9' ? 'checked' : '' }}>
-                <label for="branch_rama9" class="type-hotel">
-                    <i class="fas fa-hotel"></i>&nbsp;หอพักดอร์มพระราม 9
-                </label>
-
-                <input type="radio" name="branch" id="branch_asoke" value="ASOKE" class="branch-radio d-none"
-                    {{ $branchVal === 'ASOKE' ? 'checked' : '' }}>
-                <label for="branch_asoke" class="type-hotel">
-                    <i class="fas fa-hotel"></i>&nbsp;หอพักดอร์มอโศก
-                </label>
+                @foreach ($branches as $b)
+                    <input type="radio" name="branch" id="branch_{{ strtolower($b) }}" value="{{ $b }}"
+                        class="branch-radio d-none" {{ $branchVal === $b ? 'checked' : '' }}>
+                    <label for="branch_{{ strtolower($b) }}" class="type-hotel font-body">
+                        <i class="fas fa-hotel"></i>&nbsp;หอพักดอร์ม {{ ucwords(strtolower($b)) }}
+                    </label>
+                @endforeach
             </div>
 
             {{-- หัวข้อ 3 ช่องหลัก --}}
-            <div class="row d-flex flex-row mt-4 text-white" style="font-weight:400;">
+            <div class="row d-flex flex-row mt-3 mt-md-4 text-white font-body" style="font-weight:400;">
                 <div class="col-4">รูปแบบห้อง</div>
                 <div class="col-4">ระยะเวลาเช่า</div>
-                <div class="col-4">ชื่อ/เลขห้อง (roomNo)</div>
+                <div class="col-4">ชื่อ/เลขห้อง</div>
             </div>
 
             {{-- ================== แถว input ค้นหา ================== --}}
-            <div class="row d-flex flex-row mt-2 text-white"
+            <div class="row search-row d-flex flex-row mt-2 text-white align-items-stretch"
                 style="font-weight:400; justify-content:center; align-items:center;">
 
                 {{-- รูปแบบห้อง (select) --}}
@@ -65,9 +55,9 @@
                     $roomTypes = $types ?? ['STANDARD', 'DELUXE', 'LUXURY'];
                     $typeReq = strtoupper(request('type', ''));
                 @endphp
-                <div class="col-12 col-md-4 input-data corner-radius1">
+                <div class="col-4 input-data corner-radius1">
                     <ion-icon name="business-outline"></ion-icon>
-                    <select name="type" class="form-select p-2" style="border-radius:0;">
+                    <select name="type" class="form-select p-2 font-body" style="border-radius:0;">
                         <option value="" {{ $typeReq === '' ? 'selected' : '' }}>ทั้งหมด</option>
                         @foreach ($roomTypes as $t)
                             @php $val = strtoupper($t); @endphp
@@ -81,22 +71,23 @@
                 {{-- ระยะเวลาเช่า (flatpickr range) + hidden start/end --}}
                 <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
                 <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
-                <div class="col-12 col-md-4 input-data">
+                <div class="col-4 input-data">
                     <ion-icon name="calendar-outline"></ion-icon>
-                    <input type="text" class="form-control m-0 p-2" id="dateRangePicker" style="border-radius:0"
+                    <input type="text" class="form-control m-0 p-2 font-body" id="dateRangePicker" style="border-radius:0"
                         placeholder="เลือกช่วงวันที่ต้องการเข้าพัก"
                         value="{{ request('start_date') && request('end_date') ? request('start_date') . ' ถึง ' . request('end_date') : '' }}">
                 </div>
 
                 {{-- ชื่อ/เลขห้อง (roomNo) --}}
-                <div class="col-12 col-md-3 input-data corner-radius2">
+                <div class="col-3 input-data corner-radius2">
                     <ion-icon name="home-outline"></ion-icon>
-                    <input type="text" name="roomNo" class="form-control m-0 p-2" placeholder="เช่น SK101 หรือ 301"
+                    <input type="text" name="roomNo" class="form-control m-0 p-2 font-body" placeholder="เช่น SK101 หรือ 301"
                         value="{{ request('roomNo') }}">
                 </div>
 
-                <div class="col-12 col-md-1 d-grid">
-                    <button type="submit" class="search-data p-2 btn btn-primary">
+                <div class="col-1 p-0 col-btn">
+                    <button type="submit"
+                        class="search-data btn btn-primary w-100 d-flex justify-content-center align-items-center m-0">
                         <ion-icon name="search-outline" style="font-size:24px;vertical-align:middle"></ion-icon>
                     </button>
                 </div>

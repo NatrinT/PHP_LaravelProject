@@ -80,6 +80,11 @@
                     <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
                     <span class="btn-text ms-1 fw-bold " style="color:#020025;">Add Room</span>
                 </a>
+                <a href="/branch/adding"
+                    class=" btn-add-user d-inline-flex align-items-center text-white text-decoration-none me-4">
+                    <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
+                    <span class="btn-text ms-1 fw-bold " style="color:#020025;">Add Branch</span>
+                </a>
             </div>
 
             <div class="table-responsive">

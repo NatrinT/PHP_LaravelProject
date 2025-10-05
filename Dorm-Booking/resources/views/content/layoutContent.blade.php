@@ -11,8 +11,7 @@
     <!-- Font Awesome 6 Free -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/contentBody.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/content.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     @yield('css_before')
 </head>
@@ -20,7 +19,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-style">
-            <div class="container-fluid ">
+            <div class="container-fluid">
                 <a href="/">
                     <p class="app-icon"></p>
                 </a>
@@ -36,12 +35,11 @@
                                 href="{{ route('content.room') }}">หอพัก</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white animate-text"
-                                href="{{route('content.help')}}">ช่วยเหลือ</a>
+                            <a class="nav-link text-white animate-text" href="{{ route('content.help') }}">ช่วยเหลือ</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white animate-text"
-                                href="{{route('checkout.myBooking')}}">การจองของฉัน</a>
+                                href="https://devbanban.com/?p=4425">การจองของฉัน</a>
                         </li>
 
 
@@ -80,24 +78,11 @@
             </div>
         </nav>
     </header>
-    <div class="bg-img">
-        <div class="container-fluid p-0">
-            <div class="row">
-                <div class="col-12 col-sm-12 col-md-12">
-
-                </div>
+    <div class="container-fluid p-0">
+        <div class="container contenthome-wrapper">
+            <div>
+                @yield('content')
             </div>
-            <div class="container contenthome-wrapper">
-                <div>
-                    @yield('contenthome')
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <div>
-            @yield('contentBody')
         </div>
     </div>
 

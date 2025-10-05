@@ -10,6 +10,7 @@ use App\Models\LeaseModel;
 use App\Models\RoomModel;
 use App\Models\InvoiceModel;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -33,9 +34,59 @@ class HomeController extends Controller
             'types'    => $types,
             'branches' => $branches,
         ]);
-
-        return view('home.homepage');
     }
+
+    public function RoomPage(Request $request)
+    {
+        try {
+            // ✅ เอาเฉพาะห้อง AVAILABLE (กันเคส/เว้นวรรค)
+            $availableQ = RoomModel::whereRaw("TRIM(UPPER(status)) = 'AVAILABLE'");
+
+            // ✅ รายชื่อสาขาที่ "มีห้องว่างจริง" (ไว้โชว์ในปุ่มกรอง)
+            $branches = (clone $availableQ)
+                ->whereNotNull('branch')->where('branch', '!=', '')
+                ->distinct()->orderBy('branch')->pluck('branch');
+
+            // ✅ รับสาขาที่เลือกจาก query string
+            $selectedBranch = strtoupper(trim($request->query('branch', '')));
+
+            // ✅ ใช้ตัวกรองสาขาถ้ามีเลือก
+            $roomsQ = clone $availableQ;
+            if ($selectedBranch !== '') {
+                $roomsQ->whereRaw("TRIM(UPPER(branch)) = ?", [$selectedBranch]);
+            }
+
+            // ✅ ประเภทห้องจากชุดข้อมูลที่ถูกกรองแล้ว (โชว์เฉพาะที่ยังมีห้องจริง)
+            $types = (clone $roomsQ)
+                ->whereNotNull('type')->where('type', '!=', '')
+                ->distinct()->orderBy('type')->pluck('type');
+
+            // ✅ ห้องว่างทั้งหมด (ตามตัวกรอง) สำหรับทำ swiper (ไม่ limit — ให้ swiper เลื่อน)
+            $rooms = $roomsQ->orderBy('branch')
+                ->orderBy('type')
+                ->orderBy('floor')
+                ->orderBy('room_no')
+                ->get();
+
+            // ✅ กลุ่มซ้อน [$branch][$type] => Collection<RoomModel>
+            $byBranchType = $rooms->groupBy(['branch', 'type']);
+
+            return view('content.roomContent', [
+                'branches'       => $branches,
+                'types'          => $types,
+                'byBranchType'   => $byBranchType,
+                'selectedBranch' => $selectedBranch,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function helpPage(Request $request)
+    {
+        return view('content.helpContent');
+    }
+
 
     public function dashboard(Request $request)
     {
@@ -290,5 +341,11 @@ class HomeController extends Controller
         $branches = RoomModel::select('branch')->distinct()->orderBy('branch')->pluck('branch')->toArray();
 
         return view('searchRoom.homepage', compact('rooms', 'types', 'branches'));
+    }
+
+    public function myBooking()
+    {
+        
+        return view('content.myBookingContent');
     }
 }

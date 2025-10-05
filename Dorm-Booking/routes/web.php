@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CheckoutController;
 
 //home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -17,6 +18,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // searchRoom
 Route::get('/showRoom', [HomeController::class, 'showRoom'])->name('rooms.show');
 Route::get('/searchRoom', [HomeController::class, 'searchRoom'])->name('searchRoom');
+Route::get('/content/room', [HomeController::class, 'RoomPage'])->name('content.room');
+Route::get('/content/help', [HomeController::class, 'HelpPage'])->name('content.help');
 
 
 //login
@@ -43,7 +46,9 @@ Route::put('/users/reset/{id}', [UsersController::class, 'resetPassword']);
 Route::get('/room', [RoomController::class, 'index']);
 Route::get('/room/search', [RoomController::class, 'search'])->name('rooms.search');
 Route::get('/room/adding',  [RoomController::class, 'adding']);
+Route::get('/branch/adding',  [RoomController::class, 'branchAdding']);
 Route::post('/room',  [RoomController::class, 'create']);
+Route::post('/branch',  [RoomController::class, 'branchCreate']);
 Route::get('/room/{id}',  [RoomController::class, 'edit']);
 Route::put('/room/{id}',  [RoomController::class, 'update']);
 Route::delete('/room/remove/{id}',  [RoomController::class, 'remove']);
@@ -83,6 +88,12 @@ Route::delete('/announcement/remove/{id}',  [AnnouncementController::class, 'rem
 Route::get('/announcement/reset/{id}',  [AnnouncementController::class, 'reset']);
 Route::put('/announcement/reset/{id}',  [AnnouncementController::class, 'resetPassword']);
 
+//make purchase, lease, payment
+Route::get('/myBooking', [HomeController::class, 'myBooking'])->name('checkout.myBooking');
+Route::get('/checkout/{room}', [CheckoutController::class, 'showCheckout'])->name('checkout.booking');
+Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
+
+
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -92,7 +103,7 @@ Route::get('/checkmail', [AuthController::class, 'checkmail'])->name('users.chec
 //ทำไมต้องมี name('login') ?
 //เวลาใช้ auth middleware ถ้า user ยังไม่ login → Laravel จะ redirect ไปหา route ที่ชื่อว่า login โดยอัตโนมัติ
 //ถ้าไม่เจอ → มันก็โยน error Route [login] not defined.
- 
+
 //login เสร็จไปหน้า Dashboard
 Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');

@@ -10,6 +10,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage; // ✅ เพิ่มสำหรับจัดการไฟล์
+use Illuminate\Support\Str;
 
 class RoomController extends Controller
 {
@@ -37,6 +38,10 @@ class RoomController extends Controller
     public function adding()
     {
         return view('rooms.create');
+    }
+    public function branchAdding()
+    {
+        return view('rooms.branchCreate');
     }
 
     public function create(Request $request)
@@ -110,6 +115,57 @@ class RoomController extends Controller
             //return view('errors.404');
         }
     } //fun create
+
+    public function branchCreate(Request $request)
+    {
+        $messages = [
+            'branch.required' => 'กรุณากรอกข้อมูล',
+            'image.required'  => 'กรุณาอัปโหลดรูปห้อง',
+            'image.mimes'     => 'รองรับเฉพาะไฟล์ jpg, jpeg, png, webp',
+            'image.max'       => 'ไฟล์ต้องไม่เกิน 5MB',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'branch' => 'required',
+            'image'  => 'required|file|mimes:jpg,jpeg,png,webp|max:5120',
+        ], $messages);
+
+        if ($validator->fails()) {
+            return redirect('branch/adding')->withErrors($validator)->withInput();
+        }
+
+        try {
+            // โฟลเดอร์ปลายทางใน storage/app/public/uploads/branch
+            $disk = 'public';
+            $dir  = 'uploads/branch';
+            Storage::disk($disk)->makeDirectory($dir);
+
+            // สร้างชื่อไฟล์จากชื่อสาขาให้ปลอดภัย (ตัวพิมพ์เล็ก, a-z0-9-)
+            // ถ้าชื่อไทย slug อาจว่าง ให้ fallback เป็น branch
+            $rawBranch = trim($request->input('branch'));
+            $slug      = Str::slug($rawBranch, '-');
+            if ($slug === '') {
+                $slug = strtolower(preg_replace('/[^A-Za-z0-9_-]+/', '', $rawBranch)) ?: 'branch';
+            }
+
+            $file = $request->file('image');
+            $ext  = strtolower($file->extension()); // รักษานามสกุลเดิมของไฟล์ที่อัปโหลด
+            $name = $slug . '.' . $ext;             // ตัวอย่าง: asoke.png, rama9.jpg
+
+            // ถ้ามีไฟล์ชื่อเดิมอยู่แล้ว – ลบทิ้งก่อน (จะได้ทับได้)
+            if (Storage::disk($disk)->exists("$dir/$name")) {
+                Storage::disk($disk)->delete("$dir/$name");
+            }
+
+            // เซฟไฟล์ด้วยชื่อที่กำหนด
+            Storage::disk($disk)->putFileAs($dir, $file, $name);
+
+            Alert::success('เพิ่มข้อมูลสำเร็จ', "บันทึกรูปเป็น $dir/$name แล้ว");
+            return redirect('/room'); // หรือหน้าไหนที่ต้องการ
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
 
     public function edit($id)

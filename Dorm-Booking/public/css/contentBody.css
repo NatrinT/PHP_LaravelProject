@@ -8,6 +8,7 @@
 
 .card {
     height: 200px;
+    overflow: hidden;
 }
 
 a {
@@ -34,12 +35,6 @@ a {
 
 .carousel-control-next {
     right: 0;
-}
-
-.card .col-md-4 img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover; /* ให้รูปเต็มพื้นที่โดยไม่บิด */
 }
 
 .card-title {
@@ -146,7 +141,6 @@ a {
 }
 
 .dorm-cta2 .row {
-    min-height: 340px;
     align-items: stretch;
 }
 
@@ -304,6 +298,51 @@ a {
     .dorm-cta2__img {
         max-width: 300px;
     }
+    .card {
+        height: auto !important;
+    }
+
+    .obj-cover {
+        height: 100% !important;
+        object-fit: cover;
+        object-position: center;
+    }
+    .font-content-header {
+        font-size: 16px !important;
+    }
+    .font-content-body {
+        font-size: 12px !important;
+    }
 }
 
+@media (min-width: 992px) and (max-width: 1200px) {
+    .benefit-card {
+        height: 120px !important;
+    }
+    .benefit-card img {
+        justify-content: center;
+        align-items: center;
+        max-width: 90px !important;
+        max-height: 90px !important;
+    }
+    .font-benefit-header{
+        font-size: 14px;
+    }
+    .font-benefit-body{
+        font-size: 12px;
+    }
+}
+
+.img-size{
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.obj-cover {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
 /* แค่เพื่อ demo ให้ตัดพื้นหลัง */

@@ -115,12 +115,12 @@ body {
     width: 100%;
     z-index: 9999 !important;
     pointer-events: auto;
-    background-color: transparent !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
     transition: background-color 0.7s;
 }
 
 .navbar-scrolled {
-    background: rgba(0, 0, 0, 0.55) !important;
+    background: rgba(0, 0, 0, 0.8) !important;
     backdrop-filter: saturate(140%) blur(6px) !important;
 }
 

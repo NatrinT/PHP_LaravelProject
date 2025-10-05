@@ -25,11 +25,11 @@
                     @php
                         $img = $room->image
                             ? asset('storage/' . $room->image)
-                            : asset('images/apartment_image/rooms.jpg'); // รูป fallback
+                            : asset('storage/uploads/branch/' . $room->branch . '.jpg'); // รูป fallback
                     @endphp
 
                     <a href="#">
-                        <img src="{{ $img }}" class="card-img-top" alt="Room {{ $room->room_no }}">
+                        <img src="{{ $img }}" class="card-img-top img-size" alt="Room {{ $room->room_no }}">
                     </a>
 
                     <div class="card-body d-flex flex-column">
