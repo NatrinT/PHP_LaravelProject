@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
@@ -21,9 +22,11 @@ Route::get('/searchRoom', [HomeController::class, 'searchRoom'])->name('searchRo
 Route::get('/content/room', [HomeController::class, 'RoomPage'])->name('content.room');
 Route::get('/content/help', [HomeController::class, 'HelpPage'])->name('content.help');
 
-
-//login
-
+// หน้า “การจองของฉัน”
+Route::get('/myBooking', [BookingController::class, 'index'])->name('checkout.myBooking');
+// อัปโหลดสลิป/แนบหลักฐานให้ใบแจ้งหนี้นั้น ๆ
+Route::post('/myBooking/invoice/{invoice}/receipt', [BookingController::class, 'uploadReceipt'])->name('booking.uploadReceipt');
+Route::get('/myBooking/search', [BookingController::class, 'search'])->name('booking.search');
 
 // product home page
 Route::get('/detail/{id}', [HomeController::class, 'detail']);
@@ -89,7 +92,7 @@ Route::get('/announcement/reset/{id}',  [AnnouncementController::class, 'reset']
 Route::put('/announcement/reset/{id}',  [AnnouncementController::class, 'resetPassword']);
 
 //make purchase, lease, payment
-Route::get('/myBooking', [HomeController::class, 'myBooking'])->name('checkout.myBooking');
+// Route::get('/myBooking', [HomeController::class, 'myBooking'])->name('checkout.myBooking');
 Route::get('/checkout/{room}', [CheckoutController::class, 'showCheckout'])->name('checkout.booking');
 Route::post('/checkout', [CheckoutController::class, 'processCheckout'])->name('checkout.process');
 
@@ -108,23 +111,3 @@ Route::get('/checkmail', [AuthController::class, 'checkmail'])->name('users.chec
 Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 });
-
-//admin crud
-// Route::get('/admin', [AdminController::class, 'index']);
-// Route::get('/admin/adding',  [AdminController::class, 'adding']);
-// Route::post('/admin',  [AdminController::class, 'create']);
-// Route::get('/admin/{id}',  [AdminController::class, 'edit']);
-// Route::put('/admin/{id}',  [AdminController::class, 'update']);
-// Route::delete('/admin/remove/{id}',  [AdminController::class, 'remove']);
-// Route::get('/admin/reset/{id}',  [AdminController::class, 'reset']);
-// Route::put('/admin/reset/{id}',  [AdminController::class, 'resetPassword']);
-
-//product crud
-// Route::get('/product', [ProductController::class, 'index']);
-// Route::get('/product/adding',  [ProductController::class, 'adding']);
-// Route::post('/product',  [ProductController::class, 'create']);
-// Route::get('/product/{id}',  [ProductController::class, 'edit']);
-// Route::put('/product/{id}',  [ProductController::class, 'update']);
-// Route::delete('/product/remove/{id}',  [ProductController::class, 'remove']);
-// Route::get('/product/reset/{id}',  [ProductController::class, 'reset']);
-// Route::put('/product/reset/{id}',  [ProductController::class, 'resetPassword']);
