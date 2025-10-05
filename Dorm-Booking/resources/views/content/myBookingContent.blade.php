@@ -104,12 +104,6 @@
                     </tbody>
                 </table>
             </div>
-
-            @if (method_exists($bookings, 'links'))
-                <div class="p-3 border-top">
-                    {{ $bookings->withQueryString()->links() }}
-                </div>
-            @endif
         </div>
     </div>
 

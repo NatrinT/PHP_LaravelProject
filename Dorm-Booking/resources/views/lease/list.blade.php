@@ -89,7 +89,7 @@
                         <th class="text-center">Rent amount</th>
                         <th class="text-center" style="width:100px;">Deposit</th>
                         <th class="text-center">Status</th> {{-- เปลี่ยนหัวคอลัมน์เป็นไทย --}}
-                        @if (auth()->user()->role == 'STAFF')
+                        @if (auth()->user()->role == 'ADMIN')
                             <th class="text-center" style="width:200px;">Actions</th>
                         @endif
                     </tr>
