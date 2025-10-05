@@ -12,6 +12,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\HistoryPaymentController;
 
 //home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -27,6 +28,9 @@ Route::get('/myBooking', [BookingController::class, 'index'])->name('checkout.my
 // อัปโหลดสลิป/แนบหลักฐานให้ใบแจ้งหนี้นั้น ๆ
 Route::post('/myBooking/invoice/{invoice}/receipt', [BookingController::class, 'uploadReceipt'])->name('booking.uploadReceipt');
 Route::get('/myBooking/search', [BookingController::class, 'search'])->name('booking.search');
+
+Route::get('/history-payments', [HistoryPaymentController::class, 'index'])->name('payments.history');
+Route::post('/history-payments/invoice/{invoice}/receipt', [HistoryPaymentController::class, 'uploadReceipt'])->name('payments.uploadReceipt');
 
 // product home page
 Route::get('/detail/{id}', [HomeController::class, 'detail']);
@@ -101,6 +105,7 @@ Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard'
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/checkmail', [AuthController::class, 'checkmail'])->name('users.checkmail');
 //ทำไมต้องมี name('login') ?

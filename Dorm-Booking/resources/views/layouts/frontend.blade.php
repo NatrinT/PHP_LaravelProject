@@ -43,6 +43,10 @@
                                 <a class="nav-link text-white animate-text"
                                     href="{{ route('checkout.myBooking') }}">การจองของฉัน</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white animate-text"
+                                    href="{{ route('payments.history') }}">ประวัติการชำระเงิน</a>
+                            </li>
                         @endif
 
                         @if (session('user_role') === 'ADMIN' || session('user_role') === 'STAFF')
