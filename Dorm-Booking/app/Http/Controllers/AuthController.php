@@ -60,7 +60,7 @@ class AuthController extends Controller
             'email' => 'required|email',
         ]);
 
-        $exists = \App\Models\UsersModel::where('email', $request->email)->exists();
+        $exists = UsersModel::where('email', $request->email)->exists();
 
         if ($exists) {
             // ถ้ามี email อยู่ใน DB

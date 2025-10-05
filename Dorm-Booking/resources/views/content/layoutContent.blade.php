@@ -63,9 +63,10 @@
                                 data-bs-target="#exampleModalToggle" data-bs-toggle="modal">
                                 <ion-icon name="person-outline" class="me-2"></ion-icon> เข้าสู่ระบบ
                             </button>
-                            <a href="/register" style="text-decoration: none">
-                                <button type="button" class="btn btn-primary text-white mx-2">ลงทะเบียน</button>
-                            </a>
+                            <button type="button" class="btn bg-primary text-white d-flex align-items-center mx-2"
+                                data-bs-toggle="modal" data-bs-target="#exampleModalToggle3">
+                                <ion-icon name="person-outline" class="me-2"></ion-icon> ลงทะเบียน
+                            </button>
                         </div>
                     @endif
                     @if (session('user_id'))
@@ -254,6 +255,130 @@
                                 </div>
                             </form>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalToggle3" aria-hidden="true" aria-labelledby="exampleModalToggleLabel3"
+        tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div class="d-flex" id="display-res">
+                        <div class="register-img flex-shrink-0 rounded"></div>
+
+                        <div class="p-4 flex-grow-1 bg-white rounded">
+                            <div class="modal-header p-0 mb-3">
+                                <h5 class="modal-title" id="exampleModalToggleLabel">สมัครสมาชิก</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <form id="registerForm" action="/register" method="post" enctype="multipart/form-data"
+                                novalidate>
+                                @csrf
+
+                                {{-- Email --}}
+                                <div class="mb-3">
+                                    <label style="display: flex" class="form-label justify-content-between">
+                                        <span>Email</span>
+                                        <small class="text-danger ms-2" id="err_email">
+                                            @error('email')
+                                                {{ $message }}
+                                            @enderror
+                                        </small>
+                                    </label>
+                                    <input type="email" id="reg_email" name="email" value="{{ old('email') }}"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        placeholder="id@email.com" required>
+                                </div>
+
+                                {{-- Fullname --}}
+                                <div class="mb-3">
+                                    <label style="display: flex" class="form-label justify-content-between">
+                                        <span>Fullname</span>
+                                        <small class="text-danger ms-2" id="err_full_name">
+                                            @error('full_name')
+                                                {{ $message }}
+                                            @enderror
+                                        </small>
+                                    </label>
+                                    <input type="text" id="reg_full_name" name="full_name"
+                                        value="{{ old('full_name') }}"
+                                        class="form-control @error('full_name') is-invalid @enderror"
+                                        placeholder="ชิตวร โชติช่วง" required>
+                                </div>
+
+                                {{-- phone --}}
+                                <div class="mb-3">
+                                    <label style="display: flex" class="form-label justify-content-between">
+                                        <span>Phone</span>
+                                        <small class="text-danger ms-2" id="err_phone">
+                                            @error('phone')
+                                                {{ $message }}
+                                            @enderror
+                                        </small>
+                                    </label>
+                                    <input type="text" id="reg_phone" name="phone" value="{{ old('phone') }}"
+                                        class="form-control @error('phone') is-invalid @enderror"
+                                        placeholder="0981302525" required>
+                                </div>
+
+                                {{-- Password --}}
+                                <div class="mb-3">
+                                    <label style="display: flex" class="form-label justify-content-between">
+                                        <span>Password</span>
+                                        <small class="text-danger ms-2" id="err_password">
+                                            @error('password')
+                                                {{ $message }}
+                                            @enderror
+                                        </small>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" id="register_password" name="password"
+                                            class="form-control pe-5 @error('password') is-invalid @enderror"
+                                            placeholder="อย่างน้อย 8 ตัวอักษร" required minlength="8">
+                                        <button type="button"
+                                            class="btn btn-sm position-absolute end-0 top-50 translate-middle-y"
+                                            onclick="toggleRegisterPassword()" aria-label="Toggle password">
+                                            <ion-icon name="eye-off-outline" id="registerPasswordIcon"
+                                                size="10"></ion-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{-- Confirm Password --}}
+                                <div class="mb-1">
+                                    <label style="display: flex" class="form-label justify-content-between">
+                                        <span>Confirm Password</span>
+                                        <small class="text-danger ms-2" id="err_password_confirmation">
+                                            @error('password_confirmation')
+                                                {{ $message }}
+                                            @enderror
+                                        </small>
+                                    </label>
+                                    <div class="position-relative">
+                                        <input type="password" id="register_confirm_password"
+                                            name="password_confirmation"
+                                            class="form-control pe-5 @error('password_confirmation') is-invalid @enderror"
+                                            placeholder="พิมพ์ซ้ำให้ตรงกัน" required minlength="8">
+                                        <button type="button"
+                                            class="btn btn-sm position-absolute end-0 top-50 translate-middle-y"
+                                            onclick="toggleRegisterConfirm()" aria-label="Toggle confirm password">
+                                            <ion-icon name="eye-off-outline" id="registerConfirmIcon"
+                                                size="10"></ion-icon>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-warning"
+                                        data-bs-dismiss="modal">ยกเลิก</button>
+                                    <button type="submit" class="btn btn-primary">สมัครสมาชิก</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

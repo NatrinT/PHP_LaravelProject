@@ -37,13 +37,6 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white animate-text" href="{{ route('content.help') }}">ช่วยเหลือ</a>
-<<<<<<< HEAD
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white animate-text"
-                                href="{{ route('checkout.myBooking') }}">การจองของฉัน</a>
-=======
->>>>>>> origin
                         </li>
                         @if (session('user_id'))
                             <li class="nav-item">

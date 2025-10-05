@@ -228,7 +228,7 @@ class LeaseController extends Controller
     public function remove($id)
     {
         try {
-            $lease = \App\Models\LeaseModel::with('room', 'invoices')->find($id);
+            $lease = LeaseModel::with('room', 'invoices')->find($id);
             if (!$lease) {
                 Alert::error('ไม่พบสัญญาเช่า');
                 return redirect('/lease');
