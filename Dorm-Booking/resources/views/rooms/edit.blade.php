@@ -43,7 +43,7 @@
                                 <select name="type" required>
                                     <option value="STANDARD" {{ $type == 'STANDARD' ? 'selected' : '' }}>Standard</option>
                                     <option value="DELUXE" {{ $type == 'DELUXE' ? 'selected' : '' }}>Deluxe</option>
-                                    <option value="LUXURY" {{ $type == 'LUXURY' ? 'selected' : '' }}>Other</option>
+                                    <option value="LUXURY" {{ $type == 'LUXURY' ? 'selected' : '' }}>Luxury</option>
                                 </select>
                             @else
                                 <input type="text" name="type" value="{{ $type }}" required readonly>

@@ -4,37 +4,46 @@
     body {
         font-size: 12px !important;
     }
+
     #display-res {
         flex-direction: column !important;
         align-items: center;
     }
+
     .login-img {
         width: 100% !important;
         height: 200px !important;
         margin-bottom: 15px;
     }
+
     .register-img {
         width: 100% !important;
         height: 200px !important;
     }
+
     .show-pass {
         top: 50%;
         right: 10px;
     }
+
     .bg-img {
         height: 40vh !important;
     }
+
     .content-body {
         margin-top: 40vh;
     }
+
     .font-header {
         font-size: 13px !important;
     }
+
     .tab-menu {
         font-size: 12px !important;
         padding: 6px !important;
         margin-right: 10px !important;
     }
+
     .font-body {
         font-size: 10px !important;
     }
@@ -51,23 +60,28 @@
     #display-res {
         flex-direction: column !important;
     }
+
     .login-img {
         width: 100% !important;
         height: 250px !important;
         margin-bottom: 15px;
     }
+
     .register-img {
         width: 100% !important;
         height: 250px !important;
         margin-bottom: 15px;
     }
+
     .show-pass {
         top: 50%;
         right: 10px;
     }
+
     .bg-img {
         height: 55vh !important;
     }
+
     .content-body {
         margin-top: 50vh;
     }
@@ -79,6 +93,7 @@
         width: 350px;
         height: 400px;
     }
+
     .register-img {
         width: 350px;
         height: 400px;
@@ -164,6 +179,7 @@ body {
     /* height: 400px; */
     width: 100%;
 }
+
 #exampleModalToggle3 .modal-body .d-flex {
     /* height: 550px; */
     width: 100%;
@@ -178,6 +194,7 @@ body {
     background-position: center;
     z-index: 10;
 }
+
 .register-img {
     width: 100%;
     max-width: 350px;
@@ -208,14 +225,17 @@ body {
     color: #d6d6d6;
     transition: 0.3s;
 }
+
 .tab-menu.active {
     background-color: white;
     color: black;
 }
+
 .tab-menu.active:hover {
     background-color: white;
     color: black;
 }
+
 .tab-menu:hover {
     background-color: rgba(97, 134, 201, 0.5);
 }
@@ -230,21 +250,24 @@ body {
     color: #d6d6d6;
     transition: 0.3s;
 }
+
 /* (คงไว้ได้ เผื่อใช้ที่อื่น) */
 .type-hotel.active {
     background-color: #5e80dd;
     color: white;
 }
+
 .type-hotel.active:hover {
     background-color: #5e80dd;
     color: white;
 }
+
 .type-hotel:hover {
     background-color: rgba(97, 134, 201, 0.5);
 }
 
 /* ✅ ไฮไลต์ปุ่มสาขาตาม radio ที่ถูกเลือก — ทำงานทันที */
-.branch-radio:checked + label.type-hotel {
+.branch-radio:checked+label.type-hotel {
     background-color: #5e80dd !important;
     color: #fff !important;
 }
@@ -252,6 +275,7 @@ body {
 .tab-menu i {
     color: #d6d6d6;
 }
+
 .tab-menu.active i {
     color: #0c3e64;
 }
@@ -272,16 +296,20 @@ hr {
     border: 1px solid #cdd0d180;
     padding: 5px;
 }
+
 .corner-radius1 {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     position: relative;
 }
+
 /* เอาขอบโค้งปุ่ม search ออกให้หมด */
 .search-data {
     border: none;
-    border-radius: 0 !important; /* ตัดโค้งทั้งหมด */
-    border-top-left-radius: 0 !important; /* กันสไตล์เก่าทับ */
+    border-radius: 0 !important;
+    /* ตัดโค้งทั้งหมด */
+    border-top-left-radius: 0 !important;
+    /* กันสไตล์เก่าทับ */
     border-bottom-left-radius: 0 !important;
     border-top-right-radius: 20px !important;
     border-bottom-right-radius: 20px !important;
@@ -289,11 +317,14 @@ hr {
 
 .search-row {
     --search-h: 56px;
-} /* ปรับเป็น 48/52/60 ได้ตามชอบ */
+}
+
+/* ปรับเป็น 48/52/60 ได้ตามชอบ */
 
 .search-row .input-data {
     height: var(--search-h);
 }
+
 .search-row .form-control,
 .search-row .form-select {
     height: 100%;
@@ -304,6 +335,7 @@ hr {
 .search-row .col-btn {
     display: flex;
 }
+
 .search-row .col-btn .search-data {
     height: var(--search-h);
     border-top-left-radius: 0 !important;
@@ -319,6 +351,7 @@ hr {
     color: black;
     font-size: 25px;
 }
+
 .input-data input {
     border: none;
 }
@@ -350,18 +383,22 @@ input:focus,
 .footer {
     background: linear-gradient(135deg, #2c3e50, #34495e);
 }
+
 .footer-link {
     color: #dcdcdc;
     text-decoration: none;
 }
+
 .footer-link:hover {
     color: #f39c12;
 }
+
 .footer-social {
     font-size: 1.2rem;
     color: #dcdcdc;
     transition: 0.3s;
 }
+
 .footer-social:hover {
     color: #f39c12;
 }
@@ -376,9 +413,11 @@ input:focus,
     border-radius: 10px;
     padding: 35px 10px;
 }
+
 .payment-card p {
     margin: 0;
 }
+
 .image-payment {
     width: 50px;
     height: 50px;
@@ -396,13 +435,15 @@ input:focus,
 .dorm-hero {
     margin: 24px 0;
 }
+
 .dorm-hero__bg {
     position: absolute;
     inset: 0;
     background: linear-gradient(0deg, var(--hero-overlay), var(--hero-overlay)),
-        url("{{ asset('images/hero-dorm.jpg') }}") center/cover no-repeat;
+    url("{{ asset('images/hero-dorm.jpg') }}") center/cover no-repeat;
     z-index: 0;
 }
+
 .dorm-hero::before {
     content: "";
     position: absolute;
@@ -410,18 +451,17 @@ input:focus,
     width: 42vw;
     min-width: 360px;
     max-width: 720px;
-    background: radial-gradient(
-        120% 120% at 0% 50%,
-        var(--hero-blue) 0%,
-        var(--hero-blue-dark) 70%,
-        var(--hero-blue) 100%
-    );
+    background: radial-gradient(120% 120% at 0% 50%,
+            var(--hero-blue) 0%,
+            var(--hero-blue-dark) 70%,
+            var(--hero-blue) 100%);
     clip-path: ellipse(100% 80% at 0% 50%);
     opacity: 0.95;
     z-index: 1;
     filter: saturate(115%);
 }
-.dorm-hero > .container {
+
+.dorm-hero>.container {
     position: relative;
     z-index: 2;
 }
@@ -446,9 +486,11 @@ input:focus,
     padding-left: 44px;
     background: rgba(255, 255, 255, 0.9);
 }
+
 .dorm-hero__input::placeholder {
     color: #6b778c;
 }
+
 .dorm-hero__inputIcon {
     position: absolute;
     left: 14px;
@@ -457,6 +499,7 @@ input:focus,
     color: #6b778c;
     font-size: 1rem;
 }
+
 .dorm-hero__btn {
     height: 52px;
     border-radius: 12px;
@@ -467,6 +510,7 @@ input:focus,
     color: #fff;
     box-shadow: 0 10px 24px rgba(255, 106, 45, 0.28);
 }
+
 .dorm-hero__btn:hover {
     filter: brightness(1.05);
     transform: translateY(-1px);
@@ -477,7 +521,8 @@ input:focus,
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
-    border-radius: 0; /* เอามุมโค้งออก (ถ้าไม่ต้องการเอาบรรทัดนี้ออกได้) */
+    border-radius: 0;
+    /* เอามุมโค้งออก (ถ้าไม่ต้องการเอาบรรทัดนี้ออกได้) */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -504,15 +549,18 @@ input:focus,
         max-height: 460px;
     }
 }
+
 @media (max-width: 991.98px) {
     .dorm-hero::before {
         width: 100%;
         min-width: 0;
         clip-path: ellipse(120% 70% at 50% 0%);
     }
+
     .dorm-hero__phone {
         max-height: 320px;
     }
+
     .min-vh-50 {
         min-height: 60vh;
     }
@@ -520,13 +568,16 @@ input:focus,
 
 @media (max-width: 575.98px) {
     .d-flex.gap-2.flex-wrap {
-        flex-wrap: nowrap !important; /* ให้เลื่อนแนวนอนแทนขึ้นบรรทัดใหม่ */
+        flex-wrap: nowrap !important;
+        /* ให้เลื่อนแนวนอนแทนขึ้นบรรทัดใหม่ */
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
     }
-    .d-flex.gap-2.flex-wrap > label.type-hotel {
-        white-space: nowrap; /* ไม่ตัดคำ ป้องกันแตกบรรทัด */
+
+    .d-flex.gap-2.flex-wrap>label.type-hotel {
+        white-space: nowrap;
+        /* ไม่ตัดคำ ป้องกันแตกบรรทัด */
     }
 }
 
@@ -536,13 +587,37 @@ input:focus,
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
 }
+
 .search-data {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
 }
 
+/* ปรับระยะห่างของปุ่ม carousel จากขอบเนื้อหา */
+#cardCarouselSm .carousel-control-prev,
+#cardCarouselMd .carousel-control-prev {
+    left: -80px;
+    /* ขยับปุ่มออกไปทางซ้าย */
+}
+
+#cardCarouselSm .carousel-control-next,
+#cardCarouselMd .carousel-control-next {
+    right: -80px;
+    /* ขยับปุ่มออกไปทางขวา */
+}
+
+/* เพิ่มขนาดพื้นที่คลิกและความชัดเจน */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-size: 100%, 100%;
+    width: 2rem;
+    height: 2rem;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+}
+
 /* ========== Mobile (xs < 576px) ========== */
 @media (max-width: 575.98px) {
+
     /* ปรับความสูงรวมและระยะห่างของแต่ละแถวให้ใช้งานนิ้วได้ง่าย */
     .search-row {
         --search-h: 44px;
@@ -551,8 +626,10 @@ input:focus,
     /* กล่อง input ซ้าย ๆ ให้เตี้ยลง + ลด padding ในกล่อง */
     .search-row .input-data {
         height: var(--search-h);
-        padding: 2px 6px !important; /* ทับ p-2 เดิม */
-        margin-bottom: 0.35rem; /* ระยะห่างแนวตั้งเล็กน้อย */
+        padding: 2px 6px !important;
+        /* ทับ p-2 เดิม */
+        margin-bottom: 0.35rem;
+        /* ระยะห่างแนวตั้งเล็กน้อย */
     }
 
     /* คุมความสูง/ช่องไฟของ control ภายใน (ทับ p-2) */
@@ -574,6 +651,7 @@ input:focus,
     .search-row .col-btn {
         display: flex;
     }
+
     .search-row .col-btn .search-data {
         height: var(--search-h);
         padding: 0 !important;
@@ -581,10 +659,7 @@ input:focus,
         margin-top: 0.35rem;
     }
 
-    /* ปรับมุมโค้งหัว-ท้ายตอนซ้อนเป็นคอลัมน์ */
-    .corner-radius1,
-    .corner-radius2 {
-    }
+
 }
 
 /* ========== Tablet (≥576px และ <768px) — optional soft rules ========== */
@@ -605,6 +680,7 @@ input:focus,
         border-top-left-radius: 16px;
         border-bottom-left-radius: 16px;
     }
+
     .search-row .col-btn .search-data {
         border-top-right-radius: 16px !important;
         border-bottom-right-radius: 16px !important;

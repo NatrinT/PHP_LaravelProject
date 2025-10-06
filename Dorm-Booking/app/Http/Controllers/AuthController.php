@@ -105,7 +105,7 @@ class AuthController extends Controller
 
         //check vali 
         if ($validator->fails()) {
-            return redirect('/')
+            return redirect('/?showRegisterModal=1')
                 ->withErrors($validator)
                 ->withInput();
         }

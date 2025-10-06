@@ -50,13 +50,15 @@
                             @endif
                         </div>
                         <div class="ship-select-wrap">
-                            <select name="role" required>
-                                <option value="MEMBER" {{ $role == 'MEMBER' ? 'selected' : '' }}>Member</option>
-                                @if (auth()->user()->role == 'ADMIN')
+                            @if (auth()->user()->role === 'ADMIN')
+                                <select name="role" required>
+                                    <option value="MEMBER" {{ $role == 'MEMBER' ? 'selected' : '' }}>Member</option>
                                     <option value="STAFF" {{ $role == 'STAFF' ? 'selected' : '' }}>Staff</option>
                                     <option value="ADMIN" {{ $role == 'ADMIN' ? 'selected' : '' }}>Admin</option>
-                                @endif
-                            </select>
+                                </select>
+                            @else
+                                <input type="text" name="role" value="{{ $role }}" required readonly>
+                            @endif
                             <i class="bi bi-caret-down-fill ship-caret"></i>
                             @if (isset($errors) && $errors->has('role'))
                                 <div class="ship-error">{{ $errors->first('role') }}</div>
@@ -87,7 +89,10 @@
                 {{-- ปุ่ม --}}
                 <div class="ship-actions">
                     <a href="{{ url('/users') }}" class="btn-ghost">Back to list</a>
-                    <button type="submit" class="btn-primary-outline">Update</button>
+                    @if (session('user_role') === 'STAFF' && $role === 'ADMIN')
+                    @else
+                        <button type="submit" class="btn-primary-outline">Update</button>
+                    @endif
                 </div>
             </form>
 

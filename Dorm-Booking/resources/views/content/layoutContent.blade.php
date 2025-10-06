@@ -552,6 +552,10 @@
                     const el = document.getElementById('exampleModalToggle'); // id โมดัล login
                     if (el) new bootstrap.Modal(el).show();
                 }
+                if (params.get('showRegisterModal') === '1') {
+                    const el = document.getElementById('exampleModalToggle3'); // id โมดัล login
+                    if (el) new bootstrap.Modal(el).show();
+                }
             });
         </script>
 
