@@ -1,6 +1,8 @@
 @extends('home')
 
 @section('css_before')
+    {{-- ลิงก์ไฟล์ CSS --}}
+    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 @endsection
 
 @section('header')
@@ -10,74 +12,84 @@
 @endsection
 
 @section('content')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
-                <h4>Dashboard — Dorm Booking</h4>
+                <h2 class="fw-bold">Dashboard — Dorm Booking</h2>
             </div>
         </div>
     </div>
 
-    {{-- Cards --}}
-    {{-- การ์ดสรุปภาพรวม (ภาษาไทย) --}}
-    <div class="container mt-4">
-        <div class="row g-3">
+    {{-- ===== Top Cards (Gradient + Equal Height) ===== --}}
+    @php
+        $totalRooms = ($roomsAvailable ?? 0) + ($roomsOccupied ?? 0) + ($roomsMaintenance ?? 0);
+        $issuedTotalForRate = ($invoicePaid ?? 0)+($invoiceIssued ?? 0)+($invoiceDraft ?? 0)+($invoiceOverdue ?? 0);
+        $overduePct = $issuedTotalForRate > 0 ? round((($invoiceOverdue ?? 0)/$issuedTotalForRate)*100, 1) : 0;
+        $occupiedPct = $totalRooms > 0 ? round((($roomsOccupied ?? 0)/$totalRooms)*100, 1) : 0;
+    @endphp
 
-            {{-- ผู้ใช้ --}}
-            <div class="col-md-3">
-                <div class="alert alert-info" role="alert">
-                    <h5 class="mb-1">ผู้ใช้ทั้งหมด</h5>
-                    <div class="display-6 fw-bold">{{ number_format($totalUsers) }}</div>
-                    <div class="small text-muted">สถานะใช้งาน (ACTIVE): {{ number_format($activeUsers) }}</div>
+    <div class="container mt-3">
+        <div class="row stat-grid">
+            {{-- การ์ด: ผู้ใช้ทั้งหมด --}}
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="stat-card stat-green h-100">
+                    <div>
+                        <h6 class="title">ผู้ใช้ทั้งหมด</h6>
+                        <div class="value">{{ number_format($totalUsers) }}</div>
+                    </div>
+                    <div class="sub">สถานะใช้งาน (ACTIVE): <b>{{ number_format($activeUsers) }}</b></div>
                 </div>
             </div>
 
-            {{-- สัญญาเช่า --}}
-            <div class="col-md-3">
-                <div class="alert alert-success" role="alert">
-                    <h5 class="mb-1">สัญญาเช่าทั้งหมด</h5>
-                    <div class="display-6 fw-bold">{{ number_format($totalLeases) }}</div>
-                    <div class="small mt-1">
-                        <span class="badge bg-success">กำลังเช่า {{ number_format($activeLeases) }}</span>
-                        <span class="badge bg-secondary">รอดำเนินการ {{ number_format($pendingLeases) }}</span>
-                        <span class="badge bg-dark">สิ้นสุด {{ number_format($endedLeases) }}</span>
-                        <span class="badge bg-danger">ยกเลิก {{ number_format($canceledLeases) }}</span>
+            {{-- การ์ด: สัญญาเช่าทั้งหมด --}}
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="stat-card stat-purple h-100">
+                    <div>
+                        <h6 class="title">สัญญาเช่าทั้งหมด</h6>
+                        <div class="value">{{ number_format($totalLeases) }}</div>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">กำลังเช่า <b>{{ number_format($activeLeases) }}</b></span>
+                        <span class="chip">รอดำเนินการ <b>{{ number_format($pendingLeases) }}</b></span>
+                        <span class="chip">สิ้นสุด <b>{{ number_format($endedLeases) }}</b></span>
+                        <span class="chip">ยกเลิก <b>{{ number_format($canceledLeases) }}</b></span>
                     </div>
                 </div>
             </div>
 
-            {{-- ห้องพัก --}}
-            <div class="col-md-3">
-                <div class="alert alert-primary" role="alert">
-                    <h5 class="mb-1">สถานะห้องพัก</h5>
-                    <ul class="list-unstyled mb-0 small">
-                        <li>ว่าง (Available): <strong>{{ number_format($roomsAvailable) }}</strong></li>
-                        <li>มีผู้เช่า (Occupied): <strong>{{ number_format($roomsOccupied) }}</strong></li>
-                        <li>ปิดปรับปรุง (Maintenance): <strong>{{ number_format($roomsMaintenance) }}</strong></li>
+            {{-- การ์ด: สถานะห้องพัก --}}
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="stat-card stat-blue h-100">
+                    <div>
+                        <h6 class="title">สถานะห้องพัก</h6>
+                    </div>
+                    <ul class="stat-list">
+                        <li>ว่าง (Available): <b>{{ number_format($roomsAvailable) }}</b></li>
+                        <li>มีผู้เช่า (Occupied): <b>{{ number_format($roomsOccupied) }}</b> — {{ $occupiedPct }}% ของ {{ number_format($totalRooms) }}</li>
+                        <li>ปิดปรับปรุง (Maintenance): <b>{{ number_format($roomsMaintenance) }}</b></li>
                     </ul>
                 </div>
             </div>
 
-            {{-- ใบแจ้งหนี้ --}}
-            <div class="col-md-3">
-                <div class="alert alert-warning" role="alert">
-                    <h5 class="mb-1">สถานะใบแจ้งหนี้</h5>
-                    <ul class="list-unstyled mb-0 small">
-                        <li>ชำระแล้ว: <strong>{{ number_format($invoicePaid) }}</strong></li>
-                        <li>ออกบิล/ฉบับร่าง: <strong>{{ number_format($invoiceIssued + $invoiceDraft) }}</strong></li>
-                        <li>ค้างชำระ: <strong>{{ number_format($invoiceOverdue) }}</strong></li>
-                        <li>ยกเลิก: <strong>{{ number_format($invoiceCanceled) }}</strong></li>
+            {{-- การ์ด: สถานะใบแจ้งหนี้ --}}
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="stat-card stat-orange h-100">
+                    <div>
+                        <h6 class="title">สถานะใบแจ้งหนี้</h6>
+                    </div>
+                    <ul class="stat-list">
+                        <li>ชำระแล้ว: <b>{{ number_format($invoicePaid) }}</b></li>
+                        <li>ออกบิล/ฉบับร่าง: <b>{{ number_format($invoiceIssued + $invoiceDraft) }}</b></li>
+                        <li>ค้างชำระ: <b>{{ number_format($invoiceOverdue) }}</b> — {{ $overduePct }}%</li>
+                        <li>ยกเลิก: <b>{{ number_format($invoiceCanceled) }}</b></li>
                     </ul>
                 </div>
             </div>
-
         </div>
     </div>
 
-
-    {{-- Utilities / Rent / Other (6M/12M) --}}
+    {{-- ===== Utilities / Rent / Other (Bar + Line) ===== --}}
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12 d-flex flex-wrap align-items-center justify-content-between">
@@ -93,29 +105,47 @@
         </div>
     </div>
 
-    {{-- Donuts --}}
+    {{-- ===== ส่วนกราฟล่าง (โดนัท + บาร์) ===== --}}
     <div class="container mt-4">
         <div class="row g-4">
             <div class="col-md-6">
-                <h5 class="mb-3">สถานะใบแจ้งหนี้</h5>
-                <div id="chartInvoiceStatus"></div>
+                <div class="chart-card">
+                    <div class="chart-card__head">
+                        <h5 class="chart-card__title">สถานะใบแจ้งหนี้</h5>
+                    </div>
+                    <div class="chart-card__body">
+                        <div id="chartInvoiceStatus"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <h5 class="mb-3">สถานะสัญญาเช่า</h5>
-                <div id="chartLeaseStatus"></div>
+                <div class="chart-card">
+                    <div class="chart-card__head">
+                        <h5 class="chart-card__title">สถานะสัญญาเช่า</h5>
+                    </div>
+                    <div class="chart-card__body">
+                        <div id="chartLeaseStatus"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- Leases Monthly --}}
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-12">
-                <h5 class="mb-3">จำนวนสัญญาเช่าเริ่มใหม่รายเดือน (12 เดือนล่าสุด)</h5>
-                <div id="chartLeasesMonthly"></div>
+                <div class="chart-card">
+                    <div class="chart-card__head chart-card__head--row">
+                        <h5 class="chart-card__title mb-0">จำนวนสัญญาเช่าเริ่มใหม่รายเดือน (12 เดือนล่าสุด)</h5>
+                    </div>
+                    <div class="chart-card__body">
+                        <div id="chartLeasesMonthly"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('footer')
@@ -124,7 +154,7 @@
 @section('js_before')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // ====== Data from Controller ======
             const labels6 = @json($labels6);
             const util6 = @json($util6);
@@ -152,83 +182,59 @@
             const endedLeases = @json($endedLeases);
             const canceledLeases = @json($canceledLeases);
 
-            // ====== Utilities / Rent / Other (ตั้งชื่อซีรีส์เป็นไทยที่นี่เลย) ======
-            function utilOptions({
-                labels,
-                util,
-                rent,
-                other,
-                total
-            }) {
+            // ===== Utilities / Rent / Other (function เดิม ปรับเฉพาะ UI) =====
+            function utilOptions({ labels, util, rent, other, total }) {
                 return {
                     chart: {
+                        height: 380,
                         type: 'line',
-                        height: 360,
-                        toolbar: {
-                            show: true
-                        }
+                        toolbar: { show: true },
+                        dropShadow: { enabled: true, top: 3, left: 0, blur: 4, opacity: 0.1 }
                     },
-                    series: [{
-                            name: 'ค่าสาธารณูปโภค',
-                            type: 'column',
-                            data: util
-                        },
-                        {
-                            name: 'ค่าเช่า',
-                            type: 'column',
-                            data: rent
-                        },
-                        {
-                            name: 'ค่าอื่น ๆ',
-                            type: 'column',
-                            data: other
-                        },
-                        {
-                            name: 'รวม',
-                            type: 'line',
-                            data: total
-                        }
+                    series: [
+                        { name: 'ค่าสาธารณูปโภค', type: 'column', data: util },
+                        { name: 'ค่าเช่า', type: 'column', data: rent },
+                        { name: 'ค่าอื่น ๆ', type: 'column', data: other },
+                        { name: 'รวม', type: 'line', data: total }
                     ],
-                    xaxis: {
-                        categories: labels
-                    },
+                    stroke: { width: [0,0,0,3], curve: 'smooth' },
+                    colors: ['#3b82f6','#22c55e','#f59e0b','#ef4444'],
                     dataLabels: {
-                        enabled: false
+                        enabled: true,
+                        enabledOnSeries: [3],      // โชว์เฉพาะเส้น "รวม"
+                        style: { fontSize: '12px', fontWeight: 600, colors: ['#ef4444'] },
+                        background: { enabled: false },
+                        formatter: v => (Number(v)||0).toLocaleString()
                     },
-                    stroke: {
-                        width: [0, 0, 0, 3]
-                    },
-                    plotOptions: {
-                        bar: {
-                            borderRadius: 6,
-                            columnWidth: '45%'
-                        }
-                    },
-                    tooltip: {
-                        shared: true,
-                        intersect: false,
-                        y: {
-                            formatter: v => (Number(v) || 0).toLocaleString()
-                        }
-                    },
-                    legend: {
-                        position: 'top'
+                    plotOptions: { bar: { borderRadius: 8, columnWidth: '45%', endingShape: 'rounded' } },
+                    xaxis: {
+                        categories: labels,
+                        labels: { style: { fontSize: '12px', colors: '#475569' } },
+                        axisBorder: { show: false }, axisTicks: { show: false }
                     },
                     yaxis: {
-                        forceNiceScale: true
+                        labels: {
+                            formatter: v => (Number(v)||0).toLocaleString(),
+                            style: { fontSize: '12px', colors: '#475569' }
+                        },
+                        title: { text: 'บาท', style: { fontWeight: 500 } }
+                    },
+                    grid: { borderColor: '#e2e8f0', strokeDashArray: 5 },
+                    legend: { position: 'top', fontSize: '13px', itemMargin: { horizontal: 10, vertical: 2 } },
+                    tooltip: { shared: true, intersect: false, y: { formatter: v => (Number(v)||0).toLocaleString() } },
+                    markers: { size: 5, strokeWidth: 2, strokeColors: '#fff', hover: { size: 7 } },
+                    fill: {
+                        opacity: [0.9,0.9,0.9,1],
+                        gradient: { shade: 'light', type: 'vertical', shadeIntensity: 0.25, opacityFrom: 0.9, opacityTo: 0.8, stops: [0,90,100] }
                     }
                 };
             }
 
-            // === Chart: Utilities ===
+            // ===== Render Utilities / Rent / Other + ปุ่ม 6/12 เดือน =====
             const elUtil = document.querySelector('#chartUtilities');
             if (elUtil) {
                 let utilChart = new ApexCharts(elUtil, utilOptions({
-                    labels: labels6,
-                    util: util6,
-                    rent: rent6,
-                    other: other6,
-                    total: total6
+                    labels: labels6, util: util6, rent: rent6, other: other6, total: total6
                 }));
                 utilChart.render();
 
@@ -247,102 +253,91 @@
                 btnU6?.addEventListener('click', () => {
                     setBtnActive(btnU6, btnU12);
                     utilChart.updateOptions(utilOptions({
-                        labels: labels6,
-                        util: util6,
-                        rent: rent6,
-                        other: other6,
-                        total: total6
+                        labels: labels6, util: util6, rent: rent6, other: other6, total: total6
                     }));
                 });
                 btnU12?.addEventListener('click', () => {
                     setBtnActive(btnU12, btnU6);
                     utilChart.updateOptions(utilOptions({
-                        labels: labels12,
-                        util: util12,
-                        rent: rent12,
-                        other: other12,
-                        total: total12
+                        labels: labels12, util: util12, rent: rent12, other: other12, total: total12
                     }));
                 });
             }
 
-            // === Chart: Invoice Status (Donut) — ตั้ง labels เป็นไทยตรงนี้ ===
+            // ===== Donut: Invoice =====
             const elInv = document.querySelector('#chartInvoiceStatus');
             if (elInv) {
                 new ApexCharts(elInv, {
-                    chart: {
-                        type: 'donut',
-                        height: 320
-                    },
+                    chart: { type: 'donut', height: 320, dropShadow: { enabled: true, top: 2, left: 0, blur: 3, opacity: 0.15 } },
                     series: [invoicePaid, invoiceIssued, invoiceDraft, invoiceOverdue, invoiceCanceled],
                     labels: ['ชำระแล้ว', 'ออกบิล', 'ฉบับร่าง', 'ค้างชำระ', 'ยกเลิก'],
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: v => (Number(v) || 0).toLocaleString()
+                    legend: { position: 'bottom', fontSize: '13px', itemMargin: { horizontal: 8 } },
+                    dataLabels: { enabled: true, style: { fontSize: '12px', fontWeight: 500 } },
+                    tooltip: { y: { formatter: v => (Number(v)||0).toLocaleString() } },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '72%',
+                                labels: {
+                                    show: true,
+                                    total: {
+                                        show: true, label: 'รวม', fontSize: '13px',
+                                        formatter: w => w.globals.seriesTotals.reduce((a,b)=>a+b,0).toLocaleString()
+                                    }
+                                }
+                            }
                         }
-                    }
+                    },
+                    stroke: { width: 1 },
+                    colors: ['#22c55e','#6366f1','#a855f7','#ef4444','#94a3b8']
                 }).render();
             }
 
-            // === Chart: Lease Status (Donut) — ตั้ง labels เป็นไทยตรงนี้ ===
+            // ===== Donut: Lease =====
             const elLease = document.querySelector('#chartLeaseStatus');
             if (elLease) {
                 new ApexCharts(elLease, {
-                    chart: {
-                        type: 'donut',
-                        height: 320
-                    },
+                    chart: { type: 'donut', height: 320, dropShadow: { enabled: true, top: 2, left: 0, blur: 3, opacity: 0.15 } },
                     series: [activeLeases, pendingLeases, endedLeases, canceledLeases],
                     labels: ['กำลังเช่า', 'รอดำเนินการ', 'สิ้นสุด', 'ยกเลิก'],
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: v => (Number(v) || 0).toLocaleString()
+                    legend: { position: 'bottom', fontSize: '13px', itemMargin: { horizontal: 8 } },
+                    dataLabels: { enabled: true, style: { fontSize: '12px', fontWeight: 500 } },
+                    tooltip: { y: { formatter: v => (Number(v)||0).toLocaleString() } },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '72%',
+                                labels: {
+                                    show: true,
+                                    total: {
+                                        show: true, label: 'รวม', fontSize: '13px',
+                                        formatter: w => w.globals.seriesTotals.reduce((a,b)=>a+b,0).toLocaleString()
+                                    }
+                                }
+                            }
                         }
-                    }
+                    },
+                    stroke: { width: 1 },
+                    colors: ['#0ea5e9','#f59e0b','#10b981','#ef4444']
                 }).render();
             }
 
-            // === Chart: Leases Monthly (Bar) — ชื่อซีรีส์เป็นไทย ===
+            // ===== Bar: Leases Monthly =====
             const elLeaseBar = document.querySelector('#chartLeasesMonthly');
             if (elLeaseBar) {
                 new ApexCharts(elLeaseBar, {
-                    chart: {
-                        type: 'bar',
-                        height: 320,
-                        toolbar: {
-                            show: true
-                        }
-                    },
-                    series: [{
-                        name: 'เริ่มสัญญาใหม่',
-                        data: leasesMonthlyData
-                    }],
-                    xaxis: {
-                        categories: leasesMonthlyLabels
-                    },
-                    plotOptions: {
-                        bar: {
-                            borderRadius: 6,
-                            columnWidth: '55%'
-                        }
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: v => (Number(v) || 0).toLocaleString()
-                        }
-                    },
-                    legend: {
-                        position: 'top'
-                    }
+                    chart: { type: 'bar', height: 320, toolbar: { show: true }, dropShadow: { enabled: true, top: 2, left: 0, blur: 3, opacity: 0.15 } },
+                    series: [{ name: 'เริ่มสัญญาใหม่', data: leasesMonthlyData }],
+                    xaxis: { categories: leasesMonthlyLabels, labels: { rotate: -15, style: { fontSize: '12px' } }, axisBorder: { show: false } },
+                    yaxis: { forceNiceScale: true, labels: { style: { fontSize: '12px' } } },
+                    grid: { borderColor: '#eef2f7', strokeDashArray: 4 },
+                    plotOptions: { bar: { borderRadius: 8, columnWidth: '55%', dataLabels: { position: 'top' } } },
+                    dataLabels: { enabled: true, offsetY: -14, style: { fontSize: '11px', fontWeight: 500 }, formatter: v => (Number(v)||0).toLocaleString() },
+                    tooltip: { y: { formatter: v => (Number(v)||0).toLocaleString() } },
+                    fill: { type: 'gradient', gradient: { shadeIntensity: 0.15, opacityFrom: 0.95, opacityTo: 0.85, stops: [0, 90, 100] } },
+                    colors: ['#6366f1'],
+                    states: { hover: { filter: { type: 'lighten', value: 0.05 } } },
+                    legend: { position: 'top', fontSize: '13px' }
                 }).render();
             }
         });

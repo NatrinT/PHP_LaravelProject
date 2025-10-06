@@ -1,0 +1,254 @@
+/* ===== Top Stat Cards (Gradient Style, Equal Height) ===== */
+.stat-card {
+  position: relative;
+  border: 0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  color: #fff;
+  min-height: 150px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ===== ข้อความในการ์ด ===== */
+.stat-card .title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+.stat-card .value {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.stat-card .sub {
+  font-size: .95rem;
+  opacity: .95;
+}
+
+/* ===== รายการบรรทัดย่อยในการ์ด ===== */
+.stat-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 4px 0 0;
+}
+.stat-list li {
+  margin: 3px 0;
+}
+
+/* ===== สีพื้นหลังไล่เฉด ===== */
+.stat-green  { background: linear-gradient(135deg,#00c389,#00a97c); }
+.stat-purple { background: linear-gradient(135deg,#a889ff,#8c72ff); }
+.stat-blue   { background: linear-gradient(135deg,#1fb6ff,#1990ff); }
+.stat-orange { background: linear-gradient(135deg,#ffa07a,#ff8b66); }
+
+/* ===== วงกลมเบา ๆ มุมขวา ===== */
+.stat-card:after {
+  content:"";
+  position:absolute;
+  right:-30px; top:-30px;
+  width:160px; height:160px;
+  border-radius:50%;
+  background: rgba(255,255,255,.12);
+  filter: blur(1px);
+}
+.stat-card:before {
+  content:"";
+  position:absolute;
+  right:-70px; bottom:-70px;
+  width:210px; height:210px;
+  border-radius:50%;
+  background: rgba(255,255,255,.08);
+}
+
+/* ===== ชิปแสดงข้อมูลย่อย ===== */
+.chips {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:6px;
+}
+.chip {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.35);
+  color:#fff;
+}
+.chip b { font-weight:700; }
+
+/* ===== ปรับระยะระหว่างการ์ด ===== */
+/* ลดเฉพาะแนวนอน ให้ชิดขึ้น แต่แนวตั้งเท่าเดิม */
+.stat-grid {
+  row-gap: 16px;   /* แนวตั้งเท่าเดิม */
+}
+.row.stat-grid {
+  --bs-gutter-x: .5rem; /* ปรับ Bootstrap gutter แนวนอนให้แคบลง (ค่าปกติ 1.5rem) */
+}
+
+/* ===== Chart Cards ===== */
+.chart-card{
+  background: #ffffff;
+  border: 1px solid rgba(2,0,37,0.06);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(2,0,37,0.06);
+  padding: 12px 14px;
+}
+
+.chart-card__head{
+  padding: 6px 8px 2px;
+  border-bottom: 1px dashed rgba(2,0,37,0.08);
+  margin-bottom: 8px;
+}
+
+.chart-card__head--row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-card__title{
+  font-weight: 600;
+  color: #0b1020;
+}
+
+.chart-card__body{
+  padding: 8px;
+}
+
+/* ApexCharts global tweaks inside card */
+.chart-card .apexcharts-legend{
+  padding-top: 6px !important;
+}
+
+.chart-card .apexcharts-tooltip{
+  box-shadow: 0 8px 24px rgba(2,0,37,0.15) !important;
+  border-radius: 10px !important;
+  border: 1px solid #eef2f7 !important;
+}
+
+/* Make charts responsive with nice spacing */
+@media (max-width: 768px){
+  .chart-card{
+    padding: 10px 10px;
+  }
+  .chart-card__title{
+    font-size: 1rem;
+  }
+}
+
+/* Optional: soften grid text color a little */
+.apexcharts-xaxis text,
+.apexcharts-yaxis text{/* ===== Top Stat Cards (Gradient Style, Equal Height) ===== */
+.stat-card {
+  position: relative;
+  border: 0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  color: #fff;
+  min-height: 150px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ===== ข้อความในการ์ด ===== */
+.stat-card .title { font-weight: 700; font-size: 1.05rem; margin: 0 0 8px; }
+.stat-card .value { font-size: 34px; font-weight: 800; line-height: 1.1; }
+.stat-card .sub { font-size: .95rem; opacity: .95; }
+
+/* ===== รายการบรรทัดย่อยในการ์ด ===== */
+.stat-list { list-style: none; padding-left: 0; margin: 4px 0 0; }
+.stat-list li { margin: 3px 0; }
+
+/* ===== สีพื้นหลังไล่เฉด ===== */
+.stat-green  { background: linear-gradient(135deg,#00c389,#00a97c); }
+.stat-purple { background: linear-gradient(135deg,#a889ff,#8c72ff); }
+.stat-blue   { background: linear-gradient(135deg,#1fb6ff,#1990ff); }
+.stat-orange { background: linear-gradient(135deg,#ffa07a,#ff8b66); }
+
+/* ===== วงกลมเบา ๆ มุมขวา ===== */
+.stat-card:after {
+  content:""; position:absolute; right:-30px; top:-30px;
+  width:160px; height:160px; border-radius:50%;
+  background: rgba(255,255,255,.12); filter: blur(1px);
+}
+.stat-card:before {
+  content:""; position:absolute; right:-70px; bottom:-70px;
+  width:210px; height:210px; border-radius:50%;
+  background: rgba(255,255,255,.08);
+}
+
+/* ===== ชิปแสดงข้อมูลย่อย ===== */
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.chip {
+  display:inline-flex; align-items:center; gap:6px;
+  padding: 3px 10px; border-radius: 999px; font-size: .8rem;
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); color:#fff;
+}
+.chip b { font-weight:700; }
+
+/* ===== ปรับระยะระหว่างการ์ด ===== */
+.stat-grid { row-gap: 16px; }
+.row.stat-grid { --bs-gutter-x: .5rem; }
+
+/* ===== Chart Cards ===== */
+.chart-card{
+  background:#fff; border:1px solid rgba(2,0,37,0.06);
+  border-radius:16px; box-shadow:0 4px 16px rgba(2,0,37,0.06); padding:12px 14px;
+}
+.chart-card__head{ padding:6px 8px 2px; border-bottom:1px dashed rgba(2,0,37,0.08); margin-bottom:8px; }
+.chart-card__head--row{ display:flex; align-items:center; justify-content:space-between; }
+.chart-card__title{ font-weight:600; color:#0b1020; }
+.chart-card__body{ padding:8px; }
+
+.chart-card .apexcharts-legend{ padding-top:6px !important; }
+.chart-card .apexcharts-tooltip{
+  box-shadow:0 8px 24px rgba(2,0,37,0.15) !important;
+  border-radius:10px !important; border:1px solid #eef2f7 !important;
+}
+
+@media (max-width: 768px){
+  .chart-card{ padding:10px 10px; }
+  .chart-card__title{ font-size:1rem; }
+}
+
+/* ===== ปรับสี label บนแกนของ ApexCharts ===== */
+.apexcharts-xaxis text, .apexcharts-yaxis text{ fill:#475569 !important; }
+
+/* ===== Utilities Chart Wrapper (การ์ดบน) ===== */
+#chartUtilities{
+  background:#fff; border:1px solid rgba(2,0,37,0.05);
+  border-radius:16px; box-shadow:0 4px 16px rgba(2,0,37,0.05); padding:14px 16px;
+}
+#chartUtilities .apexcharts-legend{ padding-top:8px !important; }
+#chartUtilities .apexcharts-tooltip{ border-radius:10px !important; border:1px solid #e2e8f0 !important; }
+
+  fill: #475569 !important; /* slate-600 */
+}
+/* ===== Utilities Chart Enhancements ===== */
+#chartUtilities {
+  background: #fff;
+  border: 1px solid rgba(2, 0, 37, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(2, 0, 37, 0.05);
+  padding: 14px 16px;
+}
+
+#chartUtilities .apexcharts-legend {
+  padding-top: 8px !important;
+}
+
+#chartUtilities .apexcharts-tooltip {
+  border-radius: 10px !important;
+  border: 1px solid #e2e8f0 !important;
+}
