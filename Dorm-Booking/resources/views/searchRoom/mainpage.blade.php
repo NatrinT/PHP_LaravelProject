@@ -66,7 +66,7 @@
                                     THB {{ number_format($room->monthly_rent, 2) }}
                                 </div>
                             </div>
-                            <a href="#" class="btn btn-sm btn-primary">จอง</a>
+                            <a href="/checkout/{{ $room->id }}" class="btn btn-sm btn-primary">จอง</a>
                         </div>
                     </div>
                 </div>

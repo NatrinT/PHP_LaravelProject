@@ -76,7 +76,7 @@
                         <th style="width:140px;">Phone</th>
                         <th style="width:120px;">Role</th>
                         <th style="width:140px;">Status</th> {{-- เปลี่ยนหัวข้อคอลัมน์เป็นไทย --}}
-                        @if (auth()->user()->role == 'ADMIN')
+                        @if (auth()->user()->role == 'ADMIN' || auth()->user()->role == 'STAFF')
                             <th style="width:160px;" class="text-center">Actions</th>
                         @endif
                     </tr>
@@ -114,16 +114,19 @@
                                     {{ $label }}
                                 </span>
                             </td>
-                            @if (auth()->user()->role == 'ADMIN')
+                            @if (auth()->user()->role == 'ADMIN' || auth()->user()->role == 'STAFF')
                                 <td class="text-end">
                                     <a href="/users/{{ $row->id }}" class="icon-action text-secondary me-3"
                                         title="Edit">
                                         <i class="bi bi-gear"></i>
                                     </a>
+                                    @if($row->role == 'MEMBER' && auth()->user()->role == 'STAFF')
                                     <a href="/users/reset/{{ $row->id }}" class="icon-action text-info me-3"
                                         title="Reset Password">
                                         <i class="bi bi-arrow-repeat"></i>
                                     </a>
+                                    @endif
+                                    @if(auth()->user()->role == 'ADMIN')
                                     <button type="button" class="icon-action text-danger me-1"
                                         onclick="deleteConfirm({{ $row->id }})" title="Delete">
                                         <i class="bi bi-x-circle"></i>
@@ -132,6 +135,7 @@
                                         action="/users/remove/{{ $row->id }}" method="POST" style="display:none;">
                                         @csrf @method('delete')
                                     </form>
+                                    @endif
                                 </td>
                             @endif
                         </tr>

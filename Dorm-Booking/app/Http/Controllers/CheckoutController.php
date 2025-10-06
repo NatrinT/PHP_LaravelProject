@@ -16,6 +16,13 @@ class CheckoutController extends Controller
 {
     public function showCheckout(RoomModel $room, Request $req)
     {
+
+        $userId = Auth::id() ?? session('user_id');
+        if (!$userId) {
+            Alert::error('เข้าสู่ระบบก่อนจอง', 'กรุณาเข้าสู่ระบบก่อนทำการจอง');
+            return redirect()->route('login');
+        }
+        
         return view('content.bookingContent', [
             'room'       => $room,
             'start_date' => $req->query('start_date'),

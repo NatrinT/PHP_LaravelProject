@@ -545,6 +545,16 @@
         <!-- (ถ้าอยากได้ภาษาไทย) -->
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
 
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('showLoginModal') === '1') {
+                    const el = document.getElementById('exampleModalToggle'); // id โมดัล login
+                    if (el) new bootstrap.Modal(el).show();
+                }
+            });
+        </script>
+
         <!-- ตอนนี้ค่อยให้เพจย่อยใส่ JS -->
         @yield('js_before')
         <!-- สคริปต์รวมของโปรเจกต์ (ถ้ามี) -->

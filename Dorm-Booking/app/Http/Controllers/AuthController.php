@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function index()
     {
-        return view('auth.login'); // ชี้ไป view login แทน layout
+        return redirect('/?showLoginModal=1');
     }
 
 

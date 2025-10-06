@@ -75,19 +75,21 @@
                 style="height:68px; background:#020025;">
                 <h3 class="mb-0 fw-bold ms-3" style="color: #e8f0ff">Room Management</h3>
 
-                {{-- ✅ ปุ่ม Add Room และ Add Branch ให้อยู่ติดกัน --}}
-                <div class="d-flex align-items-center gap-2 me-4">
-                    <a href="/room/adding"
-                        class="btn-add-user d-inline-flex align-items-center text-white text-decoration-none">
-                        <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
-                        <span class="btn-text ms-1 fw-bold" style="color:#020025;">Add Room</span>
-                    </a>
-                    <a href="/branch/adding"
-                        class="btn-add-user d-inline-flex align-items-center text-white text-decoration-none">
-                        <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
-                        <span class="btn-text ms-1 fw-bold" style="color:#020025;">Add Branch</span>
-                    </a>
-                </div>
+                @if (auth()->user()->role == 'ADMIN')
+                    {{-- ✅ ปุ่ม Add Room และ Add Branch ให้อยู่ติดกัน --}}
+                    <div class="d-flex align-items-center gap-2 me-4">
+                        <a href="/room/adding"
+                            class="btn-add-user d-inline-flex align-items-center text-white text-decoration-none">
+                            <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
+                            <span class="btn-text ms-1 fw-bold" style="color:#020025;">Add Room</span>
+                        </a>
+                        <a href="/branch/adding"
+                            class="btn-add-user d-inline-flex align-items-center text-white text-decoration-none">
+                            <i class="bi bi-plus-lg fw-bold" style="color:#020025;"></i>
+                            <span class="btn-text ms-1 fw-bold" style="color:#020025;">Add Branch</span>
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="table-responsive">
@@ -164,14 +166,17 @@
                                         title="Edit">
                                         <i class="bi bi-gear"></i>
                                     </a>
-                                    <button type="button" class="icon-action text-danger"
-                                        onclick="deleteConfirm({{ $row->id }})" title="Delete">
-                                        <i class="bi bi-x-circle"></i>
-                                    </button>
-                                    <form id="delete-form-{{ $row->id }}" action="/room/remove/{{ $row->id }}"
-                                        method="POST" style="display:none;">
-                                        @csrf @method('delete')
-                                    </form>
+                                    @if (auth()->user()->role == 'ADMIN')
+                                        <button type="button" class="icon-action text-danger"
+                                            onclick="deleteConfirm({{ $row->id }})" title="Delete">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $row->id }}"
+                                            action="/room/remove/{{ $row->id }}" method="POST"
+                                            style="display:none;">
+                                            @csrf @method('delete')
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

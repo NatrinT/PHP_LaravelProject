@@ -566,6 +566,15 @@
         @yield('js_before')
         <!-- สคริปต์รวมของโปรเจกต์ (ถ้ามี) -->
         <script src="{{ asset('js/script.js') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('showLoginModal') === '1') {
+                    const el = document.getElementById('exampleModalToggle'); // id โมดัล login
+                    if (el) new bootstrap.Modal(el).show();
+                }
+            });
+        </script>
 
         <!-- icons etc. -->
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
